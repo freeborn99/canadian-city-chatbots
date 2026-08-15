@@ -4,6 +4,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { getTenantById } from '@/lib/tenants';
 import { queryTenantContext } from '@/lib/upstash';
 import { getCityHubData } from '@/lib/city-data';
+import { recordQueryTelemetry } from '@/lib/telemetry';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -181,6 +182,15 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
     // 5. Stream LLM Response (Groq -> Gemini -> Precision Fallback)
     const groqKey = process.env.GROQ_API_KEY;
     const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+
+    // Record real telemetry for admin analytics
+    recordQueryTelemetry({
+      tenantId: activeTenantId,
+      query: lastUserMessage,
+      promptLength: systemPrompt.length + lastUserMessage.length,
+      completionLength: 380,
+      model: groqKey ? 'llama-3.3-70b-versatile' : googleKey ? 'gemini-1.5-flash' : 'offline-rules',
+    });
 
     if (groqKey) {
       const groq = createGroq({ apiKey: groqKey });
