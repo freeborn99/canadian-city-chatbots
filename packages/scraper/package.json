@@ -1,0 +1,24 @@
+{
+  "name": "@canadian-chatbots/scraper",
+  "version": "1.0.0",
+  "description": "Automated Cheerio scraper and Upstash Vector ingestion for Canadian city portals",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node --transpile-only src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@upstash/vector": "^1.2.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}
