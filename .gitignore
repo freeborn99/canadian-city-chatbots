@@ -32,3 +32,4 @@ Thumbs.db
 test-*.js
 scratch/
 *.log
+scripts/*.js
