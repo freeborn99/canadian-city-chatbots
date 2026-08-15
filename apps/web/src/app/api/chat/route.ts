@@ -178,9 +178,9 @@ ${liveCivicServices}
 📚 RETRIEVED CIVIC VECTORS (UPSTASH RAG):
 ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)`}`;
 
-    // 5. Stream LLM Response (Groq -> Gemini -> Fallback)
+    // 5. Stream LLM Response (Groq -> Gemini -> Precision Fallback)
     const groqKey = process.env.GROQ_API_KEY;
-    const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
 
     if (groqKey) {
       const groq = createGroq({ apiKey: groqKey });
@@ -201,25 +201,35 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
       });
       return result.toDataStreamResponse();
     } else {
-      // Fallback intent router for offline mode
-      const isEventsQuery = /event|show|concert|theatre|ticket|music|festival|tonight|weekend/i.test(lastUserMessage);
-      const isFoodQuery = /food|restaurant|eat|dinner|lunch|brunch|bar|drink|table|reservation/i.test(lastUserMessage);
-      const isSportsQuery = /sport|game|score|hockey|flames|leafs|canucks|oilers|raptors|jays/i.test(lastUserMessage);
+      // Precision Multi-Category Fallback Router
+      const isFoodQuery = /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|breakfast|steak|pizza|sushi|patio|cocktail|cocktails|beer|wine|bar|bars|bistro|cafe|reservations?|table)\b/i.test(lastUserMessage);
+      const isEventsQuery = /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|festivals|gig|gigs|live music|broadway|comedy|performance|orchestra)\b/i.test(lastUserMessage);
+      const isSportsQuery = /\b(sport|sports|game|games|score|scores|match|matchup|nhl|nba|cfl|mlb|hockey|flames|leafs|canucks|oilers|raptors|jays|blue jays)\b/i.test(lastUserMessage);
+      const isStayQuery = /\b(hotel|hotels|stay|stays|motel|resort|airbnb|lodge|lodging|where to stay)\b/i.test(lastUserMessage);
+      const isOutdoorQuery = /\b(park|parks|hike|hiking|trail|trails|nature|lake|mountain|ski|skiing|snowboard)\b/i.test(lastUserMessage);
 
       let fallbackResponse = '';
 
-      if (isEventsQuery && cityHub.shows?.length > 0) {
+      if (isFoodQuery && cityHub.restaurants?.length > 0) {
+        fallbackResponse = `Here are top trending dining spots in **${city.name}** with open tables tonight: 🍽️\n\n` +
+          cityHub.restaurants.map(r => `🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n- **Available Tables**: ${r.availableTimes.join(', ')}\n- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') +
+          `\n💡 **Quick Next Steps:**\n- Check live shows happening after dinner\n- Find late-night cocktail bars in ${city.name}\n- Get transit directions`;
+      } else if (isEventsQuery && cityHub.shows?.length > 0) {
         fallbackResponse = `Here are the top live entertainment events and shows happening in **${city.name}**: 🎟️\n\n` +
           cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
           `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Check live sports games tonight in ${city.name}\n- Look for outdoor experiences`;
-      } else if (isFoodQuery && cityHub.restaurants?.length > 0) {
-        fallbackResponse = `Here are top trending dining spots in **${city.name}** with open tables tonight: 🍽️\n\n` +
-          cityHub.restaurants.map(r => `🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n- **Available Tables**: ${r.availableTimes.join(', ')}\n- **Reserve**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- Check shows happening after dinner\n- Find late-night cocktail bars\n- Get transit directions`;
       } else if (isSportsQuery && cityHub.sports?.length > 0) {
         fallbackResponse = `Here is the live sports action for **${city.name}**: 🏒\n\n` +
           cityHub.sports.map(s => `🏆 **${s.team} vs ${s.opponent}** (${s.league})\n- **Status**: ${s.status} ${s.score ? `(${s.score})` : `• Starts at ${s.gameTime}`}\n- **Home/Away**: ${s.isHome ? 'Home Arena' : 'Away'} • TV: ${s.tvBroadcast || 'Sportsnet / TSN'}\n- **Tickets**: [Get Match Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' tickets')})\n`).join('\n') +
           `\n💡 **Quick Next Steps:**\n- Find sports bars near the arena\n- Check full team schedule\n- View city transit routes to the game`;
+      } else if (isStayQuery && cityHub.hotels?.length > 0) {
+        fallbackResponse = `Here are top-rated boutique hotels and stays in **${city.name}**: 🏨\n\n` +
+          cityHub.hotels.map(h => `🛏️ **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight})\n- **Highlights**: ${h.description}\n- **Booking**: [Reserve on ${h.bookingPlatform}](${h.bookingUrl})\n`).join('\n') +
+          `\n💡 **Quick Next Steps:**\n- View top neighborhood restaurants\n- Check airport transit connections\n- Find local sightseeing tours`;
+      } else if (isOutdoorQuery && cityHub.outdoors?.length > 0) {
+        fallbackResponse = `Here are top outdoor parks and nature escapes in **${city.name}**: 🌲\n\n` +
+          cityHub.outdoors.map(o => `🌿 **${o.name}** (${o.category} • ${o.neighborhood})\n- **Features**: ${o.features.join(', ')}\n- **Difficulty**: ${o.difficulty} • Best Time: ${o.bestTime}\n- **Parking**: ${o.parkingTips}\n`).join('\n') +
+          `\n💡 **Quick Next Steps:**\n- Find dining near these parks\n- Check seasonal trail advisories\n- View transit routes`;
       } else {
         const topNews = cityHub.news[0];
         fallbackResponse = `Here are the top breaking headlines for **${city.name}** right now: 📰\n\n` +
