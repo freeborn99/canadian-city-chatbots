@@ -5,7 +5,7 @@ import { getTenantById } from '@/lib/tenants';
 import { queryTenantContext } from '@/lib/upstash';
 import { getCityHubData } from '@/lib/city-data';
 import { recordQueryTelemetry } from '@/lib/telemetry';
-import { checkQueryGuardrails } from '@/lib/guardrails';
+import { evaluateSemanticGuardrails } from '@/lib/guardrails';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -44,11 +44,19 @@ export async function POST(req: Request) {
     // Get the latest user message
     const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
 
+    const groqKey = process.env.GROQ_API_KEY;
+    const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+
     // =========================================================================
-    // 🛡️ LAYER 1: DETERMINISTIC SERVER-SIDE GUARDRAIL FILTER (0 TOKEN COST)
-    // Instantly deflects jailbreak attempts, coding tasks, and off-topic abuse.
+    // 🛡️ LAYER 1: MULTI-STAGE FAST HEURISTIC & AI SAFETY GUARDRAIL (FREE GROQ ENGINE)
+    // Instantly deflects jailbreak attempts, sneaky roleplays, coding tasks, and off-topic abuse.
     // =========================================================================
-    const guardrailCheck = checkQueryGuardrails(lastUserMessage, city);
+    const guardrailCheck = await evaluateSemanticGuardrails(
+      lastUserMessage,
+      truncatedMessages.map((m) => ({ role: m.role, content: typeof m.content === 'string' ? m.content : '' })),
+      city,
+      groqKey
+    );
     if (guardrailCheck.isBlocked && guardrailCheck.refusalMessage) {
       const refusalText = guardrailCheck.refusalMessage;
       const encoder = new TextEncoder();
@@ -271,9 +279,6 @@ ${liveCivicServices}
 ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)`}`;
 
     // 5. UNCRASHABLE MULTI-TIER AI INFERENCE STREAM RUNNER
-    const groqKey = process.env.GROQ_API_KEY;
-    const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-
     // Record real telemetry for admin analytics
     recordQueryTelemetry({
       tenantId: activeTenantId,
