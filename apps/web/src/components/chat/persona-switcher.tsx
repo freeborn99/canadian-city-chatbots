@@ -31,10 +31,10 @@ export const PERSONA_DEFINITIONS: PersonaDefinition[] = [
   },
   {
     id: 'foodie',
-    label: 'Foodie & Drinks',
+    label: 'Nightlife & Dining',
     icon: Utensils,
-    desc: 'Tables, menus & happy hours',
-    activationPrompt: 'Switch to Foodie & Drinks mode — tell me about the best restaurants, available reservations, signature dishes, and cocktail spots tonight.',
+    desc: 'Clubs, speakeasies & resos',
+    activationPrompt: 'Switch to Nightlife & Dining mode — show me the top nightclubs, cocktail speakeasies, table reservations, and late-night spots tonight.',
   },
   {
     id: 'family',

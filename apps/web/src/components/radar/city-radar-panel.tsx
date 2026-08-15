@@ -138,24 +138,66 @@ export const CityRadarPanel: React.FC<CityRadarPanelProps> = ({
           {/* Visual Mini Map Radar */}
           <CityMapRadar tenant={tenant} activeCategory={activeCategory} />
 
-          {/* Tab 1: Restaurant Reservations */}
+          {/* Tab 1: Restaurant Reservations & Nightlife */}
           {activeCategory === 'eats' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-400 px-1">
-                <span className="font-semibold text-slate-300">Featured Tables & Resos</span>
-                <span className="text-[10px] font-mono">{hubData.restaurants.length} spots live</span>
-              </div>
+            <div className="space-y-4">
+              {hubData.nightlife && hubData.nightlife.length > 0 && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+                    <span className="font-semibold text-amber-400 flex items-center gap-1.5">
+                      <span>🍸 Top Nightclubs & Speakeasies</span>
+                    </span>
+                    <span className="text-[10px] font-mono text-amber-400/80">{hubData.nightlife.length} clubs live</span>
+                  </div>
+                  {hubData.nightlife.map((n) => (
+                    <div
+                      key={n.id}
+                      className="p-3 rounded-2xl glass-card border border-amber-500/20 bg-slate-900/70 shadow-sm space-y-1.5 hover:border-amber-500/40 transition-colors"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                            <span>{n.name}</span>
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">{n.category}</span>
+                          </h4>
+                          <span className="text-[10px] text-slate-400">{n.neighborhood}</span>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-slate-300 leading-snug">{n.vibe}</p>
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-800/60">
+                        <span className="text-[10px] text-slate-400 font-mono">{n.hours}</span>
+                        <a
+                          href={n.guestlistUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold transition-colors flex items-center gap-1"
+                        >
+                          <span>Guestlist / VIP</span>
+                          <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-              {hubData.restaurants.map((r) => (
-                <RestaurantCard
-                  key={r.id}
-                  restaurant={r}
-                  accentClass={tenant.gradientClass}
-                  onAskAboutRestaurant={(name) =>
-                    onAskAI(`Tell me more about the menu, vibe, and reservation tips for ${name} in ${tenant.name}.`)
-                  }
-                />
-              ))}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+                  <span className="font-semibold text-slate-300">🍽️ Featured Tables & Resos</span>
+                  <span className="text-[10px] font-mono">{hubData.restaurants.length} spots live</span>
+                </div>
+
+                {hubData.restaurants.map((r) => (
+                  <RestaurantCard
+                    key={r.id}
+                    restaurant={r}
+                    accentClass={tenant.gradientClass}
+                    onAskAboutRestaurant={(name) =>
+                      onAskAI(`Tell me more about the menu, vibe, and reservation tips for ${name} in ${tenant.name}.`)
+                    }
+                  />
+                ))}
+              </div>
             </div>
           )}
 

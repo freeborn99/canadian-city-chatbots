@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Utensils, Car, Newspaper, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Calendar, Utensils, Car, Newspaper, Sparkles, ArrowUpRight, Flame } from 'lucide-react';
 import { CityTenant, StarterPrompt } from '@/lib/tenants';
 
 import type { Variants } from 'framer-motion';
@@ -17,6 +17,8 @@ const iconMap = {
   Utensils: Utensils,
   Car: Car,
   Newspaper: Newspaper,
+  Flame: Flame,
+  Sparkles: Sparkles,
 };
 
 const containerVariants: Variants = {

@@ -121,12 +121,26 @@ export interface SportsGameScore {
   isHome: boolean;
 }
 
+export interface NightlifeSpot {
+  id: string;
+  name: string;
+  category: 'Nightclub' | 'Speakeasy' | 'Cocktail Lounge' | 'Rooftop Bar' | 'Live Music & Dance' | 'Country Saloon';
+  neighborhood: string;
+  vibe: string;
+  coverOrVip: string;
+  hours: string;
+  guestlistUrl: string;
+  tag: string;
+  sponsored?: boolean;
+}
+
 export interface CityHubData {
   tenantId: string;
   cityName: string;
   news: NewsHeadline[];
   sports: SportsGameScore[];
   restaurants: RestaurantHighlight[];
+  nightlife: NightlifeSpot[];
   shows: ShowHighlight[];
   hotels: HotelStay[];
   experiences: TourExperience[];
@@ -303,6 +317,63 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         reservationUrl: 'https://www.coldgarden.ca',
         availableTimes: ['Walk-in Taproom', 'Bring Your Own Food'],
         tag: 'Dog Friendly & Eclectic',
+      },
+    ],
+    nightlife: [
+      {
+        id: 'yyc-nl1',
+        name: 'Cowboys Dance Hall',
+        category: 'Country Saloon',
+        neighborhood: 'Stampede Park / Victoria Park',
+        vibe: 'High-energy mega country dance club with live bands, mechanical bulls & VIP bottle service',
+        coverOrVip: '$10 - $25 • VIP Booths Available',
+        hours: 'Thu - Sat • 8:00 PM - 2:00 AM',
+        guestlistUrl: 'https://cowboysnightclub.com',
+        tag: 'Legendary Calgary Party',
+      },
+      {
+        id: 'yyc-nl2',
+        name: 'Commonwealth Bar & Stage',
+        category: 'Nightclub',
+        neighborhood: 'Beltline / 10th Ave SW',
+        vibe: 'Two-floor historic warehouse venue with vintage sound, hip-hop main room & underground basement beats',
+        coverOrVip: '$15 - $20 at door • Guestlist prior to 10:30 PM',
+        hours: 'Fri & Sat • 9:00 PM - 2:00 AM',
+        guestlistUrl: 'https://commonwealthbar.ca',
+        tag: 'Beltline Hotspot',
+      },
+      {
+        id: 'yyc-nl3',
+        name: 'Sub Rosa',
+        category: 'Speakeasy',
+        neighborhood: 'Downtown / Stephen Ave (Below Hudson’s Block)',
+        vibe: 'Subterranean luxury lounge with exposed century brick, plush velvet booths & craft cocktail artistry',
+        coverOrVip: 'Free entry early • Reservations recommended',
+        hours: 'Thu - Sat • 8:00 PM - 2:00 AM',
+        guestlistUrl: 'https://subrosayyc.com',
+        tag: 'Hidden Speakeasy',
+      },
+      {
+        id: 'yyc-nl4',
+        name: 'Proof Cocktail Bar',
+        category: 'Cocktail Lounge',
+        neighborhood: 'Beltline / 1st St SW',
+        vibe: 'Intimate artisanal cocktail haven with over 300 spirits and bespoke seasonal concoctions',
+        coverOrVip: 'No cover • Walk-ins & reservations',
+        hours: 'Daily • 4:00 PM - 1:00 AM',
+        guestlistUrl: 'https://proofyyc.com',
+        tag: 'Canada’s Top Cocktail Bar',
+      },
+      {
+        id: 'yyc-nl5',
+        name: 'Habitat Living Sound',
+        category: 'Nightclub',
+        neighborhood: 'Beltline / 1st St SW',
+        vibe: 'Intimate micro-club dedicated to pure house, deep techno, and local electronic DJ culture',
+        coverOrVip: '$10 - $15 • Free on guestlist before 11 PM',
+        hours: 'Fri & Sat • 10:00 PM - 2:30 AM',
+        guestlistUrl: 'https://habitatlivingsound.com',
+        tag: 'Underground Electronic',
       },
     ],
     shows: [
@@ -573,6 +644,63 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         tag: 'Matty Matheson Flagship',
       },
     ],
+    nightlife: [
+      {
+        id: 'yyz-nl1',
+        name: 'Rebel Nightclub',
+        category: 'Nightclub',
+        neighborhood: 'Polson Pier / Waterfront',
+        vibe: 'Canada’s largest nightlife complex (45,000 sq ft) with 4 distinct rooms, 65-foot stage & international EDM DJs',
+        coverOrVip: '$25 - $60 • VIP Bottle Service Booths',
+        hours: 'Sat • 10:00 PM - 3:00 AM',
+        guestlistUrl: 'https://rebeltoronto.com',
+        tag: 'Mega Waterfront Club',
+      },
+      {
+        id: 'yyz-nl2',
+        name: 'Lavelle',
+        category: 'Rooftop Bar',
+        neighborhood: 'King West (16th Floor)',
+        vibe: 'Upscale rooftop playground with 3 outdoor pools, 360-degree Toronto skyline vistas, and DJ bottle service',
+        coverOrVip: 'Reservations & VIP Table Packages',
+        hours: 'Wed - Sun • 5:00 PM - 2:00 AM',
+        guestlistUrl: 'https://chezlavelle.com',
+        tag: 'King West Skyline Rooftop',
+      },
+      {
+        id: 'yyz-nl3',
+        name: 'Century Toronto',
+        category: 'Nightclub',
+        neighborhood: 'King West',
+        vibe: 'Ultra-luxurious King West nightlife sanctuary featuring celebrity guestlists, top hip-hop DJs, and high-energy crowd',
+        coverOrVip: 'Guestlist & Bottle Service Reservations',
+        hours: 'Fri & Sat • 10:30 PM - 3:00 AM',
+        guestlistUrl: 'https://centurytoronto.com',
+        tag: 'Celebrity King West Lounge',
+      },
+      {
+        id: 'yyz-nl4',
+        name: 'Coda',
+        category: 'Nightclub',
+        neighborhood: 'Annex / Bathurst & Bloor',
+        vibe: 'Toronto’s premier underground dance venue with custom PK sound system and marathon techno/house sets',
+        coverOrVip: '$20 - $35 • Advance tickets recommended',
+        hours: 'Fri & Sat • 10:00 PM - 5:00 AM',
+        guestlistUrl: 'https://codatoronto.com',
+        tag: 'Underground Techno Sanctuary',
+      },
+      {
+        id: 'yyz-nl5',
+        name: 'BarChef',
+        category: 'Cocktail Lounge',
+        neighborhood: 'Queen West',
+        vibe: 'World-renowned molecular mixology laboratory creating multisensory cocktail experiences with dry ice & botanical essences',
+        coverOrVip: 'Reservations recommended • No cover',
+        hours: 'Daily • 5:00 PM - 2:00 AM',
+        guestlistUrl: 'https://barchef.com',
+        tag: 'World’s Best Cocktail Bar',
+      },
+    ],
     shows: [
       {
         id: 'yyz-s1',
@@ -722,6 +850,52 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         tag: 'Waterfront Views',
       },
     ],
+    nightlife: [
+      {
+        id: 'yvr-nl1',
+        name: 'Celebrities Nightclub',
+        category: 'Nightclub',
+        neighborhood: 'Davie Village / Downtown',
+        vibe: 'Vancouver nightlife staple with state-of-the-art Funktion-One sound, world-touring EDM DJs, and inclusive dance floors',
+        coverOrVip: '$15 - $35 • VIP table service',
+        hours: 'Tue, Fri & Sat • 10:00 PM - 3:00 AM',
+        guestlistUrl: 'https://celebritiesnightclub.com',
+        tag: 'Iconic Vancouver Dance Club',
+      },
+      {
+        id: 'yvr-nl2',
+        name: 'Fortune Sound Club',
+        category: 'Nightclub',
+        neighborhood: 'Chinatown / Pender St',
+        vibe: 'Multi-level cultural hub known for hip-hop, R&B, and electronic music with custom acoustic engineering',
+        coverOrVip: '$15 - $25 • Advance tickets online',
+        hours: 'Fri & Sat • 10:00 PM - 2:00 AM',
+        guestlistUrl: 'https://fortunesoundclub.com',
+        tag: 'Chinatown Sound Haven',
+      },
+      {
+        id: 'yvr-nl3',
+        name: 'The Keefer Bar',
+        category: 'Cocktail Lounge',
+        neighborhood: 'Chinatown',
+        vibe: 'Award-winning apothecary cocktail bar serving medicinal-inspired tinctures, dim sum bites, and patio DJ sets',
+        coverOrVip: 'No cover • Walk-ins & reservations',
+        hours: 'Daily • 4:00 PM - 2:00 AM',
+        guestlistUrl: 'https://thekeeferbar.com',
+        tag: 'Top 50 Best Bars in North America',
+      },
+      {
+        id: 'yvr-nl4',
+        name: 'The Roxy Cabaret',
+        category: 'Live Music & Dance',
+        neighborhood: 'Granville Entertainment District',
+        vibe: 'Legendary Granville party institution with high-energy live house bands, touring rock acts, and weekend dance crowds',
+        coverOrVip: '$10 - $20 at door',
+        hours: 'Daily • 8:00 PM - 3:00 AM',
+        guestlistUrl: 'https://roxyvan.com',
+        tag: 'Granville Strip Legend',
+      },
+    ],
     shows: [
       {
         id: 'yvr-s1',
@@ -859,6 +1033,52 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         tag: 'Montreal Icon',
       },
     ],
+    nightlife: [
+      {
+        id: 'yul-nl1',
+        name: 'Stereo Nightclub',
+        category: 'Nightclub',
+        neighborhood: 'The Village / Sainte-Catherine East',
+        vibe: 'Globally celebrated temple of sound featuring legendary analog acoustics and marathon 12-hour house & techno sets',
+        coverOrVip: '$25 - $40 • After-hours admission',
+        hours: 'Fri & Sat • 10:00 PM - 10:00 AM (After-hours)',
+        guestlistUrl: 'https://stereonightclub.net',
+        tag: 'World’s #1 Sound System',
+      },
+      {
+        id: 'yul-nl2',
+        name: 'New City Gas',
+        category: 'Nightclub',
+        neighborhood: 'Griffintown',
+        vibe: 'Massive heritage 19th-century industrial brick warehouse hosting global electronic superstars, festivals & digital art',
+        coverOrVip: '$35 - $75 • VIP Mezzanine & Bottle Service',
+        hours: 'Fri & Sat • 10:00 PM - 3:00 AM',
+        guestlistUrl: 'https://newcitygas.com',
+        tag: 'Industrial Mega-Venue',
+      },
+      {
+        id: 'yul-nl3',
+        name: 'Muzique',
+        category: 'Nightclub',
+        neighborhood: 'Boulevard Saint-Laurent (The Main)',
+        vibe: 'High-energy dual-room club with outdoor rooftop terrace, celebrity appearances, and premier hip-hop & house sets',
+        coverOrVip: 'Guestlist before 11:30 PM • VIP Bottle Service',
+        hours: 'Fri - Sun • 10:00 PM - 3:00 AM',
+        guestlistUrl: 'https://muziquemontreal.com',
+        tag: 'St-Laurent Party Strip',
+      },
+      {
+        id: 'yul-nl4',
+        name: 'Cloakroom Bar',
+        category: 'Speakeasy',
+        neighborhood: 'Golden Square Mile / Rue de la Montagne',
+        vibe: 'Ultra-exclusive 25-seat bespoke speakeasy hidden behind a custom tailor shop with handcrafted carved ice and tailored drinks',
+        coverOrVip: 'No cover • Intimate waitlist at door',
+        hours: 'Daily • 3:00 PM - 2:00 AM',
+        guestlistUrl: 'https://cloakroombar.co',
+        tag: 'Canada’s #1 Secret Speakeasy',
+      },
+    ],
     shows: [
       {
         id: 'yul-s1',
@@ -948,6 +1168,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -961,6 +1182,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -974,6 +1196,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -987,6 +1210,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -1000,6 +1224,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -1013,6 +1238,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     news: [],
     sports: [],
     restaurants: [],
+    nightlife: [],
     shows: [],
     hotels: [],
     experiences: [],
@@ -1028,6 +1254,7 @@ for (const id of ['yeg', 'yow', 'ywg', 'yhz', 'yyj', 'yyt']) {
     CITY_HUB_REGISTRY[id] = {
       ...CITY_HUB_REGISTRY[id],
       restaurants: CITY_HUB_REGISTRY.yyc.restaurants,
+      nightlife: CITY_HUB_REGISTRY.yyc.nightlife,
       shows: CITY_HUB_REGISTRY.yyc.shows,
       hotels: CITY_HUB_REGISTRY.yyc.hotels,
       experiences: CITY_HUB_REGISTRY.yyc.experiences,
