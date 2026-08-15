@@ -103,42 +103,45 @@ ${personaGuides[persona] || personaGuides.insider}
 ==================================================
 🎯 ABSOLUTE QUERY INTENT ROUTING RULES (CRITICAL):
 ==================================================
-You MUST classify what the user is asking for and respond strictly with the corresponding dataset:
+You MUST understand the user's specific intent and answer DIRECTLY:
 
-1. 🎪 **LIVE EVENTS, SHOWS, CONCERTS, THEATRE, COMEDY & FESTIVALS**:
+1. 🐶 **CIVIC ISSUES, ANIMAL SERVICES, BYLAWS, 311 & PERMITS**:
+   - If the user asks about animal control, bad/loose/aggressive dogs, bylaws, noise complaints, permits, garbage, recycling, parking tickets, or city hall:
+   - Provide direct, actionable steps for ${city.name}. For animal concerns or bylaws, direct them to contact **City of ${city.name} Animal & Bylaw Services via [311 ${city.name} Portal](https://${city.domain})** (or call 311 / 403-268-2489).
+   - Tell them the exact details to report: exact location/cross-street, dog physical description (breed, color, size, collar), behavior (aggressive, biting, roaming), date/time, and owner info if known.
+   - **⚠️ STRICT PROHIBITION: NEVER RETURN NEWS HEADLINES WHEN ASKED A CIVIC OR ANIMAL QUESTION.**
+
+2. 🎪 **LIVE EVENTS, SHOWS, CONCERTS, THEATRE, COMEDY & FESTIVALS**:
    - If the user asks for "events", "live events", "what's happening", "shows", "concerts", "theatre", "comedy", "festivals", "entertainment", or "weekend plans":
    - **STRICTLY USE THE 🎟️ LIVE SHOWS, CONCERTS & ENTERTAINMENT EVENTS FEED BELOW**.
    - List the real live events with Event Name, Venue, Dates/Times, Price Range, and direct Ticket Purchase link ([Get Tickets on Ticketmaster](...)).
-   - **⚠️ STRICT PROHIBITION: NEVER RETURN NEWS HEADLINES OR MUNICIPAL ARTICLES WHEN ASKED FOR EVENTS.**
+   - **⚠️ STRICT PROHIBITION: NEVER RETURN NEWS HEADLINES WHEN ASKED FOR EVENTS.**
 
-2. 📰 **NEWS & HEADLINES**:
+3. 📰 **NEWS & HEADLINES**:
    - ONLY when the user explicitly asks for "news", "headlines", "politics", "city council", "breaking stories", or "municipal updates", use the 📰 LIVE NEWS HEADLINES FEED below.
    - Provide the headline hyperlinked to the article URL, source, time, and 2-sentence executive summary.
 
-3. 🍽️ **FOOD, DINING & RESTAURANTS**:
+4. 🍽️ **FOOD, DINING & RESTAURANTS**:
    - When asked about restaurants, food, brunch, dinner, coffee, or bars, use the 🍽️ FEATURED DINING FEED.
    - Include restaurant name hyperlinked to booking URL, neighborhood, signature dish, and open reservation timeslots.
 
-4. 🏒 **SPORTS & GAME SCORES**:
+5. 🏒 **SPORTS & GAME SCORES**:
    - When asked about sports, hockey, baseball, basketball, games, or scores, use the 🏒 LIVE SPORTS SCORES & SCHEDULE FEED.
    - State matchup, current score or game start time, venue, and TV broadcast channel.
 
-5. 🏨 **HOTELS & STAYS**:
+6. 🏨 **HOTELS & STAYS**:
    - When asked where to stay or about hotels, use the 🏨 BOUTIQUE HOTELS & STAYS FEED with direct booking links.
 
-6. 🧭 **TOURS & EXPERIENCES**:
+7. 🧭 **TOURS & EXPERIENCES**:
    - When asked for tours, activities, boat cruises, or day trips, use the 🧭 LOCAL TOURS & EXPERIENCES FEED.
 
-7. 🌲 **OUTDOOR & PARKS**:
+8. 🌲 **OUTDOOR & PARKS**:
    - When asked for parks, hikes, nature, or ski hills, use the 🌲 OUTDOOR & PARKS FEED.
-
-8. 🏛️ **CIVIC SERVICES & TRANSIT**:
-   - When asked about city hall, transit, 311, parking, or utilities, use the 🏛️ MUNICIPAL SERVICES FEED.
 
 ==================================================
 🔗 MANDATORY HYPERLINKING DIRECTIVE:
 ==================================================
-- Every single entity (event, venue, ticket, restaurant, news article, hotel, tour) MUST be a clickable markdown hyperlink in format: [Entity Name / Action](URL).
+- Every single entity (event, venue, ticket, restaurant, news article, hotel, tour, civic service) MUST be a clickable markdown hyperlink in format: [Entity Name / Action](URL).
 - Never output plain unlinked names when URLs exist in the directory below.
 - Keep responses scannable, punchy, well-formatted with bold headers and bullet points.
 - At the end of every response, output 3 interactive follow-up suggestions:
@@ -174,12 +177,13 @@ ${liveOutdoorFeed}
 
 🏛️ MUNICIPAL SERVICES & CIVIC PORTALS:
 ${liveCivicServices}
+- Official City 311: [${city.name} 311 Service Request](https://${city.domain})
 - Official City Portal: [City of ${city.name}](https://${city.domain})
 
 📚 RETRIEVED CIVIC VECTORS (UPSTASH RAG):
 ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)`}`;
 
-    // 5. Stream LLM Response (Groq -> Gemini -> Precision Fallback)
+    // 5. Stream LLM Response with Bulletproof Multi-Provider Failover
     const groqKey = process.env.GROQ_API_KEY;
     const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
 
@@ -189,84 +193,118 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
       query: lastUserMessage,
       promptLength: systemPrompt.length + lastUserMessage.length,
       completionLength: 380,
-      model: groqKey ? 'llama-3.3-70b-versatile' : googleKey ? 'gemini-1.5-flash' : 'offline-rules',
+      model: 'llama-3.3-70b-versatile',
     });
 
-    if (groqKey) {
-      const groq = createGroq({ apiKey: groqKey });
-      const result = streamText({
-        model: groq('llama-3.3-70b-versatile'),
-        system: systemPrompt,
-        messages,
-        temperature: 0.3,
-      });
-      return result.toDataStreamResponse();
-    } else if (googleKey) {
-      const google = createGoogleGenerativeAI({ apiKey: googleKey });
-      const result = streamText({
-        model: google('gemini-1.5-flash'),
-        system: systemPrompt,
-        messages,
-        temperature: 0.3,
-      });
-      return result.toDataStreamResponse();
-    } else {
-      // Precision Multi-Category Fallback Router
-      const isFoodQuery = /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|breakfast|steak|pizza|sushi|patio|cocktail|cocktails|beer|wine|bar|bars|bistro|cafe|reservations?|table)\b/i.test(lastUserMessage);
-      const isEventsQuery = /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|festivals|gig|gigs|live music|broadway|comedy|performance|orchestra)\b/i.test(lastUserMessage);
-      const isSportsQuery = /\b(sport|sports|game|games|score|scores|match|matchup|nhl|nba|cfl|mlb|hockey|flames|leafs|canucks|oilers|raptors|jays|blue jays)\b/i.test(lastUserMessage);
-      const isStayQuery = /\b(hotel|hotels|stay|stays|motel|resort|airbnb|lodge|lodging|where to stay)\b/i.test(lastUserMessage);
-      const isOutdoorQuery = /\b(park|parks|hike|hiking|trail|trails|nature|lake|mountain|ski|skiing|snowboard)\b/i.test(lastUserMessage);
-
-      let fallbackResponse = '';
-
-      if (isFoodQuery && cityHub.restaurants?.length > 0) {
-        fallbackResponse = `Here are top trending dining spots in **${city.name}** with open tables tonight: 🍽️\n\n` +
-          cityHub.restaurants.map(r => `🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n- **Available Tables**: ${r.availableTimes.join(', ')}\n- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- Check live shows happening after dinner\n- Find late-night cocktail bars in ${city.name}\n- Get transit directions`;
-      } else if (isEventsQuery && cityHub.shows?.length > 0) {
-        fallbackResponse = `Here are the top live entertainment events and shows happening in **${city.name}**: 🎟️\n\n` +
-          cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Check live sports games tonight in ${city.name}\n- Look for outdoor experiences`;
-      } else if (isSportsQuery && cityHub.sports?.length > 0) {
-        fallbackResponse = `Here is the live sports action for **${city.name}**: 🏒\n\n` +
-          cityHub.sports.map(s => `🏆 **${s.team} vs ${s.opponent}** (${s.league})\n- **Status**: ${s.status} ${s.score ? `(${s.score})` : `• Starts at ${s.gameTime}`}\n- **Home/Away**: ${s.isHome ? 'Home Arena' : 'Away'} • TV: ${s.tvBroadcast || 'Sportsnet / TSN'}\n- **Tickets**: [Get Match Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' tickets')})\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- Find sports bars near the arena\n- Check full team schedule\n- View city transit routes to the game`;
-      } else if (isStayQuery && cityHub.hotels?.length > 0) {
-        fallbackResponse = `Here are top-rated boutique hotels and stays in **${city.name}**: 🏨\n\n` +
-          cityHub.hotels.map(h => `🛏️ **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight})\n- **Highlights**: ${h.description}\n- **Booking**: [Reserve on ${h.bookingPlatform}](${h.bookingUrl})\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- View top neighborhood restaurants\n- Check airport transit connections\n- Find local sightseeing tours`;
-      } else if (isOutdoorQuery && cityHub.outdoors?.length > 0) {
-        fallbackResponse = `Here are top outdoor parks and nature escapes in **${city.name}**: 🌲\n\n` +
-          cityHub.outdoors.map(o => `🌿 **${o.name}** (${o.category} • ${o.neighborhood})\n- **Features**: ${o.features.join(', ')}\n- **Difficulty**: ${o.difficulty} • Best Time: ${o.bestTime}\n- **Parking**: ${o.parkingTips}\n`).join('\n') +
-          `\n💡 **Quick Next Steps:**\n- Find dining near these parks\n- Check seasonal trail advisories\n- View transit routes`;
-      } else {
-        const topNews = cityHub.news[0];
-        fallbackResponse = `Here are the top breaking headlines for **${city.name}** right now: 📰\n\n` +
-          `📰 **[${topNews?.title || 'City Council Infrastructure Plan'}](${topNews?.url || `https://${city.domain}`})**\n- **Source**: [${topNews?.source || 'City News'}](${topNews?.url || `https://${city.domain}`}) • *${topNews?.timeAgo || 'Just now'}*\n- **Summary**: ${topNews?.summary || 'Major public transit and civic investments underway.'}\n- **Full Article**: [Read on ${topNews?.source || 'News'}](${topNews?.url || `https://${city.domain}`})\n\n` +
-          `💡 **Quick Next Steps:**\n- What live events are happening in ${city.name}?\n- Find top dinner reservations tonight\n- Check live sports scores`;
+    try {
+      if (groqKey) {
+        const groq = createGroq({ apiKey: groqKey });
+        const result = streamText({
+          model: groq('llama-3.3-70b-versatile'),
+          system: systemPrompt,
+          messages,
+          temperature: 0.3,
+        });
+        return result.toDataStreamResponse();
       }
-
-      const encoder = new TextEncoder();
-      const stream = new ReadableStream({
-        async start(controller) {
-          const chunks = fallbackResponse.match(/.{1,12}/g) || [fallbackResponse];
-          for (const chunk of chunks) {
-            controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
-            await new Promise((res) => setTimeout(res, 25));
-          }
-          controller.enqueue(encoder.encode('d:{"finishReason":"stop"}\n'));
-          controller.close();
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'X-Vercel-AI-Data-Stream': 'v1',
-        },
-      });
+    } catch (groqError) {
+      console.warn('[Groq Engine Failover to Gemini]:', groqError);
     }
+
+    try {
+      if (googleKey) {
+        const google = createGoogleGenerativeAI({ apiKey: googleKey });
+        const result = streamText({
+          model: google('gemini-1.5-flash'),
+          system: systemPrompt,
+          messages,
+          temperature: 0.3,
+        });
+        return result.toDataStreamResponse();
+      }
+    } catch (geminiError) {
+      console.warn('[Gemini Engine Failover to Structured Fallback]:', geminiError);
+    }
+
+    // Comprehensive Fallback Router (Only triggers if offline / complete API network outage)
+    const isAnimalOrCivicQuery = /\b(animal|dog|cat|pet|311|bylaw|bylaws|permit|parking|ticket|noise|police|fire|emergency|complaint|garbage|recycling)\b/i.test(lastUserMessage);
+    const isFoodQuery = /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|breakfast|steak|pizza|sushi|patio|cocktail|cocktails|beer|wine|bar|bars|bistro|cafe|reservations?|table)\b/i.test(lastUserMessage);
+    const isEventsQuery = /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|festivals|gig|gigs|live music|broadway|comedy|performance|orchestra)\b/i.test(lastUserMessage);
+    const isSportsQuery = /\b(sport|sports|game|games|score|scores|match|matchup|nhl|nba|cfl|mlb|hockey|flames|leafs|canucks|oilers|raptors|jays|blue jays)\b/i.test(lastUserMessage);
+    const isStayQuery = /\b(hotel|hotels|stay|stays|motel|resort|airbnb|lodge|lodging|where to stay)\b/i.test(lastUserMessage);
+    const isOutdoorQuery = /\b(park|parks|hike|hiking|trail|trails|nature|lake|mountain|ski|skiing|snowboard)\b/i.test(lastUserMessage);
+
+    let fallbackResponse = '';
+
+    if (isAnimalOrCivicQuery) {
+      fallbackResponse = `### 🐾 How to Report an Aggressive or Bad Dog in **${city.name}**\n\n` +
+        `To report an aggressive dog, biting incident, or animal bylaw violation in ${city.name}, contact **${city.name} Animal & Bylaw Services** immediately:\n\n` +
+        `📞 **How to Contact:**\n` +
+        `- **Dial 311** within city limits (or call **403-268-2489** outside Calgary)\n` +
+        `- **Online Report**: Submit a ticket directly at the [${city.name} 311 Online Service Portal](https://${city.domain})\n\n` +
+        `📝 **What to Tell the Animal Control Officer:**\n` +
+        `1. **Exact Location**: The precise address, park name, or nearest cross-streets.\n` +
+        `2. **Dog Description**: Breed, color, approximate size, collar/tags, or distinctive markings.\n` +
+        `3. **Behavior Details**: Whether the dog bit someone, was growling/charging, roaming off-leash, or acting aggressively.\n` +
+        `4. **Owner Information**: If known, the owner's description, vehicle license plate, or home address.\n` +
+        `5. **Time of Incident**: Date and exact time of occurrence.\n\n` +
+        `💡 **Quick Next Steps:**\n` +
+        `- [Open ${city.name} 311 Service Request](https://${city.domain})\n` +
+        `- What are the local bylaw fines for off-leash dogs?\n` +
+        `- Find designated fenced off-leash dog parks in ${city.name}`;
+    } else if (isFoodQuery && cityHub.restaurants?.length > 0) {
+      fallbackResponse = `Here are top trending dining spots in **${city.name}** with open tables tonight: 🍽️\n\n` +
+        cityHub.restaurants.map(r => `🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n- **Available Tables**: ${r.availableTimes.join(', ')}\n- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') +
+        `\n💡 **Quick Next Steps:**\n- Check live shows happening after dinner\n- Find late-night cocktail bars in ${city.name}\n- Get transit directions`;
+    } else if (isEventsQuery && cityHub.shows?.length > 0) {
+      fallbackResponse = `Here are the top live entertainment events and shows happening in **${city.name}**: 🎟️\n\n` +
+        cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
+        `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Check live sports games tonight in ${city.name}\n- Look for outdoor experiences`;
+    } else if (isSportsQuery && cityHub.sports?.length > 0) {
+      fallbackResponse = `Here is the live sports action for **${city.name}**: 🏒\n\n` +
+        cityHub.sports.map(s => `🏆 **${s.team} vs ${s.opponent}** (${s.league})\n- **Status**: ${s.status} ${s.score ? `(${s.score})` : `• Starts at ${s.gameTime}`}\n- **Home/Away**: ${s.isHome ? 'Home Arena' : 'Away'} • TV: ${s.tvBroadcast || 'Sportsnet / TSN'}\n- **Tickets**: [Get Match Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' tickets')})\n`).join('\n') +
+        `\n💡 **Quick Next Steps:**\n- Find sports bars near the arena\n- Check full team schedule\n- View city transit routes to the game`;
+    } else if (isStayQuery && cityHub.hotels?.length > 0) {
+      fallbackResponse = `Here are top-rated boutique hotels and stays in **${city.name}**: 🏨\n\n` +
+        cityHub.hotels.map(h => `🛏️ **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight})\n- **Highlights**: ${h.description}\n- **Booking**: [Reserve on ${h.bookingPlatform}](${h.bookingUrl})\n`).join('\n') +
+        `\n💡 **Quick Next Steps:**\n- View top neighborhood restaurants\n- Check airport transit connections\n- Find local sightseeing tours`;
+    } else if (isOutdoorQuery && cityHub.outdoors?.length > 0) {
+      fallbackResponse = `Here are top outdoor parks and nature escapes in **${city.name}**: 🌲\n\n` +
+        cityHub.outdoors.map(o => `🌿 **${o.name}** (${o.category} • ${o.neighborhood})\n- **Features**: ${o.features.join(', ')}\n- **Difficulty**: ${o.difficulty} • Best Time: ${o.bestTime}\n- **Parking**: ${o.parkingTips}\n`).join('\n') +
+        `\n💡 **Quick Next Steps:**\n- Find dining near these parks\n- Check seasonal trail advisories\n- View transit routes`;
+    } else {
+      fallbackResponse = `I am your hyper-local **Chat${city.id.toUpperCase()}** AI concierge for **${city.name}, ${city.province}**! 🍁\n\n` +
+        `I can give you real-time answers and direct booking links for:\n` +
+        `- 🍽️ **Dining & Reservations**: Finding tables at top restaurants\n` +
+        `- 🎟️ **Live Shows & Box Office**: Concerts, theatre, comedy, and tickets\n` +
+        `- 🏒 **Sports**: Flames / Leafs / Canucks schedules, broadcast channels, and scores\n` +
+        `- 🏛️ **Civic & 311 Services**: Bylaws, animal control, transit alerts, and permits\n` +
+        `- 🏨 **Hotels & Tours**: Stays, local experiences, and outdoor escapes\n\n` +
+        `💡 **Quick Next Steps:**\n` +
+        `- Ask me any specific question about ${city.name}\n` +
+        `- What live events are happening in ${city.name} this week?\n` +
+        `- Where should I go for dinner tonight?`;
+    }
+
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const chunks = fallbackResponse.match(/.{1,12}/g) || [fallbackResponse];
+        for (const chunk of chunks) {
+          controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
+          await new Promise((res) => setTimeout(res, 20));
+        }
+        controller.enqueue(encoder.encode('d:{"finishReason":"stop"}\n'));
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Vercel-AI-Data-Stream': 'v1',
+      },
+    });
   } catch (error: unknown) {
     console.error('[Chat API Error]:', error);
     return new Response(
