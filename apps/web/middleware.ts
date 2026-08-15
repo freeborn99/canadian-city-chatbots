@@ -6,10 +6,11 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
 
-  // Bypass static files, images, and system routes
+  // Bypass static files, images, system routes, and admin portal
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
+    pathname.startsWith('/admin') ||
     pathname.includes('.') || // e.g. favicon.ico, sitemap.xml, images
     pathname.startsWith('/fonts')
   ) {

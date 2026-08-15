@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -191,18 +192,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Footer info & Upstash status */}
-        <div className="p-4 border-t border-slate-800/60 bg-slate-950/40">
-          <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+        {/* Footer info & Admin link */}
+        <div className="p-4 border-t border-slate-800/60 bg-slate-950/40 space-y-2">
+          <Link
+            href="/admin"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition-all group"
+          >
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span>Admin & Telemetry</span>
+            </span>
+            <span className="text-[10px] text-cyan-400 font-mono group-hover:translate-x-0.5 transition-transform">
+              📊 Portal →
+            </span>
+          </Link>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span className="flex items-center gap-1.5">
               <Database className="w-3.5 h-3.5 text-emerald-400" />
               <span>Upstash Vector Index</span>
             </span>
-            <span className="text-emerald-400 font-mono">ONLINE</span>
+            <span className="text-emerald-400 font-mono text-[10px]">ONLINE</span>
           </div>
-          <p className="text-[10px] text-slate-400">
-            Multi-Tenant Scraper synced via GitHub Actions.
-          </p>
         </div>
       </motion.aside>
     </>
