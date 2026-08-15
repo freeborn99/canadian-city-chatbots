@@ -62,9 +62,15 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({ tenant, onSelect
           </div>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-medium text-slate-300 mb-3 shadow-inner">
-          <span className="w-2 h-2 rounded-full animate-ping bg-emerald-400" />
-          <span>Real-Time Civic AI • {tenant.province}</span>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-700/80 text-cyan-300 text-[11px] font-black uppercase tracking-wider shadow-sm animate-pulse">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <span>PUBLIC BETA 🍁</span>
+          </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-medium text-slate-300 shadow-inner">
+            <span className="w-2 h-2 rounded-full animate-ping bg-emerald-400" />
+            <span>Real-Time Civic AI • {tenant.province}</span>
+          </div>
         </div>
 
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
