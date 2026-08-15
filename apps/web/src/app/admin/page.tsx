@@ -110,8 +110,8 @@ export default function AdminPortalPage() {
   // 2. Secure Login Screen with Strong Password Protection
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 selection:bg-cyan-500 selection:text-white">
-        <div className="max-w-md w-full glass-panel border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+      <div className="fixed inset-0 w-full h-full overflow-y-auto bg-slate-950 flex items-center justify-center p-4 selection:bg-cyan-500 selection:text-white">
+        <div className="max-w-md w-full glass-panel border border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden my-auto">
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
           
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 p-0.5 mx-auto mb-4 flex items-center justify-center shadow-lg">
@@ -203,7 +203,7 @@ export default function AdminPortalPage() {
   const totalCatCount = Object.values(metrics.categoryCounts as Record<string, number>).reduce((a, b) => a + b, 0) || 1;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
+    <div className="fixed inset-0 w-full h-full overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800/90 px-4 md:px-8 py-3.5 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
