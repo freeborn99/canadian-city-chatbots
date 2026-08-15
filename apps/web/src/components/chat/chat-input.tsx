@@ -186,7 +186,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           </button>
         </div>
 
-        {/* Input Footer status */}
+        {/* Input Footer status with character counter */}
         <div className="hidden md:flex items-center justify-between mt-1 px-3 pt-1 text-[11px] text-slate-500">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -195,12 +195,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               <span className="text-slate-300 font-mono">[{tenant.id.toUpperCase()}]</span>
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span>Press</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 font-mono flex items-center gap-0.5">
-              Enter <CornerDownLeft className="w-2.5 h-2.5 inline" />
-            </kbd>
-            <span>to send</span>
+          <div className="flex items-center gap-3">
+            <span className={`font-mono tabular-nums ${
+              input.length > 3800 ? 'text-rose-400 font-semibold' :
+              input.length > 3200 ? 'text-amber-400' : 'text-slate-500'
+            }`}>
+              {input.length.toLocaleString()} / 4,000
+            </span>
+            <div className="flex items-center gap-1">
+              <span>Press</span>
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 font-mono flex items-center gap-0.5">
+                Enter <CornerDownLeft className="w-2.5 h-2.5 inline" />
+              </kbd>
+              <span>to send</span>
+            </div>
           </div>
         </div>
       </form>

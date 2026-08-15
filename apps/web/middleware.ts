@@ -5,6 +5,14 @@ import { DOMAIN_TO_TENANT_MAP, DEFAULT_TENANT_ID, TENANTS } from './src/lib/tena
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
+  const host = request.headers.get('host') || '';
+
+  // Redirect www to apex domain (e.g. www.chatyyc.com -> chatyyc.com)
+  if (host.startsWith('www.')) {
+    const apexHost = host.replace(/^www\./, '');
+    const redirectUrl = new URL(`${url.protocol}//${apexHost}${pathname}${url.search}`);
+    return NextResponse.redirect(redirectUrl, 308);
+  }
 
   // Bypass static files, images, system routes, and admin portal
   if (
@@ -17,8 +25,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 1. Check custom Host header
-  const host = request.headers.get('host') || '';
+  // 1. Resolve tenant from Host header
   const cleanHost = host.split(':')[0].replace(/^www\./, '').toLowerCase().trim();
 
   let tenantId = DEFAULT_TENANT_ID;

@@ -32,8 +32,6 @@ import {
 } from 'lucide-react';
 import { TENANTS } from '@/lib/tenants';
 
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = '🍁Canada#TrueNorth!2026';
 const AUTH_STORAGE_KEY = 'can_city_admin_auth_token_v1';
 
 export default function AdminPortalPage() {
@@ -59,10 +57,20 @@ export default function AdminPortalPage() {
   const fetchRealMetrics = useCallback(async (range = timeRange, city = cityFilter) => {
     setIsLoading(true);
     try {
+      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
+      const authHeaders = { 'x-admin-token': token };
+
       const [metricsRes, issuesRes] = await Promise.all([
-        fetch(`/api/admin/metrics?range=${range}&city=${city}`),
-        fetch('/api/admin/issues'),
+        fetch(`/api/admin/metrics?range=${range}&city=${city}`, { headers: authHeaders }),
+        fetch('/api/admin/issues', { headers: authHeaders }),
       ]);
+
+      if (metricsRes.status === 401 || issuesRes.status === 401) {
+        // Token is invalid or expired — force re-login
+        sessionStorage.removeItem(AUTH_STORAGE_KEY);
+        setIsAuthenticated(false);
+        return;
+      }
 
       const metricsJson = await metricsRes.json();
       if (metricsJson.status === 'SUCCESS' && metricsJson.metrics) {
@@ -83,8 +91,8 @@ export default function AdminPortalPage() {
 
   // Check saved session on mount
   useEffect(() => {
-    const savedToken = sessionStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem(AUTH_STORAGE_KEY);
-    if (savedToken === 'AUTH_OK_2026') {
+    const savedToken = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    if (savedToken && savedToken.length > 0) {
       setIsAuthenticated(true);
       fetchRealMetrics();
     } else {
@@ -92,27 +100,38 @@ export default function AdminPortalPage() {
     }
   }, [fetchRealMetrics]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loginAttempts >= 5) {
       setAuthError('Too many failed attempts. Please wait 60 seconds.');
       return;
     }
 
-    if (usernameInput.trim() === ADMIN_USER && passwordInput.trim() === ADMIN_PASS) {
-      sessionStorage.setItem(AUTH_STORAGE_KEY, 'AUTH_OK_2026');
-      setIsAuthenticated(true);
-      setAuthError(null);
-      fetchRealMetrics();
-    } else {
-      setLoginAttempts((prev) => prev + 1);
-      setAuthError('Invalid administrator credentials.');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.status === 'SUCCESS' && data.token) {
+        sessionStorage.setItem(AUTH_STORAGE_KEY, data.token);
+        setIsAuthenticated(true);
+        setAuthError(null);
+        fetchRealMetrics();
+      } else {
+        setLoginAttempts((prev) => prev + 1);
+        setAuthError(data.error || 'Invalid administrator credentials.');
+      }
+    } catch {
+      setAuthError('Failed to connect to authentication server.');
     }
   };
 
   const handleLogout = () => {
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
     setIsAuthenticated(false);
     setUsernameInput('');
     setPasswordInput('');
@@ -120,9 +139,13 @@ export default function AdminPortalPage() {
 
   const handleUpdateStatus = async (id: string, newStatus: 'new' | 'investigating' | 'resolved') => {
     try {
+      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
       await fetch('/api/admin/issues', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': token,
+        },
         body: JSON.stringify({ id, status: newStatus }),
       });
       setIssues((prev) =>
@@ -164,25 +187,10 @@ export default function AdminPortalPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Administrator Username</label>
-              <input
-                type="text"
-                placeholder="Enter username (e.g. admin)"
-                value={usernameInput}
-                onChange={(e) => {
-                  setUsernameInput(e.target.value);
-                  setAuthError(null);
-                }}
-                className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Strong Security Password</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1.5">Admin Access Token</label>
               <input
                 type="password"
-                placeholder="Enter strong password..."
+                placeholder="Enter your admin token..."
                 value={passwordInput}
                 onChange={(e) => {
                   setPasswordInput(e.target.value);
@@ -190,7 +198,9 @@ export default function AdminPortalPage() {
                 }}
                 className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors"
                 required
+                autoComplete="current-password"
               />
+              <p className="text-[10px] text-slate-500 mt-1.5">Set via ADMIN_API_TOKEN environment variable on the server</p>
             </div>
 
             {authError && (

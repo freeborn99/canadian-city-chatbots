@@ -43,6 +43,9 @@ export async function queryTenantContext(
   tenantId: string,
   topK = 3
 ): Promise<string> {
+  if (!/^[a-z]{3}$/.test(tenantId)) {
+    throw new Error('Invalid tenant ID format');
+  }
   const index = getUpstashVectorClient();
 
   if (!index) {

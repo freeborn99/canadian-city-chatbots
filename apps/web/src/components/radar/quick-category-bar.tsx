@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Utensils, Ticket, Train, PhoneCall, Sparkles, Flame } from 'lucide-react';
+import { Utensils, Ticket, Train, PhoneCall, Flame } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 
 export type CivicCategory = 'all' | 'eats' | 'shows' | 'transit' | 'civic';
@@ -11,42 +11,36 @@ interface QuickCategoryBarProps {
   tenant: CityTenant;
   activeCategory: CivicCategory;
   onSelectCategory: (category: CivicCategory) => void;
-  onSendSmartPrompt: (prompt: string) => void;
 }
 
 export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
   tenant,
   activeCategory,
   onSelectCategory,
-  onSendSmartPrompt,
 }) => {
   const categories = [
     {
       id: 'eats' as CivicCategory,
       label: 'Eats & Resos',
       icon: Utensils,
-      prompt: `What are the top dinner recommendations and available reservations in ${tenant.name} tonight?`,
       badge: 'Tables Available',
     },
     {
       id: 'shows' as CivicCategory,
       label: 'Shows & Tickets',
       icon: Ticket,
-      prompt: `What theatre shows, concerts, and live entertainment are selling tickets in ${tenant.name}?`,
       badge: 'Box Office',
     },
     {
       id: 'transit' as CivicCategory,
       label: 'Transit Alerts',
       icon: Train,
-      prompt: `Show me live transit status and commuter advisories across ${tenant.name}.`,
       badge: 'Live Status',
     },
     {
       id: 'civic' as CivicCategory,
       label: 'City 311 & Services',
       icon: PhoneCall,
-      prompt: `How do I submit a 311 request and what are the main civic municipal services in ${tenant.name}?`,
       badge: 'Official',
     },
   ];
@@ -66,11 +60,9 @@ export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
           return (
             <motion.button
               key={cat.id}
+              type="button"
               whileTap={{ scale: 0.96 }}
-              onClick={() => {
-                onSelectCategory(cat.id);
-                onSendSmartPrompt(cat.prompt);
-              }}
+              onClick={() => onSelectCategory(cat.id)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex-shrink-0 border shadow-sm ${
                 isSelected
                   ? `bg-slate-800 text-white border-slate-600 shadow-md ${tenant.glowClass}`

@@ -17,6 +17,25 @@ export async function POST(req: Request) {
       persona?: 'insider' | 'news' | 'foodie' | 'family';
     };
 
+    // Input validation
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(JSON.stringify({ error: 'Invalid messages format' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
+
+    // Validate persona
+    const validPersonas = ['insider', 'news', 'foodie', 'family'] as const;
+    const safePersona = validPersonas.includes(persona as any) ? persona : 'insider';
+
+    // Truncate message history to last 20 messages to prevent unbounded token costs
+    const truncatedMessages = messages.slice(-20);
+
+    // Validate individual message content length (4000 char max per message)
+    for (const msg of truncatedMessages) {
+      if (typeof msg.content === 'string' && msg.content.length > 4000) {
+        return new Response(JSON.stringify({ error: 'Message too long. Maximum 4000 characters per message.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+
     const activeTenantId = tenantId || 'yyz';
     const city = getTenantById(activeTenantId);
     const cityHub = getCityHubData(activeTenantId);
@@ -102,7 +121,7 @@ export async function POST(req: Request) {
     // 4. Build Comprehensive Real-Time System Prompt
     const systemPrompt = `You are "Chat${city.id.toUpperCase()}", the premier hyper-local AI assistant and real-time civic portal for ${city.name}, ${city.province}, Canada.
 
-${personaGuides[persona] || personaGuides.insider}
+${personaGuides[safePersona] || personaGuides.insider}
 
 ==================================================
 🎯 ABSOLUTE QUERY INTENT ROUTING RULES (CRITICAL):
@@ -210,7 +229,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const result = streamText({
               model: groq('llama-3.3-70b-versatile'),
               system: systemPrompt,
-              messages,
+              messages: truncatedMessages,
               temperature: 0.3,
             });
 
@@ -230,7 +249,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const result = streamText({
               model: groq('llama-3.1-8b-instant'),
               system: systemPrompt,
-              messages,
+              messages: truncatedMessages,
               temperature: 0.3,
             });
 
@@ -250,7 +269,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const result = streamText({
               model: google('gemini-1.5-flash'),
               system: systemPrompt,
-              messages,
+              messages: truncatedMessages,
               temperature: 0.3,
             });
 
@@ -270,7 +289,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const result = streamText({
               model: google('gemini-1.5-pro'),
               system: systemPrompt,
-              messages,
+              messages: truncatedMessages,
               temperature: 0.3,
             });
 
@@ -378,7 +397,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
   } catch (error: unknown) {
     console.error('[Chat API Global Error]:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal chat processing error', details: (error as Error).message }),
+      JSON.stringify({ error: 'An error occurred processing your request. Please try again.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

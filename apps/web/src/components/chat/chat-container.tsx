@@ -114,6 +114,14 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
     });
   };
 
+  // When a persona button is clicked, immediately send an activation message
+  const handlePersonaActivation = (persona: string, activationPrompt: string) => {
+    append({
+      role: 'user',
+      content: activationPrompt,
+    });
+  };
+
   const handleSendSmartPrompt = (promptText: string) => {
     append({
       role: 'user',
@@ -206,7 +214,6 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
               tenant={tenant}
               activeCategory={activeRadarCategory}
               onSelectCategory={(cat) => setActiveRadarCategory(cat)}
-              onSendSmartPrompt={handleSendSmartPrompt}
             />
           </div>
 
@@ -235,6 +242,8 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
               tenant={tenant}
               activePersona={activePersona}
               onSelectPersona={(p) => setActivePersona(p)}
+              onActivatePersona={handlePersonaActivation}
+              isLoading={isLoading}
             />
             <ChatInput
               input={input}

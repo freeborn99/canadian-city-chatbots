@@ -1,8 +1,13 @@
 // Script to purge all Porkbun URL Forwarding / Pixie Proxies across all 10 Canadian domains
 const https = require('https');
 
-const API_KEY = 'pk1_6714231bbae2f8b7944c139b5daf1df2e30d9151d9d99e9398ae72aafc4e256e';
-const SECRET_KEY = 'sk1_d8e1939652f2d1f1ebb1be56617e4ee3ecf7e931633040ae1ac17381fb127452';
+const API_KEY = process.env.PORKBUN_API_KEY || process.argv[2];
+const SECRET_KEY = process.env.PORKBUN_SECRET_KEY || process.argv[3];
+
+if (!API_KEY || !SECRET_KEY) {
+  console.error('Usage: Set PORKBUN_API_KEY and PORKBUN_SECRET_KEY environment variables, or pass as arguments.');
+  process.exit(1);
+}
 
 const DOMAINS = [
   'chatyyc.com',
