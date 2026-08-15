@@ -23,6 +23,12 @@ import {
   Compass,
   KeyRound,
   AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  MessageSquare,
 } from 'lucide-react';
 import { TENANTS } from '@/lib/tenants';
 
@@ -45,16 +51,30 @@ export default function AdminPortalPage() {
   // Real live telemetry data from server API
   const [realData, setRealData] = useState<any>(null);
 
+  // Real citizen issue reports
+  const [issues, setIssues] = useState<any[]>([]);
+  const [issueFilter, setIssueFilter] = useState<'all' | 'new' | 'investigating' | 'resolved'>('all');
+  const [expandedIssueId, setExpandedIssueId] = useState<string | null>(null);
+
   const fetchRealMetrics = useCallback(async (range = timeRange, city = cityFilter) => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/admin/metrics?range=${range}&city=${city}`);
-      const json = await res.json();
-      if (json.status === 'SUCCESS' && json.metrics) {
-        setRealData(json.metrics);
+      const [metricsRes, issuesRes] = await Promise.all([
+        fetch(`/api/admin/metrics?range=${range}&city=${city}`),
+        fetch('/api/admin/issues'),
+      ]);
+
+      const metricsJson = await metricsRes.json();
+      if (metricsJson.status === 'SUCCESS' && metricsJson.metrics) {
+        setRealData(metricsJson.metrics);
+      }
+
+      const issuesJson = await issuesRes.json();
+      if (issuesJson.status === 'SUCCESS' && issuesJson.issues) {
+        setIssues(issuesJson.issues);
       }
     } catch (e) {
-      console.error('Failed to fetch real telemetry:', e);
+      console.error('Failed to fetch real telemetry or issues:', e);
     } finally {
       setLastRefreshed(new Date().toLocaleTimeString());
       setIsLoading(false);
@@ -98,10 +118,25 @@ export default function AdminPortalPage() {
     setPasswordInput('');
   };
 
+  const handleUpdateStatus = async (id: string, newStatus: 'new' | 'investigating' | 'resolved') => {
+    try {
+      await fetch('/api/admin/issues', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      setIssues((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, status: newStatus } : i))
+      );
+    } catch (err) {
+      console.error('Failed to update issue status:', err);
+    }
+  };
+
   // 1. Loading screen while verifying local session
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="fixed inset-0 w-full h-full bg-slate-950 flex items-center justify-center">
         <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
       </div>
     );
@@ -201,6 +236,12 @@ export default function AdminPortalPage() {
   };
 
   const totalCatCount = Object.values(metrics.categoryCounts as Record<string, number>).reduce((a, b) => a + b, 0) || 1;
+
+  const filteredIssues = issues.filter((i) => {
+    const isStatusMatch = issueFilter === 'all' || i.status === issueFilter;
+    const isCityMatch = cityFilter === 'all' || i.tenantId === cityFilter;
+    return isStatusMatch && isCityMatch;
+  });
 
   return (
     <div className="fixed inset-0 w-full h-full overflow-y-auto overflow-x-hidden bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-white">
@@ -384,6 +425,137 @@ export default function AdminPortalPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 🚨 Citizen Issue & Bug Reports Inbox */}
+        <div className="glass-panel border border-amber-500/30 rounded-2xl p-5 md:p-6 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-white">Citizen Issue Reports & AI Quality Feedback</h2>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-950 border border-amber-800/80 text-amber-300 text-[10px] font-bold">
+                    {issues.filter((i) => i.status !== 'resolved').length} Pending
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400">Issues reported via the &quot;Report an Issue&quot; screen button with AI diagnostics</p>
+              </div>
+            </div>
+
+            {/* Status Filter Pills */}
+            <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+              {(['all', 'new', 'investigating', 'resolved'] as const).map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setIssueFilter(st)}
+                  className={`px-3 py-1 rounded-lg capitalize transition-all ${
+                    issueFilter === st
+                      ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {st}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filteredIssues.length === 0 ? (
+            <div className="text-center py-8 text-xs text-slate-400">
+              <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-80" />
+              <p className="font-semibold text-slate-300">All clear! No issue reports matching this filter.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredIssues.map((issue) => {
+                const isExpanded = expandedIssueId === issue.id;
+
+                return (
+                  <div
+                    key={issue.id}
+                    className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-mono font-bold uppercase">
+                          {issue.tenantId}
+                        </span>
+                        <span className="font-semibold text-xs text-white">
+                          {issue.aiSuggestedCategory || 'General Issue'}
+                        </span>
+                        <span className="text-[11px] text-slate-500 font-mono">
+                          • {new Date(issue.timestamp).toLocaleTimeString()}
+                        </span>
+                      </div>
+
+                      {/* Status Selector */}
+                      <div className="flex items-center gap-1.5">
+                        {(['new', 'investigating', 'resolved'] as const).map((s) => (
+                          <button
+                            key={s}
+                            onClick={() => handleUpdateStatus(issue.id, s)}
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-semibold capitalize transition-all ${
+                              issue.status === s
+                                ? s === 'resolved'
+                                  ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
+                                  : s === 'investigating'
+                                  ? 'bg-amber-950 border border-amber-700 text-amber-300'
+                                  : 'bg-rose-950 border border-rose-700 text-rose-300'
+                                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-slate-300 space-y-1 bg-slate-950/60 p-3 rounded-lg border border-slate-800/60">
+                      <div className="flex items-center gap-1 text-cyan-300 font-medium">
+                        <Sparkles className="w-3 h-3 text-cyan-400" />
+                        <span>AI Auto-Diagnosis:</span>
+                        <span className="text-slate-300">{issue.aiSuggestedSummary}</span>
+                      </div>
+                      {issue.userDescription && (
+                        <div className="text-slate-400 text-[11px] pt-1">
+                          <strong className="text-slate-300">Citizen Notes:</strong> &quot;{issue.userDescription}&quot;
+                        </div>
+                      )}
+                      {issue.userEmail && (
+                        <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-0.5">
+                          <Mail className="w-3 h-3 text-slate-500" />
+                          <span>Contact: {issue.userEmail}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Expand Conversation Context */}
+                    <button
+                      onClick={() => setExpandedIssueId(isExpanded ? null : issue.id)}
+                      className="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      <span>{isExpanded ? 'Hide conversation transcript' : 'View full conversation transcript'}</span>
+                      {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+
+                    {isExpanded && (
+                      <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] space-y-2 text-slate-400">
+                        <p><strong className="text-slate-200">Question Asked:</strong> &quot;{issue.userPrompt}&quot;</p>
+                        <p><strong className="text-slate-200">Chatbot Response:</strong></p>
+                        <div className="whitespace-pre-wrap font-mono text-[10px] text-slate-300 bg-slate-900/90 p-2 rounded max-h-48 overflow-y-auto">
+                          {issue.aiResponse}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Middle Section: AI Model Metrics & Query Category Distribution */}

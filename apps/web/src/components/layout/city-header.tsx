@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
-import { Menu, Sparkles, MapPin, ExternalLink, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, Sparkles, MapPin, ExternalLink, Share2, AlertTriangle } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 import { UserProfileMenu } from '@/components/auth/user-profile-menu';
 import { useAuth } from '@/lib/auth-context';
+import { FeedbackModal } from '@/components/feedback/feedback-modal';
 
 interface CityHeaderProps {
   tenant: CityTenant;
@@ -21,6 +22,7 @@ export const CityHeader: React.FC<CityHeaderProps> = ({
   isRadarOpen,
 }) => {
   const { openShareModal } = useAuth();
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 w-full glass-panel border-b border-slate-800/80 px-4 md:px-6 py-3 flex items-center justify-between">
@@ -85,6 +87,16 @@ export const CityHeader: React.FC<CityHeaderProps> = ({
           <ExternalLink className="w-3 h-3" />
         </a>
 
+        {/* Report an Issue Button */}
+        <button
+          onClick={() => setIsFeedbackOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition-all shadow-sm active:scale-95"
+          title="Report an Issue or Suggest Improvement"
+        >
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+          <span className="hidden sm:inline">Report Issue</span>
+        </button>
+
         {/* User Social Profile / Sign-in */}
         <UserProfileMenu tenant={tenant} />
 
@@ -102,6 +114,13 @@ export const CityHeader: React.FC<CityHeaderProps> = ({
           <span>Radar</span>
         </button>
       </div>
+
+      {/* Interactive AI Screen Issue Reporting Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        tenantId={tenant.id}
+      />
     </header>
   );
 };

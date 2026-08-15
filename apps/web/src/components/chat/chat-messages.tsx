@@ -3,9 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Message } from 'ai';
-import { User, Sparkles, Copy, Check, Bot, CornerDownRight, Volume2, VolumeX } from 'lucide-react';
+import { User, Sparkles, Copy, Check, Bot, CornerDownRight, Volume2, VolumeX, Flag } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 import { MarkdownRenderer } from './markdown-renderer';
+import { FeedbackModal } from '@/components/feedback/feedback-modal';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -23,6 +24,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const [activeFeedback, setActiveFeedback] = useState<{ userPrompt: string; aiResponse: string } | null>(null);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -94,7 +96,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
       className="h-full overflow-y-auto px-4 md:px-8 py-6 space-y-6 max-w-4xl mx-auto w-full"
     >
       <AnimatePresence initial={false}>
-        {messages.map((message) => {
+        {messages.map((message, index) => {
           const isUser = message.role === 'user';
           const { mainText, followups } = !isUser
             ? parseFollowups(message.content)
@@ -178,6 +180,21 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
                             <Copy className="w-3.5 h-3.5" />
                           )}
                         </button>
+
+                        {/* Report Issue on this message */}
+                        <button
+                          onClick={() => {
+                            const prevUserMsg = [...messages.slice(0, index)].reverse().find((m) => m.role === 'user')?.content || '';
+                            setActiveFeedback({
+                              userPrompt: prevUserMsg,
+                              aiResponse: message.content,
+                            });
+                          }}
+                          className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-amber-400 transition-opacity p-1 rounded hover:bg-slate-800/60"
+                          title="Report an issue on this response"
+                        >
+                          <Flag className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -253,6 +270,15 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Flag Message Feedback Modal */}
+      <FeedbackModal
+        isOpen={!!activeFeedback}
+        onClose={() => setActiveFeedback(null)}
+        tenantId={tenant.id}
+        userPrompt={activeFeedback?.userPrompt}
+        aiResponse={activeFeedback?.aiResponse}
+      />
     </div>
   );
 };
