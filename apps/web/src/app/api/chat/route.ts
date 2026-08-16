@@ -521,7 +521,119 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               city.id === 'yhz' ? 'https://www.halifax.ca/transportation/halifax-transit' :
               city.id === 'yyj' ? 'https://www.bctransit.com/victoria' : 'https://www.metrobus.com';
 
-            fallbackText = `### 🚇 **${city.name} Transit & Train Schedules**\n\n` +
+            const isAirportRoute = /\b(airport|yyc|yyz|yvr|yul|yeg|yow|flight|terminal|plane)\b/i.test(q);
+            const isChinook = /\b(chinook|chinnok)\b/i.test(q);
+
+            let interactiveTransitBlock = '';
+            if (city.id === 'yyc') {
+              if (isAirportRoute) {
+                interactiveTransitBlock = '```transit\n' + JSON.stringify({
+                  origin: isChinook ? "CF Chinook Centre / Chinook Station" : "Downtown Calgary (7th Ave)",
+                  destination: "Calgary International Airport (YYC)",
+                  totalDurationMinutes: isChinook ? 42 : 28,
+                  fareCost: "$3.70 CAD",
+                  cityId: "yyc",
+                  transitAgency: "Calgary Transit",
+                  officialPlannerUrl: "https://www.calgarytransit.com/plan-a-trip.html",
+                  nextDepartures: ["Every 10–12 mins (Route 300 BRT Express)", "CTrain Red Line every 5 mins"],
+                  steps: [
+                    ...(isChinook ? [{
+                      type: "train",
+                      instruction: "Board CTrain Red Line (Line 201) Northbound to City Hall",
+                      lineName: "Red Line 201",
+                      lineColor: "#EF4444",
+                      durationMinutes: 14,
+                      fromStop: "Chinook Station (Platform 1)",
+                      toStop: "City Hall / Bow Valley College Station",
+                      stopCount: 5,
+                      stops: ["Chinook", "39th Avenue", "Erlton / Stampede", "Victoria Park / Stampede", "City Hall"]
+                    }, {
+                      type: "walk",
+                      instruction: "Transfer to Route 300 Express bus bay on 7th Ave & 1st St SE",
+                      durationMinutes: 2,
+                      fromStop: "City Hall Station",
+                      toStop: "7th Ave & 1st St SE Bus Stop"
+                    }] : []),
+                    {
+                      type: "bus",
+                      instruction: "Board Route 300 BRT (Airport / City Centre Express)",
+                      lineName: "Route 300 BRT",
+                      lineColor: "#3B82F6",
+                      durationMinutes: 26,
+                      fromStop: "Downtown 7th Ave & 1st St SE",
+                      toStop: "Calgary International Airport (Departures & Arrivals)",
+                      stopCount: 4,
+                      stops: ["Downtown 7th Ave Terminal", "Edmonton Trail & 16th Ave", "Deerfoot City North", "YYC Airport Domestic & International"]
+                    }
+                  ]
+                }, null, 2) + '\n```\n\n';
+              } else {
+                interactiveTransitBlock = '```transit\n' + JSON.stringify({
+                  origin: "Chinook CTrain Station",
+                  destination: "Downtown Calgary (7th Avenue Free Fare Zone)",
+                  totalDurationMinutes: 14,
+                  fareCost: "$3.70 CAD (Free inside 7th Ave Zone)",
+                  cityId: "yyc",
+                  transitAgency: "Calgary Transit",
+                  officialPlannerUrl: "https://www.calgarytransit.com/plan-a-trip.html",
+                  nextDepartures: ["Every 4–6 mins (Peak)", "Every 10 mins (Off-Peak)"],
+                  steps: [
+                    {
+                      type: "walk",
+                      instruction: "Walk via enclosed skywalk from CF Chinook Centre to Station Platform",
+                      durationMinutes: 3,
+                      fromStop: "CF Chinook Centre Level 2",
+                      toStop: "Chinook Station (61 Ave SW)"
+                    },
+                    {
+                      type: "train",
+                      instruction: "Board CTrain Red Line (Line 201) Northbound toward Tuscany",
+                      lineName: "CTrain Red Line 201",
+                      lineColor: "#EF4444",
+                      durationMinutes: 11,
+                      fromStop: "Chinook Station (Platform 1)",
+                      toStop: "Centre Street Station (Downtown 7th Ave)",
+                      stopCount: 6,
+                      stops: ["Chinook", "39th Avenue", "Erlton / Stampede", "Victoria Park / Stampede", "City Hall", "Centre Street"]
+                    }
+                  ]
+                }, null, 2) + '\n```\n\n';
+              }
+            } else if (city.id === 'yyz') {
+              interactiveTransitBlock = '```transit\n' + JSON.stringify({
+                origin: "Union Station (Downtown Toronto)",
+                destination: "Toronto Pearson International Airport (YYZ)",
+                totalDurationMinutes: 25,
+                fareCost: "$12.35 PRESTO / $3.35 TTC Bus Transfer",
+                cityId: "yyz",
+                transitAgency: "UP Express & TTC",
+                officialPlannerUrl: "https://www.ttc.ca/trip-planner",
+                nextDepartures: ["UP Express runs every 15 minutes", "TTC Line 1 runs every 3 minutes"],
+                steps: [
+                  {
+                    type: "walk",
+                    instruction: "Follow Skywalk signs inside Union Station to UP Express concourse",
+                    durationMinutes: 3,
+                    fromStop: "Union Station Main Concourse",
+                    toStop: "UP Express Platform"
+                  },
+                  {
+                    type: "train",
+                    instruction: "Board Union Pearson Express (Direct Dedicated Airport Rail)",
+                    lineName: "UP Express",
+                    lineColor: "#10B981",
+                    durationMinutes: 25,
+                    fromStop: "Union Station",
+                    toStop: "Toronto Pearson Terminal 1 Station",
+                    stopCount: 3,
+                    stops: ["Union Station", "Bloor GO / UP", "Weston GO / UP", "Pearson Terminal 1"]
+                  }
+                ]
+              }, null, 2) + '\n```\n\n';
+            }
+
+            fallbackText = `### 🚇 **${city.name} Transit & Route Navigator**\n\n` +
+              interactiveTransitBlock +
               `Here is the latest service and schedule guide for **${transitName}**:\n\n` +
               (city.id === 'yyc' ? 
                 `#### 📍 CTrain Red Line (Line 201: Tuscany ↔ Somerset-Bridlewood)\n\n` +

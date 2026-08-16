@@ -4,11 +4,30 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { buildAffiliateUrl, inferPlatformFromUrl } from '@/lib/affiliate-config';
+import { TransitWidget, TransitItinerary } from './transit-widget';
 
 interface MarkdownRendererProps {
   content: string;
   accentClass?: string;
   tenantId?: string;
+}
+
+function tryParseTransit(raw: string, tenantId: string): TransitItinerary | null {
+  try {
+    const trimmed = raw.trim();
+    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+      const parsed = JSON.parse(trimmed);
+      if (parsed.origin && parsed.destination && Array.isArray(parsed.steps)) {
+        return {
+          ...parsed,
+          cityId: parsed.cityId || tenantId,
+        };
+      }
+    }
+  } catch {
+    // Partial JSON during streaming
+  }
+  return null;
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, tenantId = 'yyc' }) => {
@@ -48,8 +67,19 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             </blockquote>
           ),
           code: ({ className, children, ...props }) => {
-            const match = /language-(\w+)/.exec(className || '');
-            const isInline = !match && !String(children).includes('\n');
+            const match = /language-([\w-]+)/.exec(className || '');
+            const lang = match ? match[1].toLowerCase() : '';
+            const rawContent = String(children);
+
+            // 🚇 Render Interactive Transit Itinerary Widget
+            if (lang === 'transit' || lang === 'transit-itinerary' || lang === 'transit-route') {
+              const transitData = tryParseTransit(rawContent, tenantId);
+              if (transitData) {
+                return <TransitWidget data={transitData} />;
+              }
+            }
+
+            const isInline = !match && !rawContent.includes('\n');
             if (isInline) {
               return (
                 <code className="bg-slate-850 text-cyan-300 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-750" {...props}>
