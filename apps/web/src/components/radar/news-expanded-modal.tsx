@@ -6,6 +6,7 @@ import { X, ExternalLink, Sparkles, Clock, Compass, ShieldCheck, MessageSquare, 
 import { NewsHeadline } from '@/lib/city-data';
 import { MarkdownRenderer } from '@/components/chat/markdown-renderer';
 import { useAuth } from '@/lib/auth-context';
+import { getCanonicalArticleUrl } from '@/lib/utils';
 
 interface NewsExpandedModalProps {
   article: NewsHeadline | null;
@@ -128,7 +129,7 @@ export const NewsExpandedModal: React.FC<NewsExpandedModalProps> = ({
 
             <div className="flex flex-col sm:flex-row gap-2">
               <a
-                href={article.url}
+                href={getCanonicalArticleUrl(article.url, article.title, article.source)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl bg-gradient-to-r ${accentClass} text-white font-semibold text-xs shadow-lg hover:opacity-95 transition-all`}

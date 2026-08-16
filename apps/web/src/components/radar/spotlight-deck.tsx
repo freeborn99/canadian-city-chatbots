@@ -49,6 +49,7 @@ import { OutdoorCard } from './outdoor-card';
 import { LocalPartnerShowcase } from './local-partner-showcase';
 import { buildAffiliateUrl } from '@/lib/affiliate-config';
 import { useAuth } from '@/lib/auth-context';
+import { getCanonicalArticleUrl } from '@/lib/utils';
 
 import { extractChatSpotlightEntities } from '@/lib/entity-extractor';
 
@@ -619,7 +620,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                           <div className="flex items-center justify-between pt-1.5 border-t border-slate-800/60 text-[10px]">
                             <div className="flex items-center gap-2">
                               <a
-                                href={n.url}
+                                href={getCanonicalArticleUrl(n.url, n.title, n.source)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
