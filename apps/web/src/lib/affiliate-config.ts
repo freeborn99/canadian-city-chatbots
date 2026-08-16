@@ -53,8 +53,8 @@ export interface AffiliateConfig {
 
 export const DEFAULT_AFFILIATE_CONFIG: AffiliateConfig = {
   openTable: {
-    partnerId: process.env.NEXT_PUBLIC_OPENTABLE_AFFILIATE_ID || 'canadacity_ot',
-    network: 'impact',
+    partnerId: process.env.NEXT_PUBLIC_OPENTABLE_AFFILIATE_ID || '8J3cHl03Wu3pploY0KrQxAvkuP1L36bo',
+    network: 'rakuten',
   },
   ticketmaster: {
     affiliateId: process.env.NEXT_PUBLIC_TICKETMASTER_AFFILIATE_ID || 'canadacity_tm',

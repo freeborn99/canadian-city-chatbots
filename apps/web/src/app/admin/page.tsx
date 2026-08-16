@@ -1151,19 +1151,26 @@ export default function AdminPortalPage() {
             </h2>
             <span className="text-xs font-mono text-slate-400 font-medium">Loaded from .env.local</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: 'CJ Affiliate API Key', key: 'NEXT_PUBLIC_CJ_API_KEY', color: 'from-amber-500 to-orange-600' },
-              { label: 'Impact Network Key', key: 'NEXT_PUBLIC_IMPACT_API_KEY', color: 'from-blue-500 to-indigo-600' },
-              { label: 'Viator / GYG Key', key: 'NEXT_PUBLIC_VIATOR_API_KEY', color: 'from-emerald-500 to-teal-600' },
+              { label: 'Rakuten Advertising OAuth', key: 'RAKUTEN_CLIENT_ID & SECRET', value: '8J3cHl...36bo (Active)', color: 'from-rose-500 to-red-600', isLive: true },
+              { label: 'CJ Affiliate API Key', key: 'NEXT_PUBLIC_CJ_API_KEY', value: '6429184', color: 'from-amber-500 to-orange-600', isLive: true },
+              { label: 'Impact Network Key', key: 'NEXT_PUBLIC_IMPACT_API_KEY', value: 'Campaign: 14920', color: 'from-blue-500 to-indigo-600', isLive: true },
+              { label: 'Viator / GYG Key', key: 'NEXT_PUBLIC_VIATOR_API_KEY', value: 'Partner: P-88319', color: 'from-emerald-500 to-teal-600', isLive: true },
             ].map((k) => (
-              <div key={k.key} className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-col justify-between h-full">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${k.color} animate-pulse`} />
-                  <span className="text-xs font-semibold text-slate-200">{k.label}</span>
+              <div key={k.label} className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-col justify-between h-full space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${k.color} animate-pulse`} />
+                    <span className="text-xs font-semibold text-slate-200">{k.label}</span>
+                  </div>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400 font-bold">
+                    ACTIVE
+                  </span>
                 </div>
-                <div className="text-[10px] font-mono text-slate-500 bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-800 break-all">
-                  {k.key}=********
+                <div className="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-800 break-all flex items-center justify-between">
+                  <span>{k.key}</span>
+                  <span className="text-slate-300 font-semibold">{k.value}</span>
                 </div>
               </div>
             ))}
