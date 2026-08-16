@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRealMetrics } from '@/lib/telemetry';
+import { getLiveAffiliateMetrics } from '@/lib/affiliate-api';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -18,12 +19,18 @@ export async function GET(req: Request) {
     // Compute real metrics on-demand
     const metrics = getRealMetrics(timeRange, cityFilter);
 
+    // Fetch real live affiliate metrics from configured APIs / first-party telemetry
+    const affiliateSummary = await getLiveAffiliateMetrics(metrics.partnerClicks || {});
+
     return NextResponse.json({
       status: 'SUCCESS',
       computedAt: new Date().toISOString(),
       timeRange,
       cityFilter,
-      metrics,
+      metrics: {
+        ...metrics,
+        affiliateSummary,
+      },
     });
   } catch (error: any) {
     return NextResponse.json(

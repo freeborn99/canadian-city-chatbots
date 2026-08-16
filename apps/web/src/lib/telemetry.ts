@@ -306,6 +306,13 @@ export function getRealMetrics(timeRange: '24h' | '7d' | '30d' | 'all' = '7d', c
     };
   });
 
+  // Partner click breakdown
+  const partnerClicks: Record<string, number> = {};
+  affiliateEvents.forEach((e) => {
+    const p = e.partner || 'Direct';
+    partnerClicks[p] = (partnerClicks[p] || 0) + 1;
+  });
+
   // Calculate total visitors
   const totalVisitors = Object.values(cityBreakdown).reduce((acc, c) => acc + c.visitors, 0);
 
@@ -324,6 +331,7 @@ export function getRealMetrics(timeRange: '24h' | '7d' | '30d' | 'all' = '7d', c
     modelDistribution,
     totalVisitors,
     affiliateClicks: affiliateEvents.length,
+    partnerClicks,
     categoryCounts,
     cityBreakdown,
     uptimeSeconds: Math.round((Date.now() - globalTelemetryState.startedAt) / 1000),

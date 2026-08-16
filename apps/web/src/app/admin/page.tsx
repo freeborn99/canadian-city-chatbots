@@ -819,46 +819,112 @@ export default function AdminPortalPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-400" />
-                Affiliate Performance & Monetization
+                Affiliate Performance &amp; Monetization (Real Network Telemetry)
               </h2>
-              <span className="text-xs font-mono text-emerald-400 font-bold">{metrics.affiliateClicks} Clicks Today</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 font-mono">
+                  {metrics.affiliateSummary?.isApiLive ? '● Live Network API Synced' : '● First-Party Telemetry'}
+                </span>
+                <span className="text-xs font-mono text-emerald-400 font-bold">{metrics.affiliateClicks || 0} Real Clicks</span>
+              </div>
             </div>
 
             <div className="space-y-2.5">
-              {[
-                { name: 'CJ Affiliate', id: 'bDOCcy4VFDcylkkHG4tu9B4-cg', clicks: 124, conv: '4.2%', earnings: '$142.50' },
-                { name: 'Impact Network', id: '5bf7aee3-44d8-4612-8426-b6c3e577d2a1', clicks: 89, conv: '3.8%', earnings: '$95.20' },
-                { name: 'Rakuten (OpenTable)', id: 'canadacity_ot', clicks: 312, conv: '8.5%', earnings: '$45.00' },
-                { name: 'Viator / GYG', id: 'canadacity_viator', clicks: 45, conv: '2.1%', earnings: '$22.40' },
-              ].map((p) => (
+              {(metrics.affiliateSummary?.partners || [
+                {
+                  name: 'CJ Affiliate (VividSeats & Events)',
+                  networkId: 'Publisher ID: 6429184',
+                  status: 'LOCAL_TRACKER_ACTIVE',
+                  clicks: metrics.partnerClicks?.CJ || 0,
+                  conversions: 0,
+                  conversionRate: '0.0%',
+                  earnings: '$0.00 CAD',
+                  source: 'Real First-Party Telemetry',
+                  apiKeyEnvVar: 'CJ_PERSONAL_ACCESS_TOKEN',
+                },
+                {
+                  name: 'Impact Radius (Ticketmaster & Entertainment)',
+                  networkId: 'Campaign: 14920',
+                  status: 'LOCAL_TRACKER_ACTIVE',
+                  clicks: metrics.partnerClicks?.Ticketmaster || 0,
+                  conversions: 0,
+                  conversionRate: '0.0%',
+                  earnings: '$0.00 CAD',
+                  source: 'Real First-Party Telemetry',
+                  apiKeyEnvVar: 'IMPACT_ACCOUNT_SID & IMPACT_AUTH_TOKEN',
+                },
+                {
+                  name: 'OpenTable (Restaurant Bookings)',
+                  networkId: 'Partner: canadacity_ot',
+                  status: 'LOCAL_TRACKER_ACTIVE',
+                  clicks: metrics.partnerClicks?.OpenTable || 0,
+                  conversions: 0,
+                  conversionRate: '0.0%',
+                  earnings: '$0.00 CAD',
+                  source: 'Real First-Party Telemetry',
+                  apiKeyEnvVar: 'RAKUTEN_API_TOKEN',
+                },
+                {
+                  name: 'Viator & GetYourGuide (Tours & Sightseeing)',
+                  networkId: 'Partner ID: P-88319',
+                  status: 'LOCAL_TRACKER_ACTIVE',
+                  clicks: (metrics.partnerClicks?.Viator || 0) + (metrics.partnerClicks?.GetYourGuide || 0),
+                  conversions: 0,
+                  conversionRate: '0.0%',
+                  earnings: '$0.00 CAD',
+                  source: 'Real First-Party Telemetry',
+                  apiKeyEnvVar: 'VIATOR_API_KEY',
+                },
+              ]).map((p: any) => (
                 <div
                   key={p.name}
-                  className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs"
+                  className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs"
                 >
-                  <div>
-                    <div className="font-semibold text-slate-200">{p.name}</div>
-                    <div className="text-slate-400 text-[10px] font-mono mt-0.5">ID: {p.id}</div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-slate-200 flex items-center gap-1.5">
+                        <span>{p.name}</span>
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-medium ${
+                            p.status === 'API_CONNECTED'
+                              ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
+                              : 'bg-slate-800 border border-slate-700 text-slate-400'
+                          }`}
+                        >
+                          {p.status === 'API_CONNECTED' ? 'API LIVE' : 'LOCAL TRACKER'}
+                        </span>
+                      </div>
+                      <div className="text-slate-400 text-[10px] font-mono mt-0.5">{p.networkId}</div>
+                    </div>
+                    <div className="flex items-center gap-3.5 text-right">
+                      <div className="flex flex-col">
+                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Tracked Clicks</span>
+                        <span className="text-white font-mono font-bold">{p.clicks}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Conversions</span>
+                        <span className="text-cyan-400 font-mono">{p.conversions}</span>
+                      </div>
+                      <div className="flex flex-col min-w-[65px]">
+                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Settled Earnings</span>
+                        <span className="text-emerald-400 font-bold font-mono">{p.earnings}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-right">
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Clicks</span>
-                      <span className="text-white font-mono">{p.clicks}</span>
+                  {p.status !== 'API_CONNECTED' && (
+                    <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/60 flex items-center justify-between">
+                      <span>Sync live reports: Add <code className="text-cyan-400 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">{p.apiKeyEnvVar}</code> in Vercel</span>
+                      <span className="text-slate-400 font-mono">100% Real Tracking</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Conv</span>
-                      <span className="text-cyan-400 font-mono">{p.conv}</span>
-                    </div>
-                    <div className="flex flex-col min-w-[50px]">
-                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Revenue</span>
-                      <span className="text-emerald-400 font-bold font-mono">{p.earnings}</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
             <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
-               <span className="text-slate-400">Estimated Monthly MRR:</span>
-               <span className="text-emerald-400 font-bold font-mono">$9,153.00 CAD</span>
+              <span className="text-slate-400">Total Verified Network Earnings:</span>
+              <span className="text-emerald-400 font-bold font-mono">
+                {metrics.affiliateSummary?.totalEarnings || '$0.00 CAD'}
+              </span>
             </div>
           </div>
         </div>
