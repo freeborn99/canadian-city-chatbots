@@ -496,7 +496,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           const isFood = /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table)\b/.test(q);
           const isSports = /\b(sport|sports|game|games|score|scores|match|nhl|cfl|hockey|flames|leafs|canucks|oilers)\b/.test(q);
           const isStay = /\b(hotel|hotels|stay|stays|motel|resort|lodge)\b/.test(q);
-          const isOutdoors = /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain)\b/.test(q);
+          const isOutdoors = /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain|bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway|rotary|nose hill|fish creek|glenmore|bow river|outdoor|outdoors)\b/i.test(q);
 
           let fallbackText = '';
 
@@ -646,10 +646,50 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             fallbackText = `Here are top-rated boutique hotels and stays in **${city.name}**: 🏨\n\n` +
               cityHub.hotels.map(h => `🛏️ **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight})\n- **Highlights**: ${h.description}\n- **Booking**: [Reserve on ${h.bookingPlatform}](${h.bookingUrl})\n`).join('\n') +
               `\n💡 **Quick Next Steps:**\n- View top nightlife and dining spots nearby\n- Check airport transit connections\n- Find local sightseeing tours`;
-          } else if (isOutdoors && cityHub.outdoors?.length > 0) {
-            fallbackText = `Here are top outdoor parks and nature escapes in **${city.name}**: 🌲\n\n` +
-              cityHub.outdoors.map(o => `🌿 **${o.name}** (${o.category} • ${o.neighborhood})\n- **Features**: ${o.features.join(', ')}\n- **Difficulty**: ${o.difficulty} • Best Time: ${o.bestTime} • Parking: ${o.parkingTips})\n`).join('\n') +
-              `\n💡 **Quick Next Steps:**\n- Find dining and craft breweries near these parks\n- Check seasonal trail advisories\n- View transit routes`;
+          } else if (isOutdoors) {
+            const isBiking = /\b(bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway)\b/i.test(q);
+
+            if (city.id === 'yyc' && isBiking) {
+              fallbackText = `### 🚴 **Top Bike Trails & Pathways in Calgary**\n\n` +
+                `Calgary boasts over **1,000 km of paved regional pathways** and **96 km of unpaved trails** — the most extensive urban pathway network in North America!\n\n` +
+                `Here are the premier cycling routes and bike trails across Calgary:\n\n` +
+                `1. 🌊 **Bow River & Elbow River Pathways (Paved / All Levels)**\n` +
+                `- **Route**: Continuous flat, paved riverside trail running through Downtown, Eau Claire, Prince's Island Park, East Village, and Inglewood to Harvie Passage.\n` +
+                `- **Highlights**: Stunning skyline views, Peace Bridge crossing, and direct access to craft breweries and riverfront patios.\n` +
+                `- **Access Points**: Peace Bridge, Eau Claire Plaza, or St. Patrick's Island.\n\n` +
+                `2. 🌲 **Fish Creek Provincial Park (Paved & Mountain Bike Singletracks)**\n` +
+                `- **Route**: Over 100 km of interconnected paved pathways and dirt mountain bike trails traversing the forested Bow Valley canyon.\n` +
+                `- **Highlights**: Shannon Terrace forest loops, Votier's Flats singletrack, and Annie's Bakery café stops.\n` +
+                `- **Access Points**: Fish Creek-Lacombe CTrain Station or Bow Valley Ranch parking.\n\n` +
+                `3. 🌄 **Rotary Mattamy Greenway (Epic 138 km Urban Loop)**\n` +
+                `- **Route**: A continuous 138-kilometer paved path that completely circles the entire city of Calgary.\n` +
+                `- **Highlights**: Connects 55 Calgary communities, major natural wetlands, and city parks.\n\n` +
+                `4. 🏞️ **Glenmore Reservoir Loop (16 km Paved Loop)**\n` +
+                `- **Route**: Scenic 16 km paved multi-use pathway around the entire Glenmore Reservoir.\n` +
+                `- **Highlights**: Panoramic water views, Weaselhead Flats natural environment park, Heritage Park, and South Glenmore sailing club.\n\n` +
+                `5. 🌾 **Nose Hill Park (Gravel Paths & Ridge Trails)**\n` +
+                `- **Route**: 11 sq km prairie plateau with gravel multi-use pathways and dirt singletracks.\n` +
+                `- **Highlights**: 360° sweeping panoramic views of the Downtown Calgary skyline and the Canadian Rockies.\n\n` +
+                `6. 🚵 **WinSport / Canada Olympic Park (Downhill Bike Park)**\n` +
+                `- **Route**: Lift-serviced downhill flow trails, jump lines, and skills progression courses.\n\n` +
+                `📌 **Calgary Cycling Rules & Resources:**\n` +
+                `- **Speed Limit**: Maximum 20 km/h on shared pathways.\n` +
+                `- **Interactive Map**: [City of Calgary Official Pathway & Bikeway Map](https://www.calgary.ca/bike-walk-roll/pathways.html)\n` +
+                `- **Bike Rentals**: Available downtown along the Bow River at River Café kiosk, Bow Cycle, and Rapid Rent.\n\n` +
+                `💡 **Quick Next Steps:**\n` +
+                `- [Open City of Calgary Pathway & Bikeway Map](https://www.calgary.ca/bike-walk-roll/pathways.html)\n` +
+                `- Find craft breweries and patio spots along the Bow River pathway\n` +
+                `- What are the rules for bringing bikes on the Calgary CTrain?`;
+            } else if (cityHub.outdoors?.length > 0) {
+              fallbackText = `### 🌲 **Top Parks & Outdoor Trails in ${city.name}**\n\n` +
+                `Here are premier outdoor trails and nature escapes in **${city.name}**:\n\n` +
+                cityHub.outdoors.map(o => `🌿 **${o.name}** (${o.category} • ${o.neighborhood})\n- **Features**: ${o.features.join(', ')}\n- **Trail Level**: ${o.difficulty} • Best Time: ${o.bestTime} • Parking: ${o.parkingTips}\n`).join('\n') +
+                `\n💡 **Quick Next Steps:**\n- Find dining and craft breweries near these parks\n- Check seasonal trail advisories in ${city.name}\n- View transit routes to the trailheads`;
+            } else {
+              fallbackText = `### 🌲 **Outdoor Trails & Recreation in ${city.name}**\n\n` +
+                `Explore premier scenic pathways, provincial parks, and nature preserves across **${city.name} and the ${city.metroArea}**.\n\n` +
+                `💡 **Quick Next Steps:**\n- Find scenic walking and cycling paths near downtown\n- Explore top natural parks in ${city.name}\n- View weather and seasonal trail conditions`;
+            }
           } else {
             fallbackText = `I am your hyper-local **Chat${city.id.toUpperCase()}** AI concierge for **${city.name}, ${city.province}**! 🍁\n\n` +
               `I can give you real-time answers and direct booking links for:\n\n` +

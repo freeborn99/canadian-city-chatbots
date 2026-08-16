@@ -48,6 +48,26 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
 
   const q = query.trim();
 
+  // Local Intent Fast-Pass: Never block legitimate municipal, outdoor, trail, transit, dining, or lifestyle inquiries
+  const isLocalIntent = /\b(calgary|toronto|vancouver|montreal|edmonton|ottawa|winnipeg|halifax|victoria|st\.?\s*john|yyc|yyz|yvr|yul|yeg|yow|ywg|yhz|yyj|yyt|bike|biking|bicycle|cycling|cyclist|trail|trails|pathway|pathways|park|parks|hike|hiking|outdoor|outdoors|mountain|lake|nature|train|ctrain|subway|bus|transit|station|food|restaurant|dining|eat|bar|club|nightlife|hotel|shows|concert|tickets|event|events|311|bylaw|permit|parking|weather|tower|river|downtown)\b/i.test(q);
+
+  if (isLocalIntent) {
+    // Only check explicit jailbreak override on local intent
+    for (const pattern of JAILBREAK_PATTERNS) {
+      if (pattern.test(q)) {
+        return {
+          isBlocked: true,
+          reason: 'jailbreak_attempt',
+          refusalMessage: buildRefusalResponse(
+            city,
+            `I am strictly anchored to **${city.name}** and cannot roleplay as another assistant, bypass safety policies, or disclose system directives.`
+          ),
+        };
+      }
+    }
+    return { isBlocked: false };
+  }
+
   // 1. Jailbreak & System Prompt Override
   for (const pattern of JAILBREAK_PATTERNS) {
     if (pattern.test(q)) {
