@@ -26,6 +26,7 @@ import {
   ChevronRight,
   Search,
   Map as MapIcon,
+  X,
 } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 import {
@@ -55,6 +56,9 @@ interface SpotlightDeckProps {
   allMessagesText?: string;
   onAskAI: (prompt: string) => void;
   hasMessages?: boolean;
+  onClose?: () => void;
+  isMobileDrawer?: boolean;
+  initialTab?: SpotlightTab;
 }
 
 export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
@@ -62,9 +66,12 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   allMessagesText = '',
   onAskAI,
   hasMessages = false,
+  onClose,
+  isMobileDrawer = false,
+  initialTab = 'overview',
 }) => {
   const hubData = getCityHubData(tenant.id);
-  const [activeTab, setActiveTab] = useState<SpotlightTab>('overview');
+  const [activeTab, setActiveTab] = useState<SpotlightTab>(initialTab);
   const [savedItems, setSavedItems] = useState<string[]>([]);
   const [copiedLink, setCopiedLink] = useState(false);
   const [selectedNewsArticle, setSelectedNewsArticle] = useState<NewsHeadline | null>(null);
@@ -281,7 +288,9 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
 
   return (
     <>
-      <aside className="w-80 md:w-96 xl:w-[430px] h-full flex flex-col glass-panel rounded-3xl border border-slate-800/80 shadow-2xl p-4 md:p-5 overflow-hidden transition-all duration-300">
+      <aside className={`flex flex-col glass-panel rounded-3xl border border-slate-800/80 shadow-2xl p-4 md:p-5 overflow-hidden transition-all duration-300 ${
+        isMobileDrawer ? 'w-full h-full max-h-screen' : 'w-80 md:w-96 xl:w-[430px] h-full'
+      }`}>
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 flex-shrink-0">
           <div className="flex items-center gap-2.5">
@@ -309,13 +318,25 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={handleShare}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors border border-slate-800"
-            title="Share Spotlight Link"
-          >
-            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleShare}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors border border-slate-800"
+              title="Share Spotlight Link"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+            </button>
+
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 transition-colors border border-slate-700 shadow-sm"
+                title="Close Spotlight"
+              >
+                <X className="w-4 h-4 text-slate-300" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* In-Deck Search & Filter Bar */}
@@ -330,8 +351,8 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
           />
         </div>
 
-        {/* Persistent Tab Bar (Scrollable for full category coverage) */}
-        <div className="flex gap-1 p-1 my-2 rounded-2xl bg-slate-900/90 border border-slate-800 flex-shrink-0 overflow-x-auto no-scrollbar">
+        {/* Wrapped Tab Bar (No horizontal scrolling, clean wrapping for full category visibility) */}
+        <div className="flex flex-wrap gap-1.5 p-1.5 my-2 rounded-2xl bg-slate-900/90 border border-slate-800 flex-shrink-0">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeTab === tab.id;
@@ -340,10 +361,10 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-shrink-0 flex items-center gap-1 py-1.5 px-2.5 rounded-xl text-[10px] font-semibold transition-all ${
+                className={`flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl text-[11px] font-semibold transition-all ${
                   isSelected
                     ? `bg-slate-800 text-white shadow-md border border-slate-700 ${tenant.glowClass}`
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60 bg-slate-950/40 border border-transparent'
                 }`}
               >
                 <Icon
@@ -351,7 +372,14 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                     isSelected ? 'text-cyan-400' : 'text-slate-400'
                   }`}
                 />
-                <span className="whitespace-nowrap">{tab.label}</span>
+                <span>{tab.label}</span>
+                {tab.count !== undefined && tab.count > 0 && (
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono ${
+                    isSelected ? 'bg-cyan-950 text-cyan-300 border border-cyan-800/60' : 'bg-slate-800/90 text-slate-400'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
               </button>
             );
           })}

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, MapPin, ChevronRight } from 'lucide-react';
 import { useChat } from '@ai-sdk/react';
 import { CityTenant, getTenantById } from '@/lib/tenants';
 import { CityHeader } from '@/components/layout/city-header';
@@ -10,7 +12,6 @@ import { ChatMessages } from './chat-messages';
 import { ChatInput } from './chat-input';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
 import { QuickCategoryBar, CivicCategory } from '@/components/radar/quick-category-bar';
-import { CityRadarPanel } from '@/components/radar/city-radar-panel';
 import { SpotlightDeck } from '@/components/radar/spotlight-deck';
 import { AuthProvider } from '@/lib/auth-context';
 import { SocialAuthModal } from '@/components/auth/social-auth-modal';
@@ -114,6 +115,14 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
     }
   }, [messages, lastUserMsg, lastAssistantMsg]);
 
+  const handleSelectQuickCategory = (cat: CivicCategory) => {
+    setActiveRadarCategory(cat);
+    // On mobile (< 1280px), automatically open the Spotlight deck to that tab!
+    if (typeof window !== 'undefined' && window.innerWidth < 1280) {
+      setIsMobileRadarOpen(true);
+    }
+  };
+
   const handleSelectStarterPrompt = (promptText: string) => {
     append({
       role: 'user',
@@ -199,17 +208,70 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
         onSwitchTenant={handleSwitchTenant}
       />
 
-      {/* Mobile Drawer Radar (for < xl screens) */}
-      <div className="xl:hidden">
-        <CityRadarPanel
-          tenant={tenant}
-          isOpen={isMobileRadarOpen}
-          onClose={() => setIsMobileRadarOpen(false)}
-          activeCategory={activeRadarCategory}
-          onSelectCategory={(cat) => setActiveRadarCategory(cat)}
-          onAskAI={handleSelectStarterPrompt}
-        />
-      </div>
+      {/* Mobile Drawer Spotlight Hub (for < xl screens) */}
+      <AnimatePresence>
+        {isMobileRadarOpen && (
+          <div className="fixed inset-0 z-50 xl:hidden flex justify-end">
+            {/* Dark Blur Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileRadarOpen(false)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
+            />
+
+            {/* Slide-in Mobile Drawer */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              className="relative z-10 w-full max-w-md sm:max-w-lg h-full bg-slate-950 p-2 sm:p-4 overflow-hidden shadow-2xl flex flex-col"
+            >
+              <SpotlightDeck
+                tenant={tenant}
+                allMessagesText={allConversationText}
+                hasMessages={messages.length > 0}
+                onAskAI={(p) => {
+                  setIsMobileRadarOpen(false);
+                  handleSelectStarterPrompt(p);
+                }}
+                onClose={() => setIsMobileRadarOpen(false)}
+                isMobileDrawer={true}
+                initialTab={
+                  activeRadarCategory === 'eats'
+                    ? 'eats'
+                    : activeRadarCategory === 'shows'
+                    ? 'shows'
+                    : activeRadarCategory === 'transit'
+                    ? 'transit'
+                    : 'overview'
+                }
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Mobile Spotlight Hub Button (When closed on mobile) */}
+      {!isMobileRadarOpen && (
+        <div className="fixed bottom-24 right-3 z-30 xl:hidden">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsMobileRadarOpen(true)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white text-xs font-bold shadow-2xl backdrop-blur-md transition-all hover:border-cyan-500/80 ${tenant.glowClass}`}
+          >
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span>Spotlight & Map</span>
+          </motion.button>
+        </div>
+      )}
 
       {/* Main Workspace: 2-Column Desktop Grid (Center Chat + Right Spotlight Deck) */}
       <div className="relative z-10 flex-1 min-h-0 w-full flex overflow-hidden px-2 md:px-4 pb-3 pt-1 gap-4 max-w-[1700px] mx-auto">
@@ -220,7 +282,7 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
             <QuickCategoryBar
               tenant={tenant}
               activeCategory={activeRadarCategory}
-              onSelectCategory={(cat) => setActiveRadarCategory(cat)}
+              onSelectCategory={handleSelectQuickCategory}
             />
           </div>
 

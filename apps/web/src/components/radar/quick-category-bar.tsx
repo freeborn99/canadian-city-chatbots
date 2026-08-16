@@ -46,9 +46,9 @@ export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 pt-3 pb-1">
-      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none no-scrollbar">
-        <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider pl-1 pr-2 flex-shrink-0">
+    <div className="w-full max-w-4xl mx-auto px-3 sm:px-4 pt-2.5 pb-1">
+      <div className="flex flex-wrap items-center gap-1.5 pb-1">
+        <div className="flex items-center gap-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider pl-0.5 pr-1.5 flex-shrink-0">
           <Flame className="w-3.5 h-3.5 text-amber-400" />
           <span>Explore:</span>
         </div>
@@ -63,10 +63,10 @@ export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
               type="button"
               whileTap={{ scale: 0.96 }}
               onClick={() => onSelectCategory(cat.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex-shrink-0 border shadow-sm ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border shadow-sm ${
                 isSelected
                   ? `bg-slate-800 text-white border-slate-600 shadow-md ${tenant.glowClass}`
-                  : 'bg-slate-900/80 hover:bg-slate-850 text-slate-300 border-slate-800 hover:border-slate-700'
+                  : 'bg-slate-900/90 hover:bg-slate-850 text-slate-300 border-slate-800 hover:border-slate-700'
               }`}
             >
               <Icon

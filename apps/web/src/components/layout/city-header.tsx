@@ -100,18 +100,18 @@ export const CityHeader: React.FC<CityHeaderProps> = ({
         {/* User Social Profile / Sign-in */}
         <UserProfileMenu tenant={tenant} />
 
-        {/* Right-Side Radar Toggle Button (for smaller screens) */}
+        {/* Right-Side Spotlight & Radar Toggle Button (for mobile / tablet screens) */}
         <button
           onClick={onToggleRadar}
-          className={`xl:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+          className={`xl:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-md active:scale-95 ${
             isRadarOpen
-              ? `bg-slate-800 text-white border-slate-600 shadow-md ${tenant.glowClass}`
-              : 'bg-slate-900/80 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+              ? `bg-slate-800 text-white border-cyan-500 shadow-cyan-500/20`
+              : `bg-gradient-to-r ${tenant.gradientClass} text-white border-transparent hover:opacity-95 shadow-md`
           }`}
-          title="Toggle City Radar Deck"
+          title="Toggle City Spotlight Hub & Interactive Map"
         >
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-          <span>Radar</span>
+          <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+          <span>Spotlight & Map</span>
         </button>
       </div>
 
