@@ -133,7 +133,7 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
     return () => {
       isSubscribed = false;
     };
-  }, [district]);
+  }, [district.id, district.center[0], district.center[1], district.zoom, district.pins.length]);
 
   // Clean up on component unmount
   useEffect(() => {

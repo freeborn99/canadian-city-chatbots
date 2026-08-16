@@ -71,40 +71,115 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [manualDistrict, setManualDistrict] = useState<GeoSpotlightDistrict | null>(null);
 
-  // 1. Dynamic Chat Results Entity Extraction: Scans all places mentioned in the conversation
-  const chatExtracted = extractChatSpotlightEntities(allMessagesText + ' ' + searchQuery, tenant.id);
-  const matchedSpotlight = findMatchingGeoSpotlight(allMessagesText + ' ' + searchQuery, tenant.id);
+  const deferredSearch = React.useDeferredValue(searchQuery);
+  const normalizedSearch = deferredSearch.trim().toLowerCase();
+
+  // 1. Dynamic Chat Results Entity Extraction: Memoized to eliminate synchronous main-thread blocking
+  const chatExtracted = React.useMemo(() => {
+    return extractChatSpotlightEntities(allMessagesText + (normalizedSearch ? ` ${normalizedSearch}` : ''), tenant.id);
+  }, [allMessagesText, normalizedSearch, tenant.id]);
+
+  const matchedSpotlight = React.useMemo(() => {
+    return findMatchingGeoSpotlight(allMessagesText + (normalizedSearch ? ` ${normalizedSearch}` : ''), tenant.id);
+  }, [allMessagesText, normalizedSearch, tenant.id]);
 
   // 2. Prioritize dynamic chat results, then manual district, then matched street district, then default
-  const dynamicDistrict: GeoSpotlightDistrict | null = chatExtracted.hasResults
-    ? {
-        id: 'dynamic-chat-results',
-        tenantId: tenant.id,
-        keywords: [],
-        name: chatExtracted.title,
-        tagline: chatExtracted.subtitle,
-        center: chatExtracted.center,
-        zoom: chatExtracted.zoom,
-        description: `Interactive map pinpointing all ${chatExtracted.pins.length} venues and attractions mentioned in your chat results.`,
-        vibe: `🎯 ${chatExtracted.pins.length} Chat Venues Pinned`,
-        walkScore: 96,
-        transitAccess: 'Direct GPS Pinpoints',
-        pins: chatExtracted.pins,
-      }
-    : null;
+  const dynamicDistrict: GeoSpotlightDistrict | null = React.useMemo(() => {
+    if (!chatExtracted.hasResults) return null;
+    return {
+      id: 'dynamic-chat-results',
+      tenantId: tenant.id,
+      keywords: [],
+      name: chatExtracted.title,
+      tagline: chatExtracted.subtitle,
+      center: chatExtracted.center,
+      zoom: chatExtracted.zoom,
+      description: `Interactive map pinpointing all ${chatExtracted.pins.length} venues and attractions mentioned in your chat results.`,
+      vibe: `🎯 ${chatExtracted.pins.length} Chat Venues Pinned`,
+      walkScore: 96,
+      transitAccess: 'Direct GPS Pinpoints',
+      pins: chatExtracted.pins,
+    };
+  }, [chatExtracted, tenant.id]);
 
-  const activeGeoSpotlight =
-    manualDistrict && manualDistrict.tenantId === tenant.id
-      ? manualDistrict
-      : dynamicDistrict ||
-        matchedSpotlight ||
-        CANADIAN_GEO_SPOTLIGHTS.find((s) => s.tenantId === tenant.id) ||
-        null;
+  const activeGeoSpotlight = React.useMemo(() => {
+    if (manualDistrict && manualDistrict.tenantId === tenant.id) return manualDistrict;
+    return (
+      dynamicDistrict ||
+      matchedSpotlight ||
+      CANADIAN_GEO_SPOTLIGHTS.find((s) => s.tenantId === tenant.id) ||
+      null
+    );
+  }, [manualDistrict, dynamicDistrict, matchedSpotlight, tenant.id]);
 
-  // Universal dynamic intent recognition: Automatically lock the best tab based on the conversation
+  // Memoized Filtered Lists for instant 60fps search
+  const filteredSports = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.sports || [];
+    return (hubData.sports || []).filter(
+      (g) => g.team.toLowerCase().includes(normalizedSearch) || g.opponent.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.sports, normalizedSearch]);
+
+  const filteredNews = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.news || [];
+    return (hubData.news || []).filter(
+      (n) => n.title.toLowerCase().includes(normalizedSearch) || n.summary.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.news, normalizedSearch]);
+
+  const filteredRestaurants = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.restaurants || [];
+    return (hubData.restaurants || []).filter(
+      (r) =>
+        r.name.toLowerCase().includes(normalizedSearch) ||
+        r.cuisine.toLowerCase().includes(normalizedSearch) ||
+        r.neighborhood.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.restaurants, normalizedSearch]);
+
+  const filteredShows = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.shows || [];
+    return (hubData.shows || []).filter(
+      (s) =>
+        s.title.toLowerCase().includes(normalizedSearch) ||
+        s.venue.toLowerCase().includes(normalizedSearch) ||
+        s.category.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.shows, normalizedSearch]);
+
+  const filteredHotels = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.hotels || [];
+    return (hubData.hotels || []).filter(
+      (h) =>
+        h.name.toLowerCase().includes(normalizedSearch) ||
+        h.neighborhood.toLowerCase().includes(normalizedSearch) ||
+        h.tag.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.hotels, normalizedSearch]);
+
+  const filteredExperiences = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.experiences || [];
+    return (hubData.experiences || []).filter(
+      (e) =>
+        e.title.toLowerCase().includes(normalizedSearch) ||
+        e.operator.toLowerCase().includes(normalizedSearch) ||
+        e.category.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.experiences, normalizedSearch]);
+
+  const filteredOutdoors = React.useMemo(() => {
+    if (!normalizedSearch) return hubData.outdoors || [];
+    return (hubData.outdoors || []).filter(
+      (p) =>
+        p.name.toLowerCase().includes(normalizedSearch) ||
+        p.neighborhood.toLowerCase().includes(normalizedSearch) ||
+        p.category.toLowerCase().includes(normalizedSearch)
+    );
+  }, [hubData.outdoors, normalizedSearch]);
+
+  // Universal dynamic intent recognition: Automatically lock the best tab based on conversation
   useEffect(() => {
     if (!hasMessages) {
-      setActiveTab('overview');
       return;
     }
 
@@ -114,7 +189,8 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
       return;
     }
 
-    const text = (allMessagesText + ' ' + searchQuery).toLowerCase();
+    const text = allMessagesText.toLowerCase();
+    if (!text) return;
 
     if (
       text.includes('map') ||
@@ -177,7 +253,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
     ) {
       setActiveTab('transit');
     }
-  }, [allMessagesText, searchQuery, hasMessages, chatExtracted.hasResults, matchedSpotlight]);
+  }, [allMessagesText, hasMessages, chatExtracted.hasResults, matchedSpotlight]);
 
   const toggleSave = (id: string) => {
     setSavedItems((prev) =>
@@ -346,9 +422,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  {(hubData.sports || [])
-                    .filter((g) => g.team.toLowerCase().includes(searchQuery.toLowerCase()) || g.opponent.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((game: SportsGameScore) => (
+                  {filteredSports.map((game: SportsGameScore) => (
                       <div
                         key={game.id}
                         className="p-3 rounded-2xl glass-card border border-slate-800/90 shadow-md text-xs space-y-1.5"
@@ -402,9 +476,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 </div>
 
                 <div className="space-y-2.5">
-                  {(hubData.news || [])
-                    .filter((n) => n.title.toLowerCase().includes(searchQuery.toLowerCase()) || n.summary.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((n: NewsHeadline) => (
+                  {filteredNews.map((n: NewsHeadline) => (
                       <div
                         key={n.id}
                         onClick={() => setSelectedNewsArticle(n)}
@@ -445,9 +517,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">Instant Booking</span>
               </div>
 
-              {(hubData.restaurants || [])
-                .filter((r) => r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.cuisine.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((restaurant: RestaurantHighlight) => (
+              {filteredRestaurants.map((restaurant: RestaurantHighlight) => (
                   <motion.div
                     key={restaurant.id}
                     initial={{ opacity: 0, y: 8 }}
@@ -546,9 +616,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">Box Office</span>
               </div>
 
-              {(hubData.shows || [])
-                .filter((s) => s.title.toLowerCase().includes(searchQuery.toLowerCase()) || s.venue.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((show: ShowHighlight) => (
+              {filteredShows.map((show: ShowHighlight) => (
                   <motion.div
                     key={show.id}
                     initial={{ opacity: 0, y: 8 }}
@@ -626,9 +694,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 </div>
 
                 <div className="space-y-3">
-                  {hubData.hotels
-                    ?.filter((h) => h.name.toLowerCase().includes(searchQuery.toLowerCase()) || h.neighborhood.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((hotel) => (
+                  {filteredHotels.map((hotel) => (
                       <HotelCard
                         key={hotel.id}
                         hotel={hotel}
@@ -652,9 +718,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 </div>
 
                 <div className="space-y-3">
-                  {hubData.experiences
-                    ?.filter((e) => e.title.toLowerCase().includes(searchQuery.toLowerCase()) || e.operator.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((exp) => (
+                  {filteredExperiences.map((exp) => (
                       <ExperienceCard
                         key={exp.id}
                         experience={exp}
@@ -680,9 +744,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">City Escapes</span>
               </div>
 
-              {hubData.outdoors
-                ?.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.neighborhood.toLowerCase().includes(searchQuery.toLowerCase()))
-                .map((park) => (
+              {filteredOutdoors.map((park) => (
                   <OutdoorCard
                     key={park.id}
                     park={park}

@@ -55,9 +55,16 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
   const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant')?.content || '';
 
-  // Intelligent Context Keyword Spotter: Detects intent from conversation and syncs Right Radar
+  // Memoize joined conversation text to prevent re-extracting on every input keystroke
+  const allConversationText = React.useMemo(
+    () => messages.map((m) => m.content).join(' '),
+    [messages]
+  );
+
+  // Intelligent Context Keyword Spotter: Detects intent from completed conversation and syncs Right Radar
   useEffect(() => {
-    const textToCheck = `${lastUserMsg} ${input} ${lastAssistantMsg}`.toLowerCase();
+    if (!lastUserMsg && !lastAssistantMsg) return;
+    const textToCheck = `${lastUserMsg} ${lastAssistantMsg}`.toLowerCase();
 
     if (
       textToCheck.includes('food') ||
@@ -105,7 +112,7 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
     ) {
       setActiveRadarCategory('civic');
     }
-  }, [messages, input, lastUserMsg, lastAssistantMsg]);
+  }, [messages, lastUserMsg, lastAssistantMsg]);
 
   const handleSelectStarterPrompt = (promptText: string) => {
     append({
@@ -262,7 +269,7 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
         <div className="hidden xl:flex flex-shrink-0 h-full overflow-hidden">
           <SpotlightDeck
             tenant={tenant}
-            allMessagesText={messages.map((m) => m.content).join(' ') + ' ' + input}
+            allMessagesText={allConversationText}
             hasMessages={messages.length > 0}
             onAskAI={handleSelectStarterPrompt}
           />
