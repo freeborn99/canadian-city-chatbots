@@ -11,20 +11,21 @@ export interface CityScrapeTarget {
 
 export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
   {
+    tenantId: 'yyc',
+    cityName: 'Calgary',
+    province: 'Alberta',
+    urls: [
+      { url: 'https://newsroom.calgary.ca/', category: 'municipal', label: 'City of Calgary Newsroom' },
+      { url: 'https://www.cbc.ca/news/canada/calgary', category: 'news', label: 'CBC News Calgary' },
+    ]
+  },
+  {
     tenantId: 'yyz',
     cityName: 'Toronto',
     province: 'Ontario',
     urls: [
-      {
-        url: 'https://www.toronto.ca/explore-enjoy/festivals-events/festivals-events-calendar/',
-        category: 'events',
-        label: 'City of Toronto Festivals and Events'
-      },
-      {
-        url: 'https://www.toronto.ca/news/',
-        category: 'news',
-        label: 'City of Toronto Official Media & News Releases'
-      }
+      { url: 'https://www.toronto.ca/news/', category: 'municipal', label: 'City of Toronto News' },
+      { url: 'https://www.cbc.ca/news/canada/toronto', category: 'news', label: 'CBC News Toronto' },
     ]
   },
   {
@@ -32,16 +33,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Vancouver',
     province: 'British Columbia',
     urls: [
-      {
-        url: 'https://vancouver.ca/events.aspx',
-        category: 'events',
-        label: 'City of Vancouver Calendar of Events'
-      },
-      {
-        url: 'https://vancouver.ca/news-calendar/news.aspx',
-        category: 'news',
-        label: 'City of Vancouver News and Announcements'
-      }
+      { url: 'https://vancouver.ca/news-calendar/news.aspx', category: 'municipal', label: 'City of Vancouver News' },
+      { url: 'https://www.cbc.ca/news/canada/british-columbia', category: 'news', label: 'CBC News BC' },
     ]
   },
   {
@@ -49,33 +42,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Montreal',
     province: 'Quebec',
     urls: [
-      {
-        url: 'https://montreal.ca/en/events',
-        category: 'events',
-        label: 'Ville de Montréal Events & Festivals'
-      },
-      {
-        url: 'https://montreal.ca/en/news',
-        category: 'news',
-        label: 'Ville de Montréal News and Public Bulletins'
-      }
-    ]
-  },
-  {
-    tenantId: 'yyc',
-    cityName: 'Calgary',
-    province: 'Alberta',
-    urls: [
-      {
-        url: 'https://www.calgary.ca/events.html',
-        category: 'events',
-        label: 'City of Calgary Events Calendar'
-      },
-      {
-        url: 'https://newsroom.calgary.ca/',
-        category: 'news',
-        label: 'City of Calgary Newsroom Releases'
-      }
+      { url: 'https://montreal.ca/en/news', category: 'municipal', label: 'Ville de Montreal News' },
+      { url: 'https://www.cbc.ca/news/canada/montreal', category: 'news', label: 'CBC News Montreal' },
     ]
   },
   {
@@ -83,16 +51,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Edmonton',
     province: 'Alberta',
     urls: [
-      {
-        url: 'https://www.edmonton.ca/attractions_events/schedule_festivals_events',
-        category: 'events',
-        label: 'City of Edmonton Events & Festival Schedule'
-      },
-      {
-        url: 'https://edmonton.ca/city_government/news/news-releases',
-        category: 'news',
-        label: 'City of Edmonton News & Media Notices'
-      }
+      { url: 'https://edmonton.ca/city_government/news/news-releases', category: 'municipal', label: 'City of Edmonton News' },
+      { url: 'https://www.cbc.ca/news/canada/edmonton', category: 'news', label: 'CBC News Edmonton' },
     ]
   },
   {
@@ -100,16 +60,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Ottawa',
     province: 'Ontario',
     urls: [
-      {
-        url: 'https://ottawa.ca/en/recreation-and-parks/events',
-        category: 'events',
-        label: 'City of Ottawa Community Events'
-      },
-      {
-        url: 'https://ottawa.ca/en/news',
-        category: 'news',
-        label: 'City of Ottawa Official News Releases'
-      }
+      { url: 'https://ottawa.ca/en/news', category: 'municipal', label: 'City of Ottawa News' },
+      { url: 'https://www.cbc.ca/news/canada/ottawa', category: 'news', label: 'CBC News Ottawa' },
     ]
   },
   {
@@ -117,16 +69,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Winnipeg',
     province: 'Manitoba',
     urls: [
-      {
-        url: 'https://winnipeg.ca/events',
-        category: 'events',
-        label: 'City of Winnipeg Events Directory'
-      },
-      {
-        url: 'https://winnipeg.ca/news',
-        category: 'news',
-        label: 'City of Winnipeg News Releases & Advisories'
-      }
+      { url: 'https://winnipeg.ca/news', category: 'municipal', label: 'City of Winnipeg News' },
+      { url: 'https://www.cbc.ca/news/canada/manitoba', category: 'news', label: 'CBC News Manitoba' },
     ]
   },
   {
@@ -134,16 +78,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Halifax',
     province: 'Nova Scotia',
     urls: [
-      {
-        url: 'https://www.halifax.ca/parks-recreation/events',
-        category: 'events',
-        label: 'Halifax Regional Municipality Events'
-      },
-      {
-        url: 'https://www.halifax.ca/city-hall/news-announcements',
-        category: 'news',
-        label: 'Halifax News and Public Service Announcements'
-      }
+      { url: 'https://www.halifax.ca/city-hall/news-announcements', category: 'municipal', label: 'Halifax News' },
+      { url: 'https://www.cbc.ca/news/canada/nova-scotia', category: 'news', label: 'CBC News Nova Scotia' },
     ]
   },
   {
@@ -151,16 +87,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: 'Victoria',
     province: 'British Columbia',
     urls: [
-      {
-        url: 'https://www.victoria.ca/community-culture/events-activities',
-        category: 'events',
-        label: 'City of Victoria Events & Community Activities'
-      },
-      {
-        url: 'https://www.victoria.ca/city-government/news',
-        category: 'news',
-        label: 'City of Victoria Civic News & Updates'
-      }
+      { url: 'https://www.victoria.ca/city-government/news', category: 'municipal', label: 'City of Victoria News' },
+      { url: 'https://www.cbc.ca/news/canada/british-columbia', category: 'news', label: 'CBC News BC' },
     ]
   },
   {
@@ -168,16 +96,8 @@ export const CITY_SCRAPE_TARGETS: CityScrapeTarget[] = [
     cityName: "St. John's",
     province: 'Newfoundland and Labrador',
     urls: [
-      {
-        url: 'https://www.stjohns.ca/en/events-culture/events-calendar.aspx',
-        category: 'events',
-        label: "City of St. John's Public Events Calendar"
-      },
-      {
-        url: 'https://www.stjohns.ca/en/news/index.aspx',
-        category: 'news',
-        label: "City of St. John's News & Public Advisories"
-      }
+      { url: 'https://www.stjohns.ca/en/news/index.aspx', category: 'municipal', label: "City of St. John's News" },
+      { url: 'https://www.cbc.ca/news/canada/newfoundland-and-labrador', category: 'news', label: 'CBC News NL' },
     ]
   }
 ];

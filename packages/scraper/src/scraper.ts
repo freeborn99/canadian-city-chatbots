@@ -1,4 +1,7 @@
 import * as cheerio from 'cheerio';
+import { generateObject } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { z } from 'zod';
 
 export interface ScrapedDocument {
   title: string;
@@ -6,6 +9,11 @@ export interface ScrapedDocument {
   category: string;
   content: string;
   extractedAt: number;
+  aiSummary?: {
+    summary: string;
+    keyTakeaways: string[];
+    localImpact: string;
+  };
 }
 
 const USER_AGENT =
@@ -72,12 +80,38 @@ export async function scrapeUrl(
       return null;
     }
 
+    let aiSummary;
+    if (process.env.OPENAI_API_KEY && fullContent.length > 200) {
+      try {
+        console.log(`[Scraper] Generating AI Summary for ${targetUrl}`);
+        const { object } = await generateObject({
+          model: openai('gpt-4o-mini'),
+          schema: z.object({
+            summary: z.string().describe('A concise 2-sentence summary of the article or update'),
+            keyTakeaways: z.array(z.string()).max(3).describe('Up to 3 bullet points of key takeaways'),
+            localImpact: z.string().describe('1 sentence describing how this impacts local residents')
+          }),
+          prompt: `Summarize the following local news/civic update for residents of the area:\n\nTitle: ${pageTitle}\n\nContent: ${fullContent}`
+        });
+        aiSummary = object;
+      } catch (err: unknown) {
+        console.warn(`[Scraper] AI Summarization failed for ${targetUrl}:`, (err as Error).message);
+      }
+    } else if (fullContent.length > 200) {
+      aiSummary = {
+        summary: fullContent.slice(0, 150) + '...',
+        keyTakeaways: ['Check the full article for details.'],
+        localImpact: 'Important local update.'
+      };
+    }
+
     return {
       title: pageTitle.replace(/\s+/g, ' ').trim(),
       url: targetUrl,
       category,
       content: fullContent,
       extractedAt: Date.now(),
+      aiSummary
     };
   } catch (error: unknown) {
     const err = error as Error;

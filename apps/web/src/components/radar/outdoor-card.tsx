@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trees, MapPin, Compass, Bookmark, Clock } from 'lucide-react';
+import { Trees, MapPin, Compass, Bookmark, Clock, Share2 } from 'lucide-react';
 import { OutdoorPark } from '@/lib/city-data';
+import { useAuth } from '@/lib/auth-context';
 
 interface OutdoorCardProps {
   park: OutdoorPark;
@@ -20,6 +21,7 @@ export const OutdoorCard: React.FC<OutdoorCardProps> = ({
   onToggleSave,
   onAskAI,
 }) => {
+  const { openShareModal } = useAuth();
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -77,6 +79,18 @@ export const OutdoorCard: React.FC<OutdoorCardProps> = ({
         >
           <Trees className="w-3.5 h-3.5" />
           <span>Explore Trail Guide</span>
+        </button>
+
+        <button
+          onClick={() => openShareModal({ 
+            title: park.name, 
+            text: `Check out ${park.name} in ${park.neighborhood}!`,
+            url: window.location.href 
+          })}
+          className="p-1.5 rounded-xl bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 transition-colors"
+          title="Share"
+        >
+          <Share2 className="w-3.5 h-3.5" />
         </button>
 
         {onToggleSave && (

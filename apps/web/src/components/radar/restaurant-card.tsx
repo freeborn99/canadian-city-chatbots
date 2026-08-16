@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Star, MapPin, ExternalLink, UtensilsCrossed, Clock } from 'lucide-react';
 import { RestaurantHighlight } from '@/lib/city-data';
 import { buildAffiliateUrl } from '@/lib/affiliate-config';
+import { ShareButton } from '../social/share-button';
 
 interface RestaurantCardProps {
   restaurant: RestaurantHighlight;
@@ -105,6 +106,11 @@ export const RestaurantCard: React.FC<RestaurantCardProps> = ({
         >
           Ask AI
         </button>
+        <ShareButton
+          url={affiliateUrl}
+          title={restaurant.name}
+          text={restaurant.signatureDish}
+        />
       </div>
     </motion.div>
   );

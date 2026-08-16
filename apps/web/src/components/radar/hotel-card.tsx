@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bed, Star, MapPin, ExternalLink, Bookmark } from 'lucide-react';
+import { Bed, Star, MapPin, ExternalLink, Bookmark, Share2 } from 'lucide-react';
 import { HotelStay } from '@/lib/city-data';
 import { buildAffiliateUrl } from '@/lib/affiliate-config';
+import { useAuth } from '@/lib/auth-context';
+import { ShareButton } from '../social/share-button';
 
 interface HotelCardProps {
   hotel: HotelStay;
@@ -23,6 +25,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({
   onToggleSave,
   onAskAI,
 }) => {
+  const { openShareModal } = useAuth();
   const affiliateUrl = buildAffiliateUrl(hotel.bookingUrl, hotel.bookingPlatform, tenantId);
   return (
     <motion.div
@@ -86,6 +89,12 @@ export const HotelCard: React.FC<HotelCardProps> = ({
           <span>Check Rates ({hotel.bookingPlatform})</span>
           <ExternalLink className="w-3 h-3" />
         </a>
+
+        <ShareButton
+          url={affiliateUrl}
+          title={hotel.name}
+          text={hotel.description}
+        />
 
         {onToggleSave && (
           <button

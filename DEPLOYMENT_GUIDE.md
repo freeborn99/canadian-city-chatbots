@@ -49,6 +49,8 @@ In your Vercel Dashboard ➡️ Go to **Settings** ➡️ **Environment Variable
 | `GEMINI_API_KEY` | `your_gemini_api_key_here` | Google Gemini Fallback Model |
 | `UPSTASH_VECTOR_REST_URL` | `your_upstash_vector_rest_url` | Live Local Knowledge Vectors |
 | `UPSTASH_VECTOR_REST_TOKEN` | `your_upstash_vector_rest_token` | Vector Authentication |
+| `NEXT_PUBLIC_CJ_API_KEY` | `your_cj_api_key` | CJ Affiliate Network Tracking |
+| `ADMIN_API_TOKEN` | `secure_password` | Access to the /admin Dashboard |
 
 ---
 

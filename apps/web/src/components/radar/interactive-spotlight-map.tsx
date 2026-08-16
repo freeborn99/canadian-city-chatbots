@@ -12,9 +12,13 @@ import {
   Minimize2,
   Clock,
   Layers,
+  Share2,
+  X,
 } from 'lucide-react';
 import { GeoSpotlightDistrict, MapPinPoint, CANADIAN_GEO_SPOTLIGHTS } from '@/lib/city-geo-data';
 import { CityTenant } from '@/lib/tenants';
+import { useAuth } from '@/lib/auth-context';
+import { ShareButton } from '../social/share-button';
 
 interface InteractiveSpotlightMapProps {
   district: GeoSpotlightDistrict;
@@ -32,10 +36,9 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersGroupRef = useRef<any>(null);
-  const [selectedPin, setSelectedPin] = useState<MapPinPoint | null>(
-    district.pins[0] || null
-  );
+  const [selectedPin, setSelectedPin] = useState<MapPinPoint | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const { openShareModal } = useAuth();
 
   // Available districts for current tenant
   const availableDistricts = CANADIAN_GEO_SPOTLIGHTS.filter(
@@ -44,7 +47,7 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
 
   // Update selectedPin whenever active district changes
   useEffect(() => {
-    setSelectedPin(district.pins[0] || null);
+    setSelectedPin(null);
   }, [district.id]);
 
   useEffect(() => {
@@ -63,6 +66,8 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
           zoom: district.zoom,
           zoomControl: false,
           attributionControl: false,
+          dragging: !L.Browser.mobile,
+          scrollWheelZoom: false,
         });
 
         // Dark Matter / Voyager Tile Layer
@@ -88,6 +93,14 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
       setTimeout(() => {
         map.invalidateSize();
       }, 50);
+
+      // Add ResizeObserver to handle layout shifts dynamically
+      const resizeObserver = new ResizeObserver(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
+      });
+      resizeObserver.observe(mapContainerRef.current);
 
       // Clear existing markers and populate new pins
       markers.clearLayers();
@@ -137,6 +150,7 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
 
   // Clean up on component unmount
   useEffect(() => {
+    const container = mapContainerRef.current;
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -235,6 +249,59 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
       <div className="relative w-full h-52 md:h-60 rounded-xl overflow-hidden border-y border-slate-800/60">
         <div ref={mapContainerRef} className="w-full h-full z-0 bg-slate-900" />
 
+        {/* Absolute Floating Popup for Selected Pin */}
+        <AnimatePresence>
+          {selectedPin && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="absolute bottom-3 left-3 right-3 z-[1000] p-3 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-700 shadow-2xl flex flex-col gap-2"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-white line-clamp-1">{selectedPin.name}</h4>
+                  <p className="text-[10px] text-slate-400 truncate">{selectedPin.address}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedPin(null)}
+                  className="p-1 rounded-full bg-slate-800 text-slate-400 hover:text-white"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <p className="text-xs text-slate-300 line-clamp-2 leading-tight">
+                {selectedPin.highlight}
+              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <a
+                  href={selectedPin.actionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all shadow-lg"
+                >
+                  <span>{selectedPin.actionText}</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedPin.lat},${selectedPin.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-all shadow-lg"
+                  title="Get Directions"
+                >
+                  <Navigation className="w-4 h-4 text-emerald-400" />
+                </a>
+                <ShareButton 
+                   url={selectedPin.actionUrl} 
+                   title={selectedPin.name} 
+                   text={selectedPin.highlight} 
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Map Floating Controls */}
         <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
           <button
@@ -315,70 +382,6 @@ export const InteractiveSpotlightMap: React.FC<InteractiveSpotlightMapProps> = (
         </div>
       </div>
 
-      {/* Active Pin Detailed Showcase Box */}
-      {selectedPin && (
-        <div className="p-3 bg-slate-900/95 border-t border-slate-800/80 space-y-2 text-xs">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
-                  {selectedPin.category}
-                </span>
-                {selectedPin.priceLevel && (
-                  <span className="text-[11px] text-slate-400 font-mono">
-                    {selectedPin.priceLevel}
-                  </span>
-                )}
-                {selectedPin.hours && (
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-emerald-400" />
-                    <span>{selectedPin.hours}</span>
-                  </span>
-                )}
-              </div>
-
-              <h4 className="font-bold text-white text-sm">{selectedPin.name}</h4>
-              <p className="text-[11px] text-slate-400">{selectedPin.address}</p>
-            </div>
-
-            {selectedPin.rating && (
-              <div className="flex items-center gap-1 bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-md text-amber-300 text-xs font-semibold">
-                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                <span>{selectedPin.rating}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800/80 text-[11px] text-slate-300">
-            <span className="text-slate-400 font-medium">✨ Highlight: </span>
-            <span>{selectedPin.highlight}</span>
-          </div>
-
-          <div className="flex items-center gap-2 pt-1">
-            <a
-              href={selectedPin.actionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-gradient-to-r ${tenant.gradientClass} text-white font-semibold text-xs shadow-md hover:opacity-95 transition-opacity`}
-            >
-              <span>{selectedPin.actionText}</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
-
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                selectedPin.name + ' ' + selectedPin.address + ' ' + tenant.name
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors"
-              title="Open in Google Maps / Directions"
-            >
-              <Navigation className="w-4 h-4 text-cyan-400" />
-            </a>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

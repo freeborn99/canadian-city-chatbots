@@ -17,19 +17,23 @@ import { AuthProvider } from '@/lib/auth-context';
 import { SocialAuthModal } from '@/components/auth/social-auth-modal';
 import { SocialShareDialog } from '@/components/social/social-share-dialog';
 import { PersonaSwitcher, AIPersona } from './persona-switcher';
+import { LocalPartnerShowcase } from '@/components/radar/local-partner-showcase';
+import { LiveCivicFeed } from '@/components/radar/live-civic-feed';
+import { getCityHubData } from '@/lib/city-data';
 
 interface ChatContainerProps {
   initialTenantId: string;
 }
 
-const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) => {
+export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) => {
   const [activeTenantId, setActiveTenantId] = useState<string>(initialTenantId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileRadarOpen, setIsMobileRadarOpen] = useState(false);
-  const [activeRadarCategory, setActiveRadarCategory] = useState<CivicCategory>('eats');
+  const [activeRadarCategory, setActiveRadarCategory] = useState<CivicCategory>('overview');
   const [activePersona, setActivePersona] = useState<AIPersona>('insider');
 
   const tenant: CityTenant = getTenantById(activeTenantId);
+  const hubData = getCityHubData(activeTenantId);
 
   // Vercel AI SDK useChat hook
   const {
@@ -61,59 +65,6 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
     () => messages.map((m) => m.content).join(' '),
     [messages]
   );
-
-  // Intelligent Context Keyword Spotter: Detects intent from completed conversation and syncs Right Radar
-  useEffect(() => {
-    if (!lastUserMsg && !lastAssistantMsg) return;
-    const textToCheck = `${lastUserMsg} ${lastAssistantMsg}`.toLowerCase();
-
-    if (
-      textToCheck.includes('food') ||
-      textToCheck.includes('eat') ||
-      textToCheck.includes('restaurant') ||
-      textToCheck.includes('dinner') ||
-      textToCheck.includes('lunch') ||
-      textToCheck.includes('reservation') ||
-      textToCheck.includes('bites') ||
-      textToCheck.includes('brunch') ||
-      textToCheck.includes('steak') ||
-      textToCheck.includes('brewery') ||
-      textToCheck.includes('cocktail')
-    ) {
-      setActiveRadarCategory('eats');
-    } else if (
-      textToCheck.includes('ticket') ||
-      textToCheck.includes('show') ||
-      textToCheck.includes('theatre') ||
-      textToCheck.includes('concert') ||
-      textToCheck.includes('game') ||
-      textToCheck.includes('movie') ||
-      textToCheck.includes('festival') ||
-      textToCheck.includes('play')
-    ) {
-      setActiveRadarCategory('shows');
-    } else if (
-      textToCheck.includes('transit') ||
-      textToCheck.includes('bus') ||
-      textToCheck.includes('train') ||
-      textToCheck.includes('subway') ||
-      textToCheck.includes('ctrain') ||
-      textToCheck.includes('ttc') ||
-      textToCheck.includes('skytrain') ||
-      textToCheck.includes('traffic')
-    ) {
-      setActiveRadarCategory('transit');
-    } else if (
-      textToCheck.includes('311') ||
-      textToCheck.includes('bylaw') ||
-      textToCheck.includes('parking') ||
-      textToCheck.includes('waste') ||
-      textToCheck.includes('municipal') ||
-      textToCheck.includes('service')
-    ) {
-      setActiveRadarCategory('civic');
-    }
-  }, [messages, lastUserMsg, lastAssistantMsg]);
 
   const handleSelectQuickCategory = (cat: CivicCategory) => {
     setActiveRadarCategory(cat);
@@ -287,9 +238,10 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
           </div>
 
           {/* Chat Stream or Empty State Starter Prompts */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
             {messages.length === 0 ? (
-              <div className="h-full flex items-center justify-center">
+              <div className="h-full flex flex-col max-w-3xl mx-auto pb-10">
+                <LiveCivicFeed tenant={tenant} news={hubData.news} />
                 <StarterPrompts
                   tenant={tenant}
                   onSelectPrompt={handleSelectStarterPrompt}
@@ -303,6 +255,11 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
                 onSendFollowup={handleSelectStarterPrompt}
               />
             )}
+          </div>
+
+          {/* Partner Showcase between chat and input */}
+          <div className="flex-shrink-0 px-3 md:px-5 py-1.5 border-t border-slate-800/40 bg-slate-950/40">
+            <LocalPartnerShowcase tenantId={tenant.id} variant="compact" />
           </div>
 
           {/* Persona Mood Switcher & Pinned Bottom Glass Input Bar */}
@@ -334,6 +291,15 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
             allMessagesText={allConversationText}
             hasMessages={messages.length > 0}
             onAskAI={handleSelectStarterPrompt}
+            initialTab={
+              activeRadarCategory === 'eats'
+                ? 'eats'
+                : activeRadarCategory === 'shows'
+                ? 'shows'
+                : activeRadarCategory === 'transit'
+                ? 'transit'
+                : 'overview'
+            }
           />
         </div>
       </div>
@@ -344,13 +310,5 @@ const InnerChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) =
       {/* Social Share Modal */}
       <SocialShareDialog tenant={tenant} />
     </div>
-  );
-};
-
-export const ChatContainer: React.FC<ChatContainerProps> = (props) => {
-  return (
-    <AuthProvider>
-      <InnerChatContainer {...props} />
-    </AuthProvider>
   );
 };

@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Sparkles, Clock, Compass, ShieldCheck, MessageSquare } from 'lucide-react';
+import { X, ExternalLink, Sparkles, Clock, Compass, ShieldCheck, MessageSquare, Share2 } from 'lucide-react';
 import { NewsHeadline } from '@/lib/city-data';
+import { MarkdownRenderer } from '@/components/chat/markdown-renderer';
+import { useAuth } from '@/lib/auth-context';
 
 interface NewsExpandedModalProps {
   article: NewsHeadline | null;
@@ -20,6 +22,7 @@ export const NewsExpandedModal: React.FC<NewsExpandedModalProps> = ({
 }) => {
   if (!article) return null;
 
+  const { openShareModal } = useAuth();
   const { expandedDetails } = article;
 
   return (
@@ -75,9 +78,7 @@ export const NewsExpandedModal: React.FC<NewsExpandedModalProps> = ({
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Executive Briefing</span>
             </div>
-            <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
-              {article.summary}
-            </p>
+            <MarkdownRenderer content={article.summary} />
           </div>
 
           {/* Key Takeaways */}
@@ -147,6 +148,18 @@ export const NewsExpandedModal: React.FC<NewsExpandedModalProps> = ({
                   <Compass className="w-3.5 h-3.5 text-cyan-400" />
                 </a>
               )}
+
+              <button
+                onClick={() => openShareModal({ 
+                  title: article.title, 
+                  text: article.summary,
+                  url: window.location.href 
+                })}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-cyan-300 text-xs font-medium transition-colors"
+                title="Share this story"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
 
               <button
                 onClick={() => {

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Ticket, MapPin, Calendar, ExternalLink, Sparkles } from 'lucide-react';
 import { ShowHighlight } from '@/lib/city-data';
 import { buildAffiliateUrl } from '@/lib/affiliate-config';
+import { ShareButton } from '../social/share-button';
 
 interface EventTicketCardProps {
   show: ShowHighlight;
@@ -84,6 +85,11 @@ export const EventTicketCard: React.FC<EventTicketCardProps> = ({
         >
           Ask AI
         </button>
+        <ShareButton
+          url={affiliateUrl}
+          title={show.title}
+          text={`${show.venue} - ${show.dates}`}
+        />
       </div>
     </motion.div>
   );

@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Utensils, Car, Newspaper, Sparkles, ArrowUpRight, Flame } from 'lucide-react';
 import { CityTenant, StarterPrompt } from '@/lib/tenants';
+import { LocalPartnerShowcase } from '@/components/radar/local-partner-showcase';
 
 import type { Variants } from 'framer-motion';
 
@@ -130,6 +131,8 @@ export const StarterPrompts: React.FC<StarterPromptsProps> = ({ tenant, onSelect
           );
         })}
       </motion.div>
+
+
 
       {/* Local Landmarks Footer Pill */}
       <motion.div

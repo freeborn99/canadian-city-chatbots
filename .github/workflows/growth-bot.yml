@@ -1,0 +1,27 @@
+name: Growth Bot & Social Promotion
+
+on:
+  schedule:
+    # Run every day at 10:00 AM UTC
+    - cron: '0 10 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          
+      - name: Install Dependencies
+        run: npm install -g ts-node typescript
+        
+      - name: Run Growth Bot
+        run: npx ts-node scripts/growth-bot.ts
+        env:
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          REDDIT_API_KEY: ${{ secrets.REDDIT_API_KEY }}

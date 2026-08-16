@@ -46,6 +46,9 @@ import { NewsExpandedModal } from './news-expanded-modal';
 import { HotelCard } from './hotel-card';
 import { ExperienceCard } from './experience-card';
 import { OutdoorCard } from './outdoor-card';
+import { LocalPartnerShowcase } from './local-partner-showcase';
+import { buildAffiliateUrl } from '@/lib/affiliate-config';
+import { useAuth } from '@/lib/auth-context';
 
 import { extractChatSpotlightEntities } from '@/lib/entity-extractor';
 
@@ -77,6 +80,13 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   const [selectedNewsArticle, setSelectedNewsArticle] = useState<NewsHeadline | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [manualDistrict, setManualDistrict] = useState<GeoSpotlightDistrict | null>(null);
+  const { openShareModal } = useAuth();
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const deferredSearch = React.useDeferredValue(searchQuery);
   const normalizedSearch = deferredSearch.trim().toLowerCase();
@@ -135,43 +145,55 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   }, [hubData.news, normalizedSearch]);
 
   const filteredRestaurants = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.restaurants || [];
-    return (hubData.restaurants || []).filter(
-      (r) =>
-        r.name.toLowerCase().includes(normalizedSearch) ||
-        r.cuisine.toLowerCase().includes(normalizedSearch) ||
-        r.neighborhood.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.restaurants || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (r) =>
+          r.name.toLowerCase().includes(normalizedSearch) ||
+          r.cuisine.toLowerCase().includes(normalizedSearch) ||
+          r.neighborhood.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.restaurants, normalizedSearch]);
 
   const filteredShows = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.shows || [];
-    return (hubData.shows || []).filter(
-      (s) =>
-        s.title.toLowerCase().includes(normalizedSearch) ||
-        s.venue.toLowerCase().includes(normalizedSearch) ||
-        s.category.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.shows || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (s) =>
+          s.title.toLowerCase().includes(normalizedSearch) ||
+          s.venue.toLowerCase().includes(normalizedSearch) ||
+          s.category.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.shows, normalizedSearch]);
 
   const filteredHotels = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.hotels || [];
-    return (hubData.hotels || []).filter(
-      (h) =>
-        h.name.toLowerCase().includes(normalizedSearch) ||
-        h.neighborhood.toLowerCase().includes(normalizedSearch) ||
-        h.tag.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.hotels || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (h) =>
+          h.name.toLowerCase().includes(normalizedSearch) ||
+          h.neighborhood.toLowerCase().includes(normalizedSearch) ||
+          h.tag.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.hotels, normalizedSearch]);
 
   const filteredExperiences = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.experiences || [];
-    return (hubData.experiences || []).filter(
-      (e) =>
-        e.title.toLowerCase().includes(normalizedSearch) ||
-        e.operator.toLowerCase().includes(normalizedSearch) ||
-        e.category.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.experiences || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (e) =>
+          e.title.toLowerCase().includes(normalizedSearch) ||
+          e.operator.toLowerCase().includes(normalizedSearch) ||
+          e.category.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.experiences, normalizedSearch]);
 
   const filteredOutdoors = React.useMemo(() => {
@@ -183,84 +205,6 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
         p.category.toLowerCase().includes(normalizedSearch)
     );
   }, [hubData.outdoors, normalizedSearch]);
-
-  // Universal dynamic intent recognition: Automatically lock the best tab based on conversation
-  useEffect(() => {
-    if (!hasMessages) {
-      return;
-    }
-
-    // If chat returned specific places or landmarks, immediately showcase the map!
-    if (chatExtracted.hasResults || matchedSpotlight) {
-      setActiveTab('map');
-      return;
-    }
-
-    const text = allMessagesText.toLowerCase();
-    if (!text) return;
-
-    if (
-      text.includes('map') ||
-      text.includes('where is') ||
-      text.includes('directions') ||
-      text.includes('street') ||
-      text.includes('ave') ||
-      text.includes('avenue') ||
-      text.includes('zoo')
-    ) {
-      setActiveTab('map');
-    } else if (
-      text.includes('hotel') ||
-      text.includes('stay') ||
-      text.includes('tour') ||
-      text.includes('airbnb') ||
-      text.includes('experience') ||
-      text.includes('activity') ||
-      text.includes('excursion')
-    ) {
-      setActiveTab('experiences');
-    } else if (
-      text.includes('hike') ||
-      text.includes('trail') ||
-      text.includes('park') ||
-      text.includes('outdoor') ||
-      text.includes('dog') ||
-      text.includes('nature') ||
-      text.includes('mountain')
-    ) {
-      setActiveTab('outdoors');
-    } else if (
-      text.includes('food') ||
-      text.includes('eat') ||
-      text.includes('restaurant') ||
-      text.includes('dinner') ||
-      text.includes('lunch') ||
-      text.includes('steak') ||
-      text.includes('brewery') ||
-      text.includes('cocktail') ||
-      text.includes('reservation')
-    ) {
-      setActiveTab('eats');
-    } else if (
-      text.includes('ticket') ||
-      text.includes('show') ||
-      text.includes('theatre') ||
-      text.includes('concert') ||
-      text.includes('game') ||
-      text.includes('play')
-    ) {
-      setActiveTab('shows');
-    } else if (
-      text.includes('transit') ||
-      text.includes('train') ||
-      text.includes('bus') ||
-      text.includes('subway') ||
-      text.includes('ctrain') ||
-      text.includes('ttc')
-    ) {
-      setActiveTab('transit');
-    }
-  }, [allMessagesText, hasMessages, chatExtracted.hasResults, matchedSpotlight]);
 
   const toggleSave = (id: string) => {
     setSavedItems((prev) =>
@@ -277,8 +221,8 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   };
 
   const tabs = [
-    { id: 'map' as SpotlightTab, label: 'Geo-Map Radar', icon: MapIcon },
     { id: 'overview' as SpotlightTab, label: 'News & Scores', icon: Newspaper },
+    { id: 'map' as SpotlightTab, label: 'Geo-Map Radar', icon: MapIcon },
     { id: 'eats' as SpotlightTab, label: 'Dining Resos', icon: Utensils, count: (hubData.restaurants || []).length },
     { id: 'shows' as SpotlightTab, label: 'Tickets', icon: Ticket, count: (hubData.shows || []).length },
     { id: 'experiences' as SpotlightTab, label: 'Tours & Stays', icon: Bed, count: (hubData.hotels?.length || 0) + (hubData.experiences?.length || 0) },
@@ -427,17 +371,70 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
           {/* TAB 1: NEWS & SPORTS SCORES */}
           {activeTab === 'overview' && (
             <div className="space-y-3.5">
-              {/* Dynamic Interactive Geo-Map (Always Visible & Reacting to Search) */}
-              {activeGeoSpotlight && (
-                <div className="mb-1">
-                  <InteractiveSpotlightMap
-                    district={activeGeoSpotlight}
-                    tenant={tenant}
-                    onAskAI={onAskAI}
-                    onSelectDistrict={(d) => setManualDistrict(d)}
-                  />
+              {/* Regional News Headlines with Expand Action */}
+              <div>
+                <div className="flex items-center justify-between text-xs px-1 mb-2">
+                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                    <Newspaper className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Regional News Highlights</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Real-time summaries</span>
                 </div>
-              )}
+
+                <div className="space-y-2.5">
+                  {filteredNews.map((n: NewsHeadline) => (
+                    <div
+                      key={n.id}
+                      onClick={() => setSelectedNewsArticle(n)}
+                      className="p-3 rounded-2xl glass-card border border-slate-800/90 hover:border-slate-700/80 shadow-md space-y-1.5 transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="font-semibold text-cyan-400">{n.source}</span>
+                        <span className="text-slate-500 font-mono">{n.timeAgo}</span>
+                      </div>
+
+                      <h4 className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug">
+                        {n.title}
+                      </h4>
+
+                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                        {n.summary}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-1.5 border-t border-slate-800/60 text-[10px]">
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={n.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center gap-1 font-semibold text-cyan-300 hover:text-white bg-cyan-950/60 hover:bg-cyan-900/80 px-2 py-0.5 rounded-lg border border-cyan-800/40 hover:border-cyan-600 transition-colors"
+                          >
+                            <span>Read Story</span>
+                            <ExternalLink className="w-2.5 h-2.5" />
+                          </a>
+                          {n.expandedDetails?.relatedActionUrl && (
+                            <a
+                              href={n.expandedDetails.relatedActionUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 transition-colors"
+                            >
+                              <span>{n.expandedDetails.relatedActionText || 'Civic Link'}</span>
+                              <Compass className="w-2.5 h-2.5 text-cyan-400" />
+                            </a>
+                          )}
+                        </div>
+                        <span className="text-cyan-400 font-medium flex items-center gap-0.5 group-hover:text-cyan-300">
+                          <span>Briefing</span>
+                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Local Sports Scores */}
               <div>
@@ -451,85 +448,51 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
 
                 <div className="space-y-2">
                   {filteredSports.map((game: SportsGameScore) => (
-                      <div
-                        key={game.id}
-                        className="p-3 rounded-2xl glass-card border border-slate-800/90 shadow-md text-xs space-y-1.5"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
-                            {game.league}
-                          </span>
-                          <span
-                            className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
-                              game.status === 'Final'
-                                ? 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300'
-                                : 'bg-cyan-950/60 border-cyan-800/60 text-cyan-300'
-                            }`}
-                          >
-                            {game.status}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between font-bold text-white text-xs pt-0.5">
-                          <span>{game.team}</span>
-                          {game.score ? (
-                            <span className="text-emerald-400 font-mono text-sm">{game.score}</span>
-                          ) : (
-                            <span className="text-slate-400 text-[11px] font-mono">{game.gameTime}</span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800/60">
-                          <span>vs. {game.opponent}</span>
-                          {game.tvBroadcast && (
-                            <span className="flex items-center gap-1 text-slate-400">
-                              <Tv className="w-3 h-3" />
-                              <span>{game.tvBroadcast}</span>
-                            </span>
-                          )}
-                        </div>
+                    <div
+                      key={game.id}
+                      className="p-3 rounded-2xl glass-card border border-slate-800/90 shadow-md text-xs space-y-1.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
+                          {game.league}
+                        </span>
+                        <span
+                          className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
+                            game.status === 'Final'
+                              ? 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300'
+                              : 'bg-cyan-950/60 border-cyan-800/60 text-cyan-300'
+                          }`}
+                        >
+                          {game.status}
+                        </span>
                       </div>
-                    ))}
+
+                      <div className="flex items-center justify-between font-bold text-white text-xs pt-0.5">
+                        <span>{game.team}</span>
+                        {game.score ? (
+                          <span className="text-emerald-400 font-mono text-sm">{game.score}</span>
+                        ) : (
+                          <span className="text-slate-400 text-[11px] font-mono">{game.gameTime}</span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800/60">
+                        <span>vs. {game.opponent}</span>
+                        {game.tvBroadcast && (
+                          <span className="flex items-center gap-1 text-slate-400">
+                            <Tv className="w-3 h-3" />
+                            <span>{game.tvBroadcast}</span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Regional News Headlines with Expand Action */}
-              <div>
-                <div className="flex items-center justify-between text-xs px-1 mb-2">
-                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                    <Newspaper className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Regional News Highlights</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Click to Expand</span>
-                </div>
-
-                <div className="space-y-2.5">
-                  {filteredNews.map((n: NewsHeadline) => (
-                      <div
-                        key={n.id}
-                        onClick={() => setSelectedNewsArticle(n)}
-                        className="p-3 rounded-2xl glass-card border border-slate-800/90 hover:border-slate-700/80 shadow-md space-y-1.5 transition-all group cursor-pointer"
-                      >
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="font-semibold text-cyan-400">{n.source}</span>
-                          <span className="text-slate-500 font-mono">{n.timeAgo}</span>
-                        </div>
-
-                        <h4 className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug">
-                          {n.title}
-                        </h4>
-
-                        <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
-                          {n.summary}
-                        </p>
-
-                        <div className="flex items-center justify-between pt-1 border-t border-slate-800/60 text-[10px] text-cyan-400 font-medium">
-                          <span>Read AI Executive Briefing</span>
-                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                        </div>
-                      </div>
-                    ))}
-                </div>
+              {/* Partner Showcase Injection */}
+              <div className="py-1">
+                <LocalPartnerShowcase tenantId={tenant.id} />
               </div>
             </div>
           )}
@@ -545,6 +508,17 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">Instant Booking</span>
               </div>
 
+              {/* Partner Showcase Injection */}
+              <div className="py-1">
+                <LocalPartnerShowcase 
+                  tenantId={tenant.id} 
+                  title="Exclusive Dining Experiences" 
+                  description="Book premium chef-tasting menus and VIP tables across the city."
+                  imageUrl="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=800"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
               {filteredRestaurants.map((restaurant: RestaurantHighlight) => (
                   <motion.div
                     key={restaurant.id}
@@ -607,7 +581,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
 
                     <div className="flex items-center gap-2 pt-1 border-t border-slate-800/60">
                       <a
-                        href={restaurant.reservationUrl}
+                        href={buildAffiliateUrl(restaurant.reservationUrl, restaurant.bookingPlatform, tenant.id)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-gradient-to-r ${tenant.gradientClass} text-white font-semibold text-xs shadow-md hover:opacity-95 transition-opacity`}
@@ -616,6 +590,17 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                         <ExternalLink className="w-3 h-3" />
                       </a>
 
+                      <button
+                        onClick={() => openShareModal({ 
+                          title: restaurant.name, 
+                          text: `Check out ${restaurant.name} in ${tenant.name}!`,
+                          url: window.location.href 
+                        })}
+                        className="p-1.5 rounded-xl bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 transition-colors"
+                        title="Share"
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         onClick={() => toggleSave(restaurant.id)}
                         className="p-1.5 rounded-xl bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-amber-300 transition-colors"
@@ -630,6 +615,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                     </div>
                   </motion.div>
                 ))}
+              </div>
             </div>
           )}
 
@@ -644,6 +630,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">Box Office</span>
               </div>
 
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
               {filteredShows.map((show: ShowHighlight) => (
                   <motion.div
                     key={show.id}
@@ -682,7 +669,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
 
                     <div className="flex items-center gap-2 pt-1 border-t border-slate-800/60">
                       <a
-                        href={show.ticketUrl}
+                        href={buildAffiliateUrl(show.ticketUrl, show.ticketPlatform, tenant.id)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-gradient-to-r ${tenant.gradientClass} text-white font-semibold text-xs shadow-md hover:opacity-95 transition-opacity`}
@@ -691,6 +678,17 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                         <ExternalLink className="w-3 h-3" />
                       </a>
 
+                      <button
+                        onClick={() => openShareModal({ 
+                          title: show.title, 
+                          text: `Check out ${show.title} at ${show.venue} in ${tenant.name}!`,
+                          url: window.location.href 
+                        })}
+                        className="p-1.5 rounded-xl bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 transition-colors"
+                        title="Share"
+                      >
+                        <Share2 className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         onClick={() => toggleSave(show.id)}
                         className="p-1.5 rounded-xl bg-slate-855 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-amber-300 transition-colors"
@@ -705,6 +703,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                     </div>
                   </motion.div>
                 ))}
+              </div>
             </div>
           )}
 
@@ -726,6 +725,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                       <HotelCard
                         key={hotel.id}
                         hotel={hotel}
+                        tenantId={tenant.id}
                         accentClass={tenant.gradientClass}
                         isSaved={savedItems.includes(hotel.id)}
                         onToggleSave={() => toggleSave(hotel.id)}
@@ -750,6 +750,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                       <ExperienceCard
                         key={exp.id}
                         experience={exp}
+                        tenantId={tenant.id}
                         accentClass={tenant.gradientClass}
                         isSaved={savedItems.includes(exp.id)}
                         onToggleSave={() => toggleSave(exp.id)}
@@ -812,6 +813,11 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
               ))}
             </div>
           )}
+
+          {/* Persistent Showcase at the bottom of the Spotlight window */}
+          <div className="pt-4 pb-2">
+            <LocalPartnerShowcase tenantId={tenant.id} />
+          </div>
         </div>
       </aside>
 

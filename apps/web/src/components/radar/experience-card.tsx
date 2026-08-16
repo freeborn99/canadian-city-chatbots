@@ -2,9 +2,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Compass, Star, Clock, ExternalLink, Bookmark } from 'lucide-react';
+import { Compass, Star, Clock, ExternalLink, Bookmark, Share2 } from 'lucide-react';
 import { TourExperience } from '@/lib/city-data';
 import { buildAffiliateUrl } from '@/lib/affiliate-config';
+import { useAuth } from '@/lib/auth-context';
+import { ShareButton } from '../social/share-button';
 
 interface ExperienceCardProps {
   experience: TourExperience;
@@ -23,6 +25,7 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
   onToggleSave,
   onAskAI,
 }) => {
+  const { openShareModal } = useAuth();
   const affiliateUrl = buildAffiliateUrl(experience.bookingUrl, experience.bookingPlatform, tenantId);
   return (
     <motion.div
@@ -82,6 +85,18 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
           <ExternalLink className="w-3 h-3" />
         </a>
 
+        <button
+          onClick={() => openShareModal({ 
+            title: experience.title, 
+            text: `Check out ${experience.title} by ${experience.operator}!`,
+            url: window.location.href 
+          })}
+          className="p-1.5 rounded-xl bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-cyan-300 transition-colors"
+          title="Share"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+        </button>
+
         {onToggleSave && (
           <button
             onClick={onToggleSave}
@@ -93,6 +108,11 @@ export const ExperienceCard: React.FC<ExperienceCardProps> = ({
             />
           </button>
         )}
+        <ShareButton
+          url={affiliateUrl}
+          title={experience.title}
+          text={experience.highlights.join(', ')}
+        />
       </div>
     </motion.div>
   );

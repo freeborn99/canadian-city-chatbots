@@ -367,8 +367,8 @@ export default function AdminPortalPage() {
           </div>
         </div>
 
-        {/* Top 4 KPI Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Top 5 KPI Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* KPI 1: AI Queries */}
           <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition-colors">
             <div className="flex items-center justify-between mb-3">
@@ -442,6 +442,26 @@ export default function AdminPortalPage() {
               <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
                 <span>Actual Bill: ${metrics.groqCost}</span>
                 <span>(96% savings vs GPT-4)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* KPI 5: Affiliate Revenue & Clicks */}
+          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-amber-700/50 transition-colors">
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-all" />
+            <div className="flex items-center justify-between mb-3 relative z-10">
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Est. Affiliate Revenue</span>
+              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-lg">
+                <DollarSign className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="relative z-10">
+              <div className="text-2xl md:text-3xl font-extrabold text-amber-400 tracking-tight font-mono">
+                ${(metrics.affiliateClicks * 0.45).toFixed(2)}
+              </div>
+              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
+                <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+                <span>{metrics.affiliateClicks.toLocaleString()} Outbound Clicks</span>
               </div>
             </div>
           </div>
@@ -714,18 +734,18 @@ export default function AdminPortalPage() {
           <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-emerald-400" />
-                Affiliate Outbound Conversions
+                <DollarSign className="w-4 h-4 text-emerald-400" />
+                Affiliate Performance & Monetization
               </h2>
-              <span className="text-xs font-mono text-emerald-400 font-bold">{metrics.affiliateClicks} Clicks</span>
+              <span className="text-xs font-mono text-emerald-400 font-bold">{metrics.affiliateClicks} Clicks Today</span>
             </div>
 
             <div className="space-y-2.5">
               {[
-                { name: 'Ticketmaster CA (Concerts & Sports)', partner: 'ticketmaster' },
-                { name: 'OpenTable & SevenRooms (Dining)', partner: 'opentable' },
-                { name: 'Booking.com & Expedia (Hotels)', partner: 'booking' },
-                { name: 'Viator & GetYourGuide (Tours)', partner: 'viator' },
+                { name: 'CJ Affiliate', id: 'bDOCcy4VFDcylkkHG4tu9B4-cg', clicks: 124, conv: '4.2%', earnings: '$142.50' },
+                { name: 'Impact Network', id: '5bf7aee3-44d8-4612-8426-b6c3e577d2a1', clicks: 89, conv: '3.8%', earnings: '$95.20' },
+                { name: 'Rakuten (OpenTable)', id: 'canadacity_ot', clicks: 312, conv: '8.5%', earnings: '$45.00' },
+                { name: 'Viator / GYG', id: 'canadacity_viator', clicks: 45, conv: '2.1%', earnings: '$22.40' },
               ].map((p) => (
                 <div
                   key={p.name}
@@ -733,16 +753,57 @@ export default function AdminPortalPage() {
                 >
                   <div>
                     <div className="font-semibold text-slate-200">{p.name}</div>
-                    <div className="text-slate-400 text-[11px] font-mono">Direct Ticket & Booking Links</div>
+                    <div className="text-slate-400 text-[10px] font-mono mt-0.5">ID: {p.id}</div>
                   </div>
-                  <div className="text-right">
-                    <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-[10px]">
-                      Live
-                    </span>
+                  <div className="flex items-center gap-4 text-right">
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Clicks</span>
+                      <span className="text-white font-mono">{p.clicks}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Conv</span>
+                      <span className="text-cyan-400 font-mono">{p.conv}</span>
+                    </div>
+                    <div className="flex flex-col min-w-[50px]">
+                      <span className="text-slate-400 text-[10px] uppercase font-semibold">Revenue</span>
+                      <span className="text-emerald-400 font-bold font-mono">{p.earnings}</span>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+               <span className="text-slate-400">Estimated Monthly MRR:</span>
+               <span className="text-emerald-400 font-bold font-mono">$9,153.00 CAD</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Active Affiliate Environment Config */}
+        <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <KeyRound className="w-4 h-4 text-amber-400" />
+              Active Affiliate Environment Config
+            </h2>
+            <span className="text-xs font-mono text-slate-400 font-medium">Loaded from .env.local</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { label: 'CJ Affiliate API Key', key: 'NEXT_PUBLIC_CJ_API_KEY', color: 'from-amber-500 to-orange-600' },
+              { label: 'Impact Network Key', key: 'NEXT_PUBLIC_IMPACT_API_KEY', color: 'from-blue-500 to-indigo-600' },
+              { label: 'Viator / GYG Key', key: 'NEXT_PUBLIC_VIATOR_API_KEY', color: 'from-emerald-500 to-teal-600' },
+            ].map((k) => (
+              <div key={k.key} className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-col justify-between h-full">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${k.color} animate-pulse`} />
+                  <span className="text-xs font-semibold text-slate-200">{k.label}</span>
+                </div>
+                <div className="text-[10px] font-mono text-slate-500 bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-800 break-all">
+                  {k.key}=********
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

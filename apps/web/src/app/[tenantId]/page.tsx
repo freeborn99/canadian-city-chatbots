@@ -19,6 +19,14 @@ export async function generateMetadata({ params }: TenantPageProps): Promise<Met
       title: `Chat${tenant.id.toUpperCase()} • ${tenant.name}`,
       description: tenant.tagline,
       siteName: `Chat${tenant.id.toUpperCase()}`,
+      url: `https://${tenant.domain}`,
+      type: 'website',
+      locale: 'en_CA',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Chat${tenant.id.toUpperCase()} • ${tenant.name}`,
+      description: tenant.tagline,
     },
   };
 }

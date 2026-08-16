@@ -3,10 +3,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Message } from 'ai';
-import { User, Sparkles, Copy, Check, Bot, CornerDownRight, Volume2, VolumeX, Flag } from 'lucide-react';
+import { User, Sparkles, Copy, Check, Bot, CornerDownRight, Volume2, VolumeX, Flag, ExternalLink } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 import { MarkdownRenderer } from './markdown-renderer';
 import { FeedbackModal } from '@/components/feedback/feedback-modal';
+import { buildAffiliateUrl, inferPlatformFromUrl } from '@/lib/affiliate-config';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -74,18 +75,79 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  // Helper to extract follow-up pills from response text
-  const parseFollowups = (content: string) => {
-    if (!content.includes('Quick Next Steps:')) return { mainText: content, followups: [] };
+  // Helper to extract follow-up pills and action links from response text
+  interface FollowupItem {
+    id: string;
+    text: string;
+    url?: string;
+    isLink: boolean;
+  }
+
+  const parseFollowups = (content: string): { mainText: string; followups: FollowupItem[] } => {
+    if (!content.includes('Quick Next Steps:') && !content.includes('💡')) {
+      return { mainText: content, followups: [] };
+    }
 
     const parts = content.split(/💡\s*\*\*Quick Next Steps:\*\*/i);
+    if (parts.length < 2) {
+      return { mainText: content, followups: [] };
+    }
     const mainText = parts[0].trim();
     const followupBlock = parts[1] || '';
 
-    const followups = followupBlock
+    const lines = followupBlock
       .split('\n')
       .map((line) => line.replace(/^[\s\-*•\d.]+\s*/, '').trim())
-      .filter((line) => line.length > 3 && line.length < 80);
+      .filter((line) => line.length > 2 && line.length < 150);
+
+    const followups: FollowupItem[] = [];
+
+    for (const line of lines) {
+      // Check if this line is a markdown link: [Anchor Text](https://...)
+      const mdLinkMatch = line.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+      if (mdLinkMatch) {
+        followups.push({
+          id: line,
+          text: mdLinkMatch[1].trim(),
+          url: mdLinkMatch[2].trim(),
+          isLink: true,
+        });
+        continue;
+      }
+
+      // Check if line contains a markdown link
+      const embeddedMatch = line.match(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/);
+      if (embeddedMatch) {
+        followups.push({
+          id: line,
+          text: embeddedMatch[1].trim(),
+          url: embeddedMatch[2].trim(),
+          isLink: true,
+        });
+        continue;
+      }
+
+      // Check if line is a raw URL
+      if (/^https?:\/\/[^\s]+$/.test(line)) {
+        followups.push({
+          id: line,
+          text: 'Visit Official Website',
+          url: line,
+          isLink: true,
+        });
+        continue;
+      }
+
+      // Otherwise it's a prompt suggestion
+      const cleanPrompt = line.replace(/[*_`]/g, '').trim();
+      if (cleanPrompt) {
+        followups.push({
+          id: line,
+          text: cleanPrompt,
+          isLink: false,
+        });
+      }
+    }
 
     return { mainText, followups };
   };
@@ -205,28 +267,46 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
                       {message.content}
                     </div>
                   ) : (
-                    <MarkdownRenderer content={mainText} />
+                    <MarkdownRenderer content={mainText} tenantId={tenant.id} />
                   )}
                 </div>
 
-                {/* Interactive Clickable Follow-up Action Chips */}
-                {!isUser && (
+                {/* Interactive Clickable Follow-up Action Chips & Links */}
+                {!isUser && followups.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="flex flex-wrap gap-1.5 pt-1 pl-1"
+                    className="flex flex-wrap gap-2 pt-2 pl-1"
                   >
-                    {followups.map((chip, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => onSendFollowup?.(chip)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-xs text-slate-300 hover:text-white transition-all shadow-sm group active:scale-95 cursor-pointer"
-                      >
-                        <CornerDownRight className="w-3 h-3 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
-                        <span>{chip}</span>
-                      </button>
-                    ))}
+                    {followups.map((item, idx) => {
+                      if (item.isLink && item.url) {
+                        const finalUrl = buildAffiliateUrl(item.url, inferPlatformFromUrl(item.url), tenant.id);
+                        return (
+                          <a
+                            key={idx}
+                            href={finalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/80 hover:border-cyan-400 text-xs font-semibold text-cyan-200 hover:text-white transition-all shadow-md group active:scale-95 cursor-pointer"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                            <span>{item.text}</span>
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => onSendFollowup?.(item.text)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-xs text-slate-300 hover:text-white transition-all shadow-sm group active:scale-95 cursor-pointer"
+                        >
+                          <CornerDownRight className="w-3 h-3 text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
+                          <span>{item.text}</span>
+                        </button>
+                      );
+                    })}
                   </motion.div>
                 )}
               </div>

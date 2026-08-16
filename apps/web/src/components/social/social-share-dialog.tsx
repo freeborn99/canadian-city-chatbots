@@ -11,13 +11,15 @@ interface SocialShareDialogProps {
 }
 
 export const SocialShareDialog: React.FC<SocialShareDialogProps> = ({ tenant }) => {
-  const { isShareModalOpen, closeShareModal } = useAuth();
+  const { isShareModalOpen, closeShareModal, shareData } = useAuth();
   const [copied, setCopied] = useState(false);
 
   if (!isShareModalOpen) return null;
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://chatyyc.com';
-  const shareText = `Exploring the best spots, reservations, and live tickets in ${tenant.name} with Canadian AI Hub! 🍁`;
+  const currentUrl = shareData?.url || (typeof window !== 'undefined' ? window.location.href : 'https://chatyyc.com');
+  const fallbackText = `Exploring the best spots, reservations, and live tickets in ${tenant.name} with Canadian AI Hub! 🍁`;
+  const shareText = shareData?.text || fallbackText;
+  const dialogTitle = shareData?.title || `Share ${tenant.name} Itinerary 🍁`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(currentUrl);
@@ -78,7 +80,7 @@ export const SocialShareDialog: React.FC<SocialShareDialogProps> = ({ tenant }) 
 
               <div>
                 <h3 className="text-lg font-bold text-white tracking-tight">
-                  Share {tenant.name} Itinerary 🍁
+                  {dialogTitle}
                 </h3>
                 <p className="text-xs text-slate-400">
                   Broadcast recommendations with friends & community

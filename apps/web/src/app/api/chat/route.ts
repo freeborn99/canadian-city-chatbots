@@ -173,9 +173,10 @@ export async function POST(req: Request) {
 
     // 2. Format Structured Regional Intelligence Categories
     const liveNewsFeed = (cityHub.news || [])
+      .filter((n) => n.category !== 'Culture')
       .map(
         (n, i) =>
-          `[News Story ${i + 1}]: "${n.title}"\n- Direct Article Link: [${n.title}](${n.url})\n- Source: [${n.source}](${n.url}) (${n.timeAgo})\n- Summary: ${n.summary}\n- Key Facts: ${n.expandedDetails?.keyTakeaways?.join('; ') || ''}\n- Local Impact: ${n.expandedDetails?.localImpact || ''}`
+          `[News Story ${i + 1}]: "${n.title}"\n- Direct Article Link: [${n.title}](${n.url})\n- Source Link: [${n.source}](${n.url}) (${n.timeAgo})\n- Summary: ${n.summary}\n- Key Facts: ${n.expandedDetails?.keyTakeaways?.join('; ') || ''}\n- Local Impact: ${n.expandedDetails?.localImpact || ''}\n- Action/Civic Link: ${n.expandedDetails?.relatedActionUrl ? `[${n.expandedDetails.relatedActionText || 'Official Civic Link'}](${n.expandedDetails.relatedActionUrl})` : `[Read Full Coverage on ${n.source}](${n.url})`}`
       )
       .join('\n\n');
 
@@ -237,8 +238,28 @@ export async function POST(req: Request) {
 
     // 3. Persona Tuning
     const personaGuides = {
-      insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture.',
-      news: 'Voice: Executive civic news briefing style — factual, timely, analytical, focusing on city development, policy, and breaking headlines.',
+      insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
+      news: `Voice: Executive Civic News Briefing.
+Formatting Directives (MANDATORY LINKS FOR EVERY STORY):
+- Every single news story MUST include clickable markdown links for the headline, source, and civic actions.
+- For each story, format as:
+  ### 📰 [Headline Title](Article URL)
+  *Source: [Source Name](Article URL) • Published: Time*
+
+  **Executive Summary:**
+  [1-2 clear summary sentences with embedded markdown links to relevant locations/entities]
+
+  **Key Takeaways:**
+  • [Core fact 1]
+  • [Core fact 2]
+
+  **City Impact:**
+  [What residents, transit riders, or local businesses need to know]
+
+  🔗 **Related Links:** [Read Full Coverage on Source Name](Article URL)
+
+  ---
+- Always insert a horizontal rule (---) between separate stories.`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -315,13 +336,13 @@ You MUST understand the user's specific intent and answer DIRECTLY:
 ==================================================
 🔗 MANDATORY HYPERLINKING DIRECTIVE:
 ==================================================
-- Every single entity (club, event, venue, ticket, restaurant, hotel, civic service) MUST be a clickable markdown hyperlink: [Entity Name / Action](URL).
+- In the main response body, every single entity (club, event, venue, ticket, restaurant, hotel, civic service) MUST be a clickable markdown hyperlink: [Entity Name / Action](URL).
 - Keep responses scannable, punchy, well-formatted with bold headers and bullet points.
-- At the end of every response, output 3 interactive follow-up suggestions:
+- At the end of every response, output 3 interactive follow-up suggestions (you can include direct action links [Text](URL) or follow-up question prompts):
 💡 **Quick Next Steps:**
-- [Actionable follow-up 1]
-- [Actionable follow-up 2]
-- [Actionable follow-up 3]
+- [Direct Action / Booking Link](https://...)
+- Follow-up question prompt 1
+- Follow-up question prompt 2
 
 ==================================================
 🔴 VERIFIED LIVE ${city.name.toUpperCase()} INTELLIGENCE DIRECTORY

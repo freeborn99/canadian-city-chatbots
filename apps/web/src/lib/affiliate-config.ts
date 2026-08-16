@@ -36,40 +36,67 @@ export interface AffiliateConfig {
   skipTheDishes: {
     referralCode?: string;
   };
+  cj: {
+    apiKey: string;
+  };
 }
 
 export const DEFAULT_AFFILIATE_CONFIG: AffiliateConfig = {
   openTable: {
-    partnerId: process.env.NEXT_PUBLIC_OPENTABLE_AFFILIATE_ID || 'canadacity_ot',
+    partnerId: process.env.NEXT_PUBLIC_OPENTABLE_AFFILIATE_ID || '',
     network: 'impact',
   },
   ticketmaster: {
-    affiliateId: process.env.NEXT_PUBLIC_TICKETMASTER_AFFILIATE_ID || 'canadacity_tm',
-    campaignId: process.env.NEXT_PUBLIC_TICKETMASTER_CAMPAIGN_ID || 'canadacity_shows',
+    affiliateId: process.env.NEXT_PUBLIC_TICKETMASTER_AFFILIATE_ID || '',
+    campaignId: process.env.NEXT_PUBLIC_TICKETMASTER_CAMPAIGN_ID || '',
     network: 'impact',
   },
   bookingCom: {
-    aid: process.env.NEXT_PUBLIC_BOOKING_AFFILIATE_ID || '894210', // Default / Custom AID
-    label: 'canadacity_hotels',
+    aid: process.env.NEXT_PUBLIC_BOOKING_AFFILIATE_ID || '',
+    label: '',
   },
   expedia: {
-    partnerId: process.env.NEXT_PUBLIC_EXPEDIA_AFFILIATE_ID || 'canadacity_exp',
-    camref: '1100lCan',
+    partnerId: process.env.NEXT_PUBLIC_EXPEDIA_AFFILIATE_ID || '',
+    camref: '',
   },
   viator: {
-    partnerId: process.env.NEXT_PUBLIC_VIATOR_PARTNER_ID || 'canadacity_viator',
+    partnerId: process.env.NEXT_PUBLIC_VIATOR_PARTNER_ID || '',
     subId: 'tours_radar',
   },
   getYourGuide: {
-    partnerId: process.env.NEXT_PUBLIC_GETYOURGUIDE_PARTNER_ID || 'canadacity_gyg',
+    partnerId: process.env.NEXT_PUBLIC_GETYOURGUIDE_PARTNER_ID || '',
   },
   uber: {
-    clientSecretPromo: process.env.NEXT_PUBLIC_UBER_PROMO_CODE || 'CANADACITY20',
+    clientSecretPromo: process.env.NEXT_PUBLIC_UBER_PROMO_CODE || '',
   },
   skipTheDishes: {
-    referralCode: process.env.NEXT_PUBLIC_SKIP_REFERRAL || 'CANADACITYEATS',
+    referralCode: process.env.NEXT_PUBLIC_SKIP_REFERRAL || '',
+  },
+  cj: {
+    apiKey: process.env.NEXT_PUBLIC_CJ_API_KEY || '',
   },
 };
+
+/**
+ * Automatically infers the booking platform based on the URL domain.
+ */
+export function inferPlatformFromUrl(rawUrl: string): string {
+  if (!rawUrl) return 'Direct';
+  try {
+    const hostname = new URL(rawUrl).hostname.toLowerCase();
+    if (hostname.includes('opentable')) return 'OpenTable';
+    if (hostname.includes('ticketmaster')) return 'Ticketmaster';
+    if (hostname.includes('booking.com')) return 'Booking.com';
+    if (hostname.includes('expedia')) return 'Expedia';
+    if (hostname.includes('viator')) return 'Viator';
+    if (hostname.includes('getyourguide')) return 'GetYourGuide';
+    if (hostname.includes('mirvish')) return 'Mirvish';
+    if (hostname.includes('vividseats') || hostname.includes('stubhub')) return 'CJ';
+    return 'Direct';
+  } catch {
+    return 'Direct';
+  }
+}
 
 /**
  * Universal Affiliate Link Formatter
@@ -87,47 +114,67 @@ export function buildAffiliateUrl(
 
     switch (platform) {
       case 'OpenTable':
-        url.searchParams.set('affil', DEFAULT_AFFILIATE_CONFIG.openTable.partnerId);
-        url.searchParams.set('sub_id', tenantId);
+        if (DEFAULT_AFFILIATE_CONFIG.openTable.partnerId) {
+          url.searchParams.set('affil', DEFAULT_AFFILIATE_CONFIG.openTable.partnerId);
+          url.searchParams.set('sub_id', tenantId);
+        }
         break;
 
       case 'Ticketmaster':
-        url.searchParams.set('partner', DEFAULT_AFFILIATE_CONFIG.ticketmaster.affiliateId);
-        url.searchParams.set('camref', DEFAULT_AFFILIATE_CONFIG.ticketmaster.campaignId);
-        url.searchParams.set('subId1', tenantId);
+        if (DEFAULT_AFFILIATE_CONFIG.ticketmaster.affiliateId) {
+          url.searchParams.set('partner', DEFAULT_AFFILIATE_CONFIG.ticketmaster.affiliateId);
+          url.searchParams.set('camref', DEFAULT_AFFILIATE_CONFIG.ticketmaster.campaignId || tenantId);
+          url.searchParams.set('subId1', tenantId);
+        }
         break;
 
       case 'Booking.com':
-        url.searchParams.set('aid', DEFAULT_AFFILIATE_CONFIG.bookingCom.aid);
-        url.searchParams.set('label', `${DEFAULT_AFFILIATE_CONFIG.bookingCom.label}_${tenantId}`);
+        if (DEFAULT_AFFILIATE_CONFIG.bookingCom.aid) {
+          url.searchParams.set('aid', DEFAULT_AFFILIATE_CONFIG.bookingCom.aid);
+          if (DEFAULT_AFFILIATE_CONFIG.bookingCom.label) {
+            url.searchParams.set('label', `${DEFAULT_AFFILIATE_CONFIG.bookingCom.label}_${tenantId}`);
+          }
+        }
         break;
 
       case 'Expedia':
-        url.searchParams.set('camref', DEFAULT_AFFILIATE_CONFIG.expedia.camref);
-        url.searchParams.set('subId', tenantId);
+        if (DEFAULT_AFFILIATE_CONFIG.expedia.camref) {
+          url.searchParams.set('camref', DEFAULT_AFFILIATE_CONFIG.expedia.camref);
+          url.searchParams.set('subId', tenantId);
+        }
         break;
 
-      case 'Viator':
-        url.searchParams.set('pid', DEFAULT_AFFILIATE_CONFIG.viator.partnerId);
+      case 'Viator': {
+        const partnerId = DEFAULT_AFFILIATE_CONFIG.viator.partnerId || 'bba2dead-f9fa-416b-acc8-3cc64cc6211b';
+        url.searchParams.set('pid', partnerId);
         url.searchParams.set('mcid', '42383');
         url.searchParams.set('medium', 'link');
         url.searchParams.set('sub_id', tenantId);
         break;
+      }
 
       case 'GetYourGuide':
-        url.searchParams.set('partner_id', DEFAULT_AFFILIATE_CONFIG.getYourGuide.partnerId);
-        url.searchParams.set('utm_medium', 'online_publisher');
-        url.searchParams.set('utm_source', `canadacity_${tenantId}`);
+        if (DEFAULT_AFFILIATE_CONFIG.getYourGuide.partnerId) {
+          url.searchParams.set('partner_id', DEFAULT_AFFILIATE_CONFIG.getYourGuide.partnerId);
+          url.searchParams.set('utm_medium', 'online_publisher');
+          url.searchParams.set('utm_source', tenantId);
+        }
         break;
 
+      case 'CJ': {
+        const cjKey = DEFAULT_AFFILIATE_CONFIG.cj.apiKey || 'bDOCcy4VFDcylkkHG4tu9B4-cg';
+        url.searchParams.set('publisherId', cjKey);
+        url.searchParams.set('sid', tenantId);
+        break;
+      }
+
       default:
-        url.searchParams.set('ref', `canadacity_${tenantId}`);
+        // Clean direct link without legacy query params
         break;
     }
 
     return url.toString();
   } catch {
-    // If URL parsing fails, return rawUrl as fallback
     return rawUrl;
   }
 }

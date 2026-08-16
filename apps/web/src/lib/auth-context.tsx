@@ -2,6 +2,12 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export interface ShareData {
+  title?: string;
+  text?: string;
+  url?: string;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -18,9 +24,10 @@ interface AuthContextType {
   savedPlaces: string[];
   isAuthModalOpen: boolean;
   isShareModalOpen: boolean;
+  shareData: ShareData | null;
   openAuthModal: () => void;
   closeAuthModal: () => void;
-  openShareModal: () => void;
+  openShareModal: (data?: ShareData) => void;
   closeShareModal: () => void;
   signInWithSocial: (provider: 'google' | 'github' | 'twitter' | 'apple') => Promise<void>;
   signOut: () => void;
@@ -35,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [savedPlaces, setSavedPlaces] = useState<string[]>([]);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareData, setShareData] = useState<ShareData | null>(null);
 
   // Hydrate from localStorage
   useEffect(() => {
@@ -54,8 +62,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => setIsAuthModalOpen(false);
-  const openShareModal = () => setIsShareModalOpen(true);
-  const closeShareModal = () => setIsShareModalOpen(false);
+  const openShareModal = (data?: ShareData) => {
+    if (data) setShareData(data);
+    setIsShareModalOpen(true);
+  };
+  const closeShareModal = () => {
+    setIsShareModalOpen(false);
+    setTimeout(() => setShareData(null), 300); // clear after animation
+  };
 
   const signInWithSocial = async (provider: 'google' | 'github' | 'twitter' | 'apple') => {
     // Generate simulated/real social profile based on selected provider
@@ -117,6 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         savedPlaces,
         isAuthModalOpen,
         isShareModalOpen,
+        shareData,
         openAuthModal,
         closeAuthModal,
         openShareModal,

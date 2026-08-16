@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Utensils, Ticket, Train, PhoneCall, Flame } from 'lucide-react';
+import { Utensils, Ticket, Train, PhoneCall, Flame, Newspaper } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 
-export type CivicCategory = 'all' | 'eats' | 'shows' | 'transit' | 'civic';
+export type CivicCategory = 'all' | 'eats' | 'shows' | 'transit' | 'civic' | 'overview';
 
 interface QuickCategoryBarProps {
   tenant: CityTenant;
@@ -19,6 +19,12 @@ export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
   onSelectCategory,
 }) => {
   const categories = [
+    {
+      id: 'overview' as CivicCategory,
+      label: 'News & Scores',
+      icon: Newspaper,
+      badge: 'Live',
+    },
     {
       id: 'eats' as CivicCategory,
       label: 'Eats & Resos',
@@ -39,7 +45,7 @@ export const QuickCategoryBar: React.FC<QuickCategoryBarProps> = ({
     },
     {
       id: 'civic' as CivicCategory,
-      label: 'City 311 & Services',
+      label: 'City 311',
       icon: PhoneCall,
       badge: 'Official',
     },
