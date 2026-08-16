@@ -51,13 +51,13 @@ export interface TourExperience {
   id: string;
   title: string;
   operator: string;
-  category: 'Food Tour' | 'Sightseeing' | 'Nature & Wildlife' | 'Craft Brewery' | 'Helicopter / Cruise' | 'Historic Walk';
+  category: 'Food Tour' | 'Sightseeing' | 'Nature & Wildlife' | 'Craft Brewery' | 'Helicopter / Cruise' | 'Historic Walk' | 'Ski & Alpine Resort' | 'Mountain Sightseeing';
   duration: string;
   rating: number;
   reviewCount: number;
   priceFrom: string;
   bookingUrl: string;
-  bookingPlatform: 'Viator' | 'GetYourGuide' | 'Direct';
+  bookingPlatform: 'Viator' | 'GetYourGuide' | 'SkiBig3' | 'WhistlerEpicPass' | 'MountainAdventure' | 'Direct';
   highlights: string[];
   badge: string;
 }
@@ -630,6 +630,34 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         bookingPlatform: 'Viator',
         highlights: ['Fly over Mount Assiniboine & continental divide', 'Aerial view of turquoise glacier lakes', 'Pilot audio narration'],
         badge: 'Bucket List Experience'
+      },
+      {
+        id: 'yyc-e5',
+        title: 'SkiBig3: Banff Sunshine, Lake Louise & Mt Norquay Tri-Area Pass',
+        operator: 'SkiBig3 Alberta Rockies',
+        category: 'Ski & Alpine Resort',
+        duration: 'Multi-Day / Season',
+        rating: 4.9,
+        reviewCount: 2800,
+        priceFrom: '$169 / day pass',
+        bookingUrl: 'https://www.skibig3.com',
+        bookingPlatform: 'SkiBig3',
+        highlights: ['8,000+ skiable acres across 3 iconic resorts', 'Free ski bus shuttles from Banff & Lake Louise hotels', 'Champagne dry powder with 7-month winter season'],
+        badge: 'Canada #1 Ski Pass'
+      },
+      {
+        id: 'yyc-e6',
+        title: 'Banff Gondola Summit Experience & Sulphur Mountain Boardwalk',
+        operator: 'Pursuit Banff Jasper Collection',
+        category: 'Mountain Sightseeing',
+        duration: '2 - 3 Hours',
+        rating: 4.8,
+        reviewCount: 5200,
+        priceFrom: '$68 / person',
+        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingPlatform: 'Viator',
+        highlights: ['360° Canadian Rockies panoramic summit views', 'Above-the-clouds rooftop observation deck & Sky Bistro', 'Self-guided Sulphur Mountain boardwalk trail'],
+        badge: 'Must-See Rockies Icon'
       }
     ],
     outdoors: [
@@ -1720,6 +1748,34 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         bookingPlatform: 'Viator',
         highlights: ['Water takeoff from Coal Harbour', 'Aerial views of Stanley Park & Lions Gate Bridge', 'North Shore mountain flyover'],
         badge: 'Iconic West Coast Flight'
+      },
+      {
+        id: 'yvr-e5',
+        title: 'Whistler Blackcomb Ski Resort Lift Tickets & Peak 2 Peak Gondola',
+        operator: 'Vail Resorts / Whistler Blackcomb',
+        category: 'Ski & Alpine Resort',
+        duration: 'Full Day / Multi-Day',
+        rating: 4.9,
+        reviewCount: 9400,
+        priceFrom: '$199 / day pass',
+        bookingUrl: 'https://www.whistlerblackcomb.com',
+        bookingPlatform: 'WhistlerEpicPass',
+        highlights: ['North America’s largest ski resort (8,171 acres & 200+ runs)', 'World record-breaking Peak 2 Peak 360° gondola span', 'Vibrant pedestrian alpine village with après-ski dining'],
+        badge: 'World #1 Ski Destination'
+      },
+      {
+        id: 'yvr-e6',
+        title: 'Grouse Mountain Skyride & Mountaintop Alpine Adventure',
+        operator: 'Grouse Mountain Resort',
+        category: 'Mountain Sightseeing',
+        duration: '3 - 5 Hours',
+        rating: 4.8,
+        reviewCount: 6800,
+        priceFrom: '$75 / person',
+        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingPlatform: 'Viator',
+        highlights: ['Scenic North Shore Skyride gondola ascent', 'Grizzly bear refuge & lumberjack show in summer; Night skiing in winter', 'The Observatory mountaintop dining overlooking Vancouver'],
+        badge: 'The Peak of Vancouver'
       }
     ],
     outdoors: [
@@ -4284,6 +4340,34 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         bookingPlatform: 'Viator',
         highlights: ['Salish Sea killer whales & humpback encounters', 'Marine biologist guided narration', 'Eco-certified carbon neutral tour'],
         badge: 'Canada #1 Whale Safari'
+      },
+      {
+        id: 'yyj-e3',
+        title: 'Mount Washington Alpine Resort Lift Tickets & Vancouver Island Snow Pass',
+        operator: 'Mount Washington Alpine Resort',
+        category: 'Ski & Alpine Resort',
+        duration: 'Full Day / Season',
+        rating: 4.8,
+        reviewCount: 2100,
+        priceFrom: '$119 / day pass',
+        bookingUrl: 'https://www.mountwashington.ca',
+        bookingPlatform: 'MountainAdventure',
+        highlights: ['Vancouver Island’s premier alpine playground with 1,700 acres', 'Epic coastal deep powder with Pacific Ocean views from the peaks', 'Night skiing, cross-country Nordic trails & snow tubing park'],
+        badge: 'Island Alpine Haven'
+      },
+      {
+        id: 'yyj-e4',
+        title: 'Malahat SkyWalk & Salish Sea Coastal Mountain Lookout',
+        operator: 'Malahat SkyWalk Experience',
+        category: 'Mountain Sightseeing',
+        duration: '2.5 - 3.5 Hours',
+        rating: 4.9,
+        reviewCount: 4400,
+        priceFrom: '$36 / person',
+        bookingUrl: 'https://www.viator.com/Victoria/d617-ttd',
+        bookingPlatform: 'Viator',
+        highlights: ['Walk 250 meters above sea level on spiral wooden tower', '360° views of Mount Baker, Finlayson Arm & coastal fjords', '20-meter spiral adventure slide descent'],
+        badge: 'Top Island Attraction'
       }
     ],
     outdoors: [

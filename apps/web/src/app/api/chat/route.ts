@@ -760,8 +760,60 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `\n💡 **Quick Next Steps:**\n- View top nightlife and dining spots nearby\n- Check airport transit connections\n- Find local sightseeing tours`;
           } else if (isOutdoors) {
             const isBiking = /\b(bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway)\b/i.test(q);
+            const isSkiOrMountains = /\b(ski|skiing|snowboard|snowboarding|lift ticket|lift pass|banff|lake louise|sunshine|skibig3|whistler|blackcomb|grouse|cypress|seymour|mount washington|rockies|rocky mountain|norquay|nakiska|kananaskis|mountain|mountains)\b/i.test(q);
 
-            if (city.id === 'yyc' && isBiking) {
+            if (city.id === 'yyc' && isSkiOrMountains) {
+              fallbackText = `### ⛷️ **Canadian Rockies & Calgary Ski & Mountain Guide**\n\n` +
+                `Calgary is the gateway to the world-renowned **Canadian Rocky Mountains**, with world-class skiing and alpine adventures just 60–90 minutes west:\n\n` +
+                `1. 🎿 **[SkiBig3 Tri-Area Pass: Banff Sunshine, Lake Louise & Mt Norquay](https://www.skibig3.com)**\n` +
+                `- **Terrain**: 8,000+ skiable acres, 300+ runs, and legendary light dry champagne powder.\n` +
+                `- **Highlights**: 1 unified pass gives access to **Banff Sunshine Village**, **Lake Louise Ski Resort**, and **Mt Norquay**.\n` +
+                `- **Shuttles**: Free daily ski shuttles from all Banff and Lake Louise hotels to the ski hills.\n` +
+                `- **Passes & Tickets**: [Book Official SkiBig3 Lift Tickets & Passes](https://www.skibig3.com)\n\n` +
+                `2. 🚠 **[Banff Gondola & Sulphur Mountain Boardwalk](https://www.viator.com/Calgary/d817-ttd)**\n` +
+                `- **Highlights**: 8-minute glass gondola ascent to 2,281m summit with 360° panoramic views of 6 Rocky Mountain ranges, rooftop observation deck, and Sky Bistro.\n` +
+                `- **Tickets**: [Reserve Banff Gondola Admission](https://www.viator.com/Calgary/d817-ttd)\n\n` +
+                `3. 🌲 **Kananaskis Nordic Spa & Alpine Thermal Pools**\n` +
+                `- **Highlights**: 50,000 sq ft outdoor hydrotherapy sanctuary nestled among the pines featuring eucalyptus steam rooms, cedar saunas, and warm relaxation pools.\n` +
+                `- **Location**: Kananaskis Village (45 mins from Calgary).\n\n` +
+                `4. 🚌 **Mountain Shuttles from Calgary & Airport (YYC)**:\n` +
+                `- **Brewster Express / Banff Airporter**: Direct door-to-door shuttles from YYC Airport to Banff, Canmore, and Lake Louise hotels.\n\n` +
+                `💡 **Quick Next Steps:**\n` +
+                `- [Get SkiBig3 Banff & Lake Louise Lift Tickets](https://www.skibig3.com)\n` +
+                `- [Book Brewster Express Calgary-to-Banff Mountain Shuttle](https://www.viator.com/Calgary/d817-ttd)\n` +
+                `- What are the best après-ski dinner spots in Banff and Canmore?`;
+            } else if (city.id === 'yvr' && isSkiOrMountains) {
+              fallbackText = `### 🎿 **Vancouver Coastal Mountains & Whistler Ski Guide**\n\n` +
+                `Vancouver is framed by the dramatic Pacific Coast Mountains with world-class downhill skiing, gondolas, and alpine terrain:\n\n` +
+                `1. 🏔️ **[Whistler Blackcomb Ski Resort (Epic Pass)](https://www.whistlerblackcomb.com)**\n` +
+                `- **Terrain**: North America's #1 ski resort with 8,171 acres, 200+ runs, and 16 alpine bowls.\n` +
+                `- **Highlights**: The world record-breaking **Peak 2 Peak Gondola** connecting Whistler and Blackcomb mountains, and vibrant pedestrian alpine village with world-class dining.\n` +
+                `- **Tickets & Passes**: [Get Whistler Blackcomb Lift Tickets](https://www.whistlerblackcomb.com)\n` +
+                `- **Shuttle from Downtown / YVR**: [Book Vancouver-to-Whistler Express Bus](https://www.viator.com/Vancouver/d616-ttd)\n\n` +
+                `2. 🚠 **[Grouse Mountain: The Peak of Vancouver](https://www.viator.com/Vancouver/d616-ttd)**\n` +
+                `- **Highlights**: 15 minutes from downtown Vancouver with the scenic Skyride gondola, night skiing overlooking city lights, and The Observatory fine dining.\n` +
+                `- **Admission**: [Reserve Grouse Mountain Skyride Pass](https://www.viator.com/Vancouver/d616-ttd)\n\n` +
+                `3. 🌲 **Cypress Mountain & Mount Seymour**:\n` +
+                `- **Cypress Mountain**: Official 2010 Winter Olympic venue with 53 runs and the largest cross-country skiing network in Vancouver.\n` +
+                `- **Mount Seymour**: Family-friendly alpine terrain and snow tubing park.\n\n` +
+                `💡 **Quick Next Steps:**\n` +
+                `- [Get Whistler Blackcomb Lift Tickets](https://www.whistlerblackcomb.com)\n` +
+                `- [Book Vancouver-to-Whistler Mountain Shuttle](https://www.viator.com/Vancouver/d616-ttd)\n` +
+                `- [Reserve Grouse Mountain Skyride Tickets](https://www.viator.com/Vancouver/d616-ttd)`;
+            } else if (city.id === 'yyj' && isSkiOrMountains) {
+              fallbackText = `### 🏔️ **Vancouver Island Alpine & Mountain Guide**\n\n` +
+                `Vancouver Island offers unique coastal mountain terrain with deep Pacific snowpacks and fjord lookouts:\n\n` +
+                `1. 🎿 **[Mount Washington Alpine Resort](https://www.mountwashington.ca)**\n` +
+                `- **Highlights**: Vancouver Island's premier winter playground featuring 1,700 acres of alpine terrain, night skiing, and legendary coastal deep powder with ocean views from the peaks.\n` +
+                `- **Passes & Tickets**: [Get Mount Washington Lift Passes](https://www.mountwashington.ca)\n\n` +
+                `2. 🌲 **[Malahat SkyWalk & Coastal Fjord Lookout](https://www.viator.com/Victoria/d617-ttd)**\n` +
+                `- **Highlights**: 250m elevated spiral wooden boardwalk overlooking Finlayson Arm, Mount Baker, and the Salish Sea with a 20m spiral slide descent.\n` +
+                `- **Tickets**: [Book Malahat SkyWalk Admission](https://www.viator.com/Victoria/d617-ttd)\n\n` +
+                `💡 **Quick Next Steps:**\n` +
+                `- [Get Mount Washington Alpine Resort Lift Passes](https://www.mountwashington.ca)\n` +
+                `- [Reserve Malahat SkyWalk Admission](https://www.viator.com/Victoria/d617-ttd)\n` +
+                `- What are the top nature parks around Victoria?`;
+            } else if (city.id === 'yyc' && isBiking) {
               fallbackText = `### 🚴 **Top Bike Trails & Pathways in Calgary**\n\n` +
                 `Calgary boasts over **1,000 km of paved regional pathways** and **96 km of unpaved trails** — the most extensive urban pathway network in North America!\n\n` +
                 `Here are the premier cycling routes and bike trails across Calgary:\n\n` +
