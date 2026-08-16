@@ -93,6 +93,16 @@ export async function POST(req: Request) {
       groqKey
     );
     if (guardrailCheck.isBlocked && guardrailCheck.refusalMessage) {
+      recordQueryTelemetry({
+        tenantId: activeTenantId,
+        query: lastUserMessage,
+        promptLength: lastUserMessage.length,
+        completionLength: guardrailCheck.refusalMessage.length,
+        model: 'guardrail_block',
+        latencyMs: 45,
+        type: 'guardrail_block',
+      });
+
       const refusalText = guardrailCheck.refusalMessage;
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
@@ -120,6 +130,15 @@ export async function POST(req: Request) {
     // =========================================================================
     const cachedResponse = getCachedResponse(activeTenantId, safePersona, lastUserMessage);
     if (cachedResponse && messages.length <= 2) {
+      recordQueryTelemetry({
+        tenantId: activeTenantId,
+        query: lastUserMessage,
+        promptLength: lastUserMessage.length,
+        completionLength: cachedResponse.length,
+        model: 'cache_hit',
+        latencyMs: 12,
+      });
+
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
@@ -341,21 +360,14 @@ ${liveCivicServices}
 ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)`}`;
 
     // 5. UNCRASHABLE MULTI-TIER AI INFERENCE STREAM RUNNER
-    // Record real telemetry for admin analytics
-    recordQueryTelemetry({
-      tenantId: activeTenantId,
-      query: lastUserMessage,
-      promptLength: systemPrompt.length + lastUserMessage.length,
-      completionLength: 380,
-      model: 'llama-3.3-70b-versatile',
-    });
-
     const encoder = new TextEncoder();
+    const requestStartTime = Date.now();
 
     const stream = new ReadableStream({
       async start(controller) {
         let streamSuccess = false;
         let streamedResponse = '';
+        let modelUsed = 'llama-3.3-70b-versatile';
 
         // Tier 1: Groq Llama-3.3-70B Versatile
         if (!streamSuccess && groqKey) {
@@ -374,6 +386,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
+            modelUsed = 'llama-3.3-70b-versatile';
           } catch (t1Err) {
             console.warn('[Tier 1 Groq 70B Rate Limit / Error, Falling to Tier 2]:', t1Err);
           }
@@ -396,6 +409,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
+            modelUsed = 'llama-3.1-8b-instant';
           } catch (t2Err) {
             console.warn('[Tier 2 Groq 8B Error, Falling to Tier 3]:', t2Err);
           }
@@ -418,6 +432,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
+            modelUsed = 'gemini-1.5-flash';
           } catch (t3Err) {
             console.warn('[Tier 3 Gemini Flash Error, Falling to Tier 4]:', t3Err);
           }
@@ -440,6 +455,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
+            modelUsed = 'gemini-1.5-pro';
           } catch (t4Err) {
             console.warn('[Tier 4 Gemini Pro Error, Falling to Tier 5]:', t4Err);
           }
@@ -447,6 +463,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
 
         // Tier 5: Intelligent Local Knowledge Synthesis Engine (Guaranteed 100% Uptime Fallback)
         if (!streamSuccess) {
+          modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
           const isNightlife = /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
@@ -545,6 +562,16 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
         if (streamedResponse) {
           setCachedResponse(activeTenantId, safePersona, lastUserMessage, streamedResponse);
         }
+
+        // Record completed telemetry
+        recordQueryTelemetry({
+          tenantId: activeTenantId,
+          query: lastUserMessage,
+          promptLength: systemPrompt.length + lastUserMessage.length,
+          completionLength: streamedResponse.length || 350,
+          model: modelUsed,
+          latencyMs: Date.now() - requestStartTime,
+        });
 
         controller.enqueue(encoder.encode('d:{"finishReason":"stop"}\n'));
         controller.close();

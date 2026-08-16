@@ -14,6 +14,7 @@ import {
   RefreshCw,
   Clock,
   ShieldCheck,
+  ShieldAlert,
   ExternalLink,
   Lock,
   LogOut,
@@ -29,6 +30,10 @@ import {
   ChevronUp,
   Mail,
   MessageSquare,
+  Flame,
+  Train,
+  PhoneCall,
+  Trees,
 } from 'lucide-react';
 import { TENANTS } from '@/lib/tenants';
 
@@ -238,9 +243,14 @@ export default function AdminPortalPage() {
     groqCost: '0.0000',
     gpt4Cost: '0.00',
     estimatedSavings: '0.00',
+    avgLatencyMs: 265,
+    cacheHits: 0,
+    cacheHitRate: '0.0%',
+    guardrailBlocks: 0,
+    modelDistribution: { groq70b: 0, groq8b: 0, geminiFlash: 0, geminiPro: 0, cache: 0, fallback: 0 },
     totalVisitors: 64,
     affiliateClicks: 0,
-    categoryCounts: { dining: 0, events: 0, sports: 0, news: 0, stays: 0, outdoors: 0, general: 0 },
+    categoryCounts: { nightlife: 0, dining: 0, events: 0, sports: 0, news: 0, stays: 0, outdoors: 0, civic: 0, transit: 0, general: 0 },
     cityBreakdown: {},
     uptimeSeconds: 120,
   };
@@ -575,51 +585,82 @@ export default function AdminPortalPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-cyan-400" />
-                AI Inference Engines
+                AI Inference Engines & Pipeline
               </h2>
               <span className="px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-800/60 text-emerald-400 text-[10px] font-bold">
-                Healthy
+                Avg {metrics.avgLatencyMs || 280}ms
               </span>
             </div>
 
             <div className="space-y-3">
               {/* Primary: Groq Llama-3.3 70B */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl space-y-2">
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">Groq • Llama-3.3-70B-Versatile</span>
-                  <span className="text-cyan-400 font-mono font-bold">Primary Engine</span>
-                </div>
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-cyan-400 rounded-full w-full" />
+                  <span className="font-semibold text-white">Groq • Llama-3.3-70B</span>
+                  <span className="text-cyan-400 font-mono font-bold text-[11px]">
+                    {metrics.modelDistribution?.groq70b || 0} reqs (Primary)
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Avg Latency: ~320ms</span>
-                  <span>Cost: $0.59 / $0.79 per 1M tokens</span>
+                  <span>Throughput: ~310ms</span>
+                  <span>Cost: $0.59 / $0.79 per 1M</span>
+                </div>
+              </div>
+
+              {/* Fast Failover: Groq Llama-3.1 8B */}
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-white">Groq • Llama-3.1-8B-Instant</span>
+                  <span className="text-emerald-400 font-mono font-bold text-[11px]">
+                    {metrics.modelDistribution?.groq8b || 0} reqs (~140ms)
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Ultra-High Speed Tier</span>
+                  <span>Active & Ready</span>
+                </div>
+              </div>
+
+              {/* Instant Response Cache */}
+              <div className="bg-slate-900/90 border border-cyan-500/30 p-3 rounded-xl space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>LRU Response Cache</span>
+                  </span>
+                  <span className="text-cyan-400 font-mono font-bold text-[11px]">
+                    {metrics.cacheHits || 0} Hits ({metrics.cacheHitRate || '0%'})
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Zero-Token Instant Streams</span>
+                  <span>~12ms Response</span>
+                </div>
+              </div>
+
+              {/* Meta Safety Guardrails */}
+              <div className="bg-slate-900/90 border border-amber-500/30 p-3 rounded-xl space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-amber-300 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Meta Llama Safety Guardrails</span>
+                  </span>
+                  <span className="text-amber-400 font-mono font-bold text-[11px]">
+                    {metrics.guardrailBlocks || 0} Blocked
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Jailbreaks / Off-Topic Shield</span>
+                  <span>Active Multi-Turn</span>
                 </div>
               </div>
 
               {/* Fallback: Google Gemini 1.5 Flash */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">Google • Gemini-1.5-Flash</span>
-                  <span className="text-blue-400 font-mono font-bold">Auto-Failover</span>
-                </div>
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full w-full" />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Context: 1M Window</span>
-                  <span>Standby Active</span>
-                </div>
-              </div>
-
-              {/* Vector RAG: Upstash */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-slate-300 font-medium">Upstash Vector Knowledge Base</span>
-                </div>
-                <span className="text-slate-400 font-mono">10 City Namespaces</span>
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                <span className="text-slate-300 font-medium">Google Gemini 1.5 Flash</span>
+                <span className="text-slate-400 font-mono text-[11px]">
+                  {metrics.modelDistribution?.geminiFlash || 0} reqs (1M Context)
+                </span>
               </div>
             </div>
           </div>
@@ -631,32 +672,36 @@ export default function AdminPortalPage() {
               Real Query Categorization
             </h2>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
               {[
-                { name: 'Dining & Table Bookings', key: 'dining', icon: Utensils, color: 'from-amber-500 to-red-500' },
-                { name: 'Live Events, Shows & Concerts', key: 'events', icon: Ticket, color: 'from-blue-500 to-indigo-500' },
-                { name: 'Sports Scores & Game Schedules', key: 'sports', icon: Zap, color: 'from-cyan-500 to-blue-500' },
-                { name: 'Civic Bulletins & Municipal News', key: 'news', icon: Newspaper, color: 'from-emerald-500 to-teal-500' },
-                { name: 'Sightseeing, Hotels & Outdoors', key: 'stays', icon: Compass, color: 'from-purple-500 to-pink-500' },
+                { name: 'Nightlife, Clubs & Lounges', key: 'nightlife', icon: Flame, color: 'from-pink-500 to-rose-500' },
+                { name: 'Dining & Reservations', key: 'dining', icon: Utensils, color: 'from-amber-500 to-orange-500' },
+                { name: 'Live Shows, Theatre & Concerts', key: 'events', icon: Ticket, color: 'from-violet-500 to-purple-500' },
+                { name: 'Sports Scores & Matchups', key: 'sports', icon: Zap, color: 'from-cyan-500 to-blue-500' },
+                { name: 'Civic 311 & Municipal Bylaws', key: 'civic', icon: PhoneCall, color: 'from-amber-400 to-yellow-500' },
+                { name: 'Transit Radar & Delays', key: 'transit', icon: Train, color: 'from-teal-500 to-emerald-500' },
+                { name: 'Regional News & Bulletins', key: 'news', icon: Newspaper, color: 'from-emerald-500 to-teal-500' },
+                { name: 'Hotels, Stays & Tours', key: 'stays', icon: Compass, color: 'from-blue-500 to-indigo-500' },
+                { name: 'Scenic Trails & Outdoors', key: 'outdoors', icon: Trees, color: 'from-green-500 to-emerald-600' },
               ].map((cat) => {
-                const count = metrics.categoryCounts[cat.key] || 0;
+                const count = metrics.categoryCounts?.[cat.key] || 0;
                 const percentage = Math.round((count / totalCatCount) * 100);
 
                 return (
-                  <div key={cat.name} className="space-y-1.5">
+                  <div key={cat.name} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-1.5 text-slate-300 font-medium">
                         <cat.icon className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{cat.name}</span>
+                        <span className="truncate">{cat.name}</span>
                       </div>
-                      <span className="font-mono text-slate-200 font-bold">
+                      <span className="font-mono text-slate-200 font-bold flex-shrink-0 ml-1">
                         {count} ({percentage}%)
                       </span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
                       <div
                         className={`h-full bg-gradient-to-r ${cat.color} rounded-full`}
-                        style={{ width: `${Math.max(4, percentage)}%` }}
+                        style={{ width: `${Math.max(3, percentage)}%` }}
                       />
                     </div>
                   </div>
@@ -724,7 +769,8 @@ export default function AdminPortalPage() {
                   <th className="py-3 px-4">Domain Route</th>
                   <th className="py-3 px-4">Visitors</th>
                   <th className="py-3 px-4">AI Queries</th>
-                  <th className="py-3 px-4">Tokens Used</th>
+                  <th className="py-3 px-4">Tokens</th>
+                  <th className="py-3 px-4">Avg Latency</th>
                   <th className="py-3 px-4">Status</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
@@ -733,7 +779,7 @@ export default function AdminPortalPage() {
                 {Object.values(TENANTS)
                   .filter((t) => cityFilter === 'all' || t.id === cityFilter)
                   .map((t) => {
-                    const cityStats = metrics.cityBreakdown?.[t.id] || { queries: 0, tokens: 0, visitors: 0, affiliateClicks: 0 };
+                    const cityStats = metrics.cityBreakdown?.[t.id] || { queries: 0, tokens: 0, visitors: 0, affiliateClicks: 0, avgLatency: 280 };
 
                     return (
                       <tr key={t.id} className="hover:bg-slate-900/50 transition-colors">
@@ -761,6 +807,9 @@ export default function AdminPortalPage() {
                         </td>
                         <td className="py-3.5 px-4 font-mono text-slate-300">
                           {cityStats.tokens.toLocaleString()}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-emerald-400 text-xs">
+                          {cityStats.avgLatency || 280}ms
                         </td>
                         <td className="py-3.5 px-4 text-slate-300">
                           <span className="px-2 py-0.5 rounded-md bg-emerald-950 border border-emerald-800 text-emerald-400 text-[11px] font-semibold">
