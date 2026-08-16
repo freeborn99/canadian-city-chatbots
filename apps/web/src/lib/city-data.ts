@@ -1,4 +1,5 @@
 import liveNewsFeed from '../data/live-news.json';
+import liveHotspotsFeed from '../data/live-hotspots.json';
 
 export interface RestaurantHighlight {
   id: string;
@@ -4642,9 +4643,17 @@ export function getCityHubData(tenantId: string): CityHubData {
   
   // Merge live scraped news if it exists
   const liveNews = (liveNewsFeed as any)[tenantId] || [];
-  
+
+  // Merge dynamic live hotspot items if available
+  const dynamicHotspots = (liveHotspotsFeed as any)?.tenants?.[tenantId] || null;
+
+  const mergedTransit = dynamicHotspots?.transitLines?.length 
+    ? [...dynamicHotspots.transitLines, ...data.transitLines]
+    : data.transitLines;
+
   return {
     ...data,
-    news: [...liveNews, ...data.news].slice(0, 10)
+    news: [...liveNews, ...data.news].slice(0, 10),
+    transitLines: mergedTransit.slice(0, 5)
   };
 }

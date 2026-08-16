@@ -1,0 +1,177 @@
+{
+  "updatedAt": "2026-08-16T13:53:43.452Z",
+  "version": "1.0",
+  "totalTenants": 10,
+  "tenants": {
+    "yyc": {
+      "tenantId": "yyc",
+      "cityName": "Calgary",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yyc-dyn-t1",
+          "lineName": "Calgary Rapid Transit Core",
+          "systemName": "Calgary Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 1
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yyz": {
+      "tenantId": "yyz",
+      "cityName": "Toronto",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yyz-dyn-t1",
+          "lineName": "Toronto Rapid Transit Core",
+          "systemName": "Toronto Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 8
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yvr": {
+      "tenantId": "yvr",
+      "cityName": "Vancouver",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yvr-dyn-t1",
+          "lineName": "Vancouver Rapid Transit Core",
+          "systemName": "Vancouver Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 3
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yul": {
+      "tenantId": "yul",
+      "cityName": "Montreal",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yul-dyn-t1",
+          "lineName": "Montreal Rapid Transit Core",
+          "systemName": "Montreal Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 2
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yeg": {
+      "tenantId": "yeg",
+      "cityName": "Edmonton",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yeg-dyn-t1",
+          "lineName": "Edmonton Rapid Transit Core",
+          "systemName": "Edmonton Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 6
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yow": {
+      "tenantId": "yow",
+      "cityName": "Ottawa",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yow-dyn-t1",
+          "lineName": "Ottawa Rapid Transit Core",
+          "systemName": "Ottawa Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 3
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "ywg": {
+      "tenantId": "ywg",
+      "cityName": "Winnipeg",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "ywg-dyn-t1",
+          "lineName": "Winnipeg Rapid Transit Core",
+          "systemName": "Winnipeg Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 3
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yhz": {
+      "tenantId": "yhz",
+      "cityName": "Halifax",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yhz-dyn-t1",
+          "lineName": "Halifax Rapid Transit Core",
+          "systemName": "Halifax Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 6
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yyj": {
+      "tenantId": "yyj",
+      "cityName": "Victoria",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yyj-dyn-t1",
+          "lineName": "Victoria Rapid Transit Core",
+          "systemName": "Victoria Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 6
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    },
+    "yyt": {
+      "tenantId": "yyt",
+      "cityName": "St. John's",
+      "lastRefreshed": "2026-08-16T13:53:43.452Z",
+      "transitLines": [
+        {
+          "id": "yyt-dyn-t1",
+          "lineName": "St. John's Rapid Transit Core",
+          "systemName": "St. John's Transit Service",
+          "status": "Normal Service",
+          "statusColor": "emerald",
+          "details": "All main line trains and express buses running on regular 4-6 minute peak headway frequency.",
+          "updatedMinutesAgo": 3
+        }
+      ],
+      "activeDynamicEventsCount": 8
+    }
+  }
+}

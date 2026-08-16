@@ -1,0 +1,38 @@
+name: Daily Dynamic Hotspot Refresh & Expiration Pipeline
+
+on:
+  schedule:
+    # Runs daily at 4:00 AM MST / 6:00 AM EST (11:00 UTC)
+    - cron: '0 11 * * *'
+  workflow_dispatch: # Allows instant manual trigger anytime from GitHub Actions UI
+
+jobs:
+  refresh-hotspots:
+    name: Refresh Dynamic City Hotspots & Purge Expired
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to commit updated live-hotspots.json back
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Dynamic Hotspot Refresh & Expiration Engine
+        run: node scripts/refresh-hotspots.js
+
+      - name: Commit and push updated live hotspots data
+        run: |
+          git config --global user.name "Hotspots Daily Bot"
+          git config --global user.email "bot@canadiancitychatbots.com"
+          git add apps/web/src/data/live-hotspots.json
+          git commit -m "chore: daily dynamic hotspot refresh & expired purge [skip ci]" || echo "No changes to commit"
+          git push
