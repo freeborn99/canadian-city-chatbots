@@ -486,6 +486,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
         if (!streamSuccess) {
           modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
+          const isTransit = /\b(train|trains|ctrain|subway|metro|bus|buses|transit|station|stations|schedule|schedules|route|routes|commute|lrt|skytrain|rem|ferry|line|lines|fare|fares|chinook|chinnok|tuscan|somerset|brentwood|stampede|crowfoot|saddletowne|dalhousie|sunnyside|erlton|heritage|southland|anderson|canyon meadows|fish creek|shawnessy|bridlewood|lion’s park|saith|banff trail|university|whitehorn|rundle|marlborough|franklin|barlow|max)\b/i.test(q);
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
           const isNightlife = /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
           const isAnimal = /\b(animal|dog|cat|pet|bite|aggressive|loose)\b/.test(q);
@@ -498,7 +499,51 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
 
           let fallbackText = '';
 
-          if (isOffTopic) {
+          if (isTransit) {
+            const transitName = city.id === 'yyc' ? 'Calgary Transit (CTrain & Bus)' :
+              city.id === 'yyz' ? 'TTC (Subway, Streetcar & Bus)' :
+              city.id === 'yvr' ? 'TransLink (SkyTrain, SeaBus & Bus)' :
+              city.id === 'yul' ? 'STM (Métro & Bus) and REM' :
+              city.id === 'yeg' ? 'ETS (Valley & Capital Line LRT)' :
+              city.id === 'yow' ? 'OC Transpo (O-Train & Transitway)' :
+              city.id === 'ywg' ? 'Winnipeg Transit (BLUE Rapid Transit)' :
+              city.id === 'yhz' ? 'Halifax Transit (Ferries & Express Buses)' :
+              city.id === 'yyj' ? 'BC Transit (Victoria Region)' : 'Metrobus Transit';
+
+            const primaryTransitUrl = city.id === 'yyc' ? 'https://www.calgarytransit.com' :
+              city.id === 'yyz' ? 'https://www.ttc.ca' :
+              city.id === 'yvr' ? 'https://www.translink.ca' :
+              city.id === 'yul' ? 'https://www.stm.info' :
+              city.id === 'yeg' ? 'https://www.edmonton.ca/edmonton-transit-system-ets' :
+              city.id === 'yow' ? 'https://www.octranspo.com' :
+              city.id === 'ywg' ? 'https://winnipegtransit.com' :
+              city.id === 'yhz' ? 'https://www.halifax.ca/transportation/halifax-transit' :
+              city.id === 'yyj' ? 'https://www.bctransit.com/victoria' : 'https://www.metrobus.com';
+
+            fallbackText = `### 🚇 **${city.name} Transit & Train Schedules**\n\n` +
+              `Here is the latest service and schedule guide for **${transitName}**:\n\n` +
+              (city.id === 'yyc' ? 
+                `📍 **CTrain Red Line (Tuscany ↔ Somerset-Bridlewood)**:\n` +
+                `- **Chinook Station**: Located at 61st Ave SW with a direct covered pedestrian skywalk to CF Chinook Centre.\n` +
+                `- **Frequency**: Every **4 to 7 minutes** during rush hours; every **10 to 15 minutes** off-peak and evenings.\n` +
+                `- **Operating Hours**: ~4:30 AM to 1:30 AM daily.\n` +
+                `- **Downtown Free Fare Zone**: Free rides along 7th Avenue between 3rd St East and 11th St West.\n` +
+                `- **Live Next Train Tracker**: [Check Live Schedules on Calgary Transit](${primaryTransitUrl})\n\n` :
+                `📍 **Live Service Status & Schedules**:\n` +
+                `- Trains and rapid transit lines operate every **3 to 10 minutes** throughout the day.\n` +
+                `- [Check Live Schedules on ${transitName}](${primaryTransitUrl})\n\n`) +
+              `🎟️ **Fares & Passes**:\n` +
+              `- Regular single adult fare: **$3.70** (valid for 90 minutes with unlimited transfers).\n` +
+              `- Day Pass: **$11.60**.\n` +
+              `- Pay via contactless credit/debit card tap at all station fare gates or mobile transit app.\n\n` +
+              (cityHub.transitLines?.length > 0 ? 
+                `⚡ **Live System Status**:\n` +
+                cityHub.transitLines.map(t => `- **${t.lineName}**: ${t.status} — *${t.details}*`).join('\n') + '\n\n' : '') +
+              `💡 **Quick Next Steps:**\n` +
+              `- [Plan Route on ${city.name} Transit Portal](${primaryTransitUrl})\n` +
+              `- What are the parking options at ${city.name} train stations?\n` +
+              `- How do I take transit to the airport from downtown?`;
+          } else if (isOffTopic) {
             fallbackText = `🍁 **Chat${city.id.toUpperCase()} is dedicated exclusively to ${city.name}, ${city.province} and the ${city.metroArea}.**\n\n` +
               `I can't assist with general coding, homework, or cities outside our Canadian region, but I would love to help you discover ${city.name}!\n\n` +
               `💡 **Explore ${city.name} Instead:**\n` +
