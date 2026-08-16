@@ -26,6 +26,10 @@ export interface CityTenant {
   starterPrompts: StarterPrompt[];
   landmarks: string[];
   sampleTrivia: string;
+  contactEmail?: string;
+  newsEmail?: string;
+  partnersEmail?: string;
+  pressEmail?: string;
 }
 
 export const DOMAIN_TO_TENANT_MAP: Record<string, { id: string; name: string; colorTheme: string }> = {
@@ -574,13 +578,24 @@ export const TENANTS: Record<string, CityTenant> = {
   },
 };
 
+function enrichTenant(tenant: any): CityTenant {
+  return {
+    ...tenant,
+    contactEmail: tenant.contactEmail || `hello@${tenant.domain}`,
+    newsEmail: tenant.newsEmail || `news@${tenant.domain}`,
+    partnersEmail: tenant.partnersEmail || `partners@${tenant.domain}`,
+    pressEmail: tenant.pressEmail || `press@${tenant.domain}`,
+  };
+}
+
 export const DEFAULT_TENANT_ID = 'yyz';
-export const DEFAULT_TENANT = TENANTS[DEFAULT_TENANT_ID];
+export const DEFAULT_TENANT = enrichTenant(TENANTS[DEFAULT_TENANT_ID]);
 
 export function getTenantById(id?: string | null): CityTenant {
   if (!id) return DEFAULT_TENANT;
   const cleanId = id.toLowerCase().trim();
-  return TENANTS[cleanId] || DEFAULT_TENANT;
+  const raw = TENANTS[cleanId] || TENANTS[DEFAULT_TENANT_ID];
+  return enrichTenant(raw);
 }
 
 export function getTenantByHost(host?: string | null): CityTenant {
@@ -597,12 +612,12 @@ export function getTenantByHost(host?: string | null): CityTenant {
   // Check if subdomain contains tenant id (e.g. yvr.localhost, yyc.vercel.app)
   const subdomain = cleanHost.split('.')[0];
   if (TENANTS[subdomain]) {
-    return TENANTS[subdomain];
+    return enrichTenant(TENANTS[subdomain]);
   }
 
   return DEFAULT_TENANT;
 }
 
 export function getAllTenants(): CityTenant[] {
-  return Object.values(TENANTS);
+  return Object.values(TENANTS).map(enrichTenant);
 }

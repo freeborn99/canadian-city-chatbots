@@ -779,6 +779,64 @@ export default function AdminPortalPage() {
           </div>
         </div>
 
+        {/* Regional Email Forwarding & Routing Directory */}
+        <div className="glass-panel border border-cyan-500/30 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <Mail className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  Regional Email Forwarding &amp; Routing Directory
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold">
+                    10 Hubs Active
+                  </span>
+                </h2>
+                <p className="text-xs text-slate-400">All inbound emails route through Porkbun MX &amp; SPF forwarding to primary inbox</p>
+              </div>
+            </div>
+            <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 flex items-center gap-2">
+              <span className="text-slate-500">Destination:</span>
+              <strong className="text-cyan-300 font-mono">chatadmin@casayoung.com</strong>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Object.values(TENANTS).map((t) => (
+              <div key={t.id} className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700 transition-colors space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${t.gradientClass}`} />
+                    <span className="text-xs font-bold text-white">{t.name}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">({t.id})</span>
+                  </div>
+                  <span className="text-[10px] text-emerald-400 font-mono font-medium">MX LIVE</span>
+                </div>
+
+                <div className="space-y-1 text-[11px]">
+                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
+                    <span className="text-slate-500">Inquiries:</span>
+                    <a href={`mailto:hello@${t.domain}`} className="font-mono text-cyan-400 hover:underline">hello@{t.domain}</a>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
+                    <span className="text-slate-500">Partners:</span>
+                    <a href={`mailto:partners@${t.domain}`} className="font-mono text-cyan-400 hover:underline">partners@{t.domain}</a>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
+                    <span className="text-slate-500">News Tips:</span>
+                    <a href={`mailto:news@${t.domain}`} className="font-mono text-cyan-400 hover:underline">news@{t.domain}</a>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
+                    <span className="text-slate-500">Press:</span>
+                    <a href={`mailto:press@${t.domain}`} className="font-mono text-cyan-400 hover:underline">press@{t.domain}</a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Active Affiliate Environment Config */}
         <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
           <div className="flex items-center justify-between">

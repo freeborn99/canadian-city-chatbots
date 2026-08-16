@@ -240,6 +240,17 @@ export function FeedbackModal({
               </div>
             )}
 
+            {/* Direct Regional Email Link */}
+            <div className="text-center pt-1 text-[11px] text-slate-500">
+              Prefer direct email?{' '}
+              <a
+                href={`mailto:hello@chat${tenantId.toLowerCase()}.com`}
+                className="text-cyan-400 hover:text-cyan-300 underline font-medium"
+              >
+                hello@chat{tenantId.toLowerCase()}.com
+              </a>
+            </div>
+
             {/* Action Buttons */}
             <div className="flex items-center justify-end gap-2.5 pt-2">
               <button

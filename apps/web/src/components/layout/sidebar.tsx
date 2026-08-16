@@ -192,8 +192,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Footer info & Admin link */}
-        <div className="p-4 border-t border-slate-800/60 bg-slate-950/40 space-y-2">
+        {/* Footer info, Regional Contact & Admin link */}
+        <div className="p-4 border-t border-slate-800/60 bg-slate-950/40 space-y-2.5">
+          {/* Regional Contact Links */}
+          <div className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1.5">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              {tenant.name} Regional Desk
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 pt-0.5">
+              <a
+                href={`mailto:${tenant.contactEmail}`}
+                className="px-2 py-1 rounded-lg bg-slate-800/90 hover:bg-cyan-950/80 border border-slate-700/60 hover:border-cyan-700/60 text-[11px] text-slate-300 hover:text-cyan-200 transition-colors flex items-center gap-1.5 truncate"
+                title={`Email General Inquiries: ${tenant.contactEmail}`}
+              >
+                <span>✉️ Hello</span>
+              </a>
+              <a
+                href={`mailto:${tenant.partnersEmail}`}
+                className="px-2 py-1 rounded-lg bg-slate-800/90 hover:bg-cyan-950/80 border border-slate-700/60 hover:border-cyan-700/60 text-[11px] text-slate-300 hover:text-cyan-200 transition-colors flex items-center gap-1.5 truncate"
+                title={`Email Local Partners & Ads: ${tenant.partnersEmail}`}
+              >
+                <span>🤝 Partners</span>
+              </a>
+            </div>
+            <div className="pt-0.5">
+              <a
+                href={`mailto:${tenant.newsEmail}`}
+                className="w-full px-2 py-1 rounded-lg bg-slate-800/70 hover:bg-cyan-950/80 border border-slate-700/50 hover:border-cyan-700/60 text-[10px] text-slate-400 hover:text-cyan-200 transition-colors flex items-center justify-between"
+                title={`Send News Tips: ${tenant.newsEmail}`}
+              >
+                <span>📰 Submit News Tip</span>
+                <span className="font-mono text-[9px] text-slate-500">{tenant.newsEmail}</span>
+              </a>
+            </div>
+          </div>
+
           <Link
             href="/admin"
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition-all group"
