@@ -487,6 +487,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
           const isTransit = /\b(train|trains|ctrain|subway|metro|bus|buses|transit|station|stations|schedule|schedules|route|routes|commute|lrt|skytrain|rem|ferry|line|lines|fare|fares|chinook|chinnok|tuscan|somerset|brentwood|stampede|crowfoot|saddletowne|dalhousie|sunnyside|erlton|heritage|southland|anderson|canyon meadows|fish creek|shawnessy|bridlewood|lion’s park|saith|banff trail|university|whitehorn|rundle|marlborough|franklin|barlow|max)\b/i.test(q);
+          const isLandmarkOrArea = /\b(calgary tower|cn tower|tower|towers|stephen ave|stephen avenue|17th ave|17th avenue|kensington|inglewood|east village|mission|bridgeland|chinook|eau claire|prince's island|saddledome|rogers place|scotiabank arena|bell centre|granville|yaletown|gastown|stanley park|byward|parliament|the forks|old montreal|vieux-montr|waterfront|peggy's cove|signal hill|inner harbour|downtown|what is happening|what's happening|right now|happening around|things to do|going on|attraction|attractions|landmark|landmarks)\b/i.test(q);
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
           const isNightlife = /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
           const isAnimal = /\b(animal|dog|cat|pet|bite|aggressive|loose)\b/.test(q);
@@ -549,12 +550,54 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- [Open Live ${city.name} Transit Schedule Tracker](${primaryTransitUrl})\n` +
               `- What are the connecting bus routes from Chinook Station?\n` +
               `- How do I take transit to the airport from downtown?`;
+          } else if (isLandmarkOrArea) {
+            const isTower = /\b(tower|calgary tower|cn tower|observation deck)\b/i.test(q);
+            const district = city.nightlifeDistricts?.[0] || 'Downtown';
+
+            if (city.id === 'yyc' && isTower) {
+              fallbackText = `### 🗼 **What’s Happening Around Calgary Tower Right Now**\n\n` +
+                `Here is your real-time guide to the **Calgary Tower** and the surrounding **Stephen Avenue & Downtown Arts District**:\n\n` +
+                `📍 **At the Calgary Tower (101 9th Ave SW)**:\n` +
+                `- **Observation Deck**: 191-meter 360° panoramic views of the Canadian Rockies and city skyline with a glass-floor walkway. Open daily until 10:00 PM.\n` +
+                `- **[SKY 360 Revolving Restaurant](https://www.sky360.ca)**: Revolving fine-dining at the top of the tower offering Alberta beef, craft cocktails, and sunset views.\n` +
+                `- **Ruth’s Chris Steak House**: Located at the base of the tower for steak dinners and wine.\n\n` +
+                `🎭 **Happening Steps Away on Stephen Avenue & Arts Commons**:\n` +
+                `- **[Arts Commons & Jack Singer Concert Hall](https://www.artscommons.ca)** (2 blocks east): Home to the Calgary Philharmonic Orchestra, Broadway Across Canada, and live stage theatre.\n` +
+                `- **Stephen Avenue Pedestrian Mall (8th Ave SW)**: Historic sandstone boulevard packed with street musicians, public art installations, and heated outdoor patios.\n` +
+                `- **[Glenbow at The Edison](https://www.glenbow.org)**: Contemporary Canadian exhibitions.\n\n` +
+                `🍸 **Top Dining & Speakeasies Nearby**:\n` +
+                `- **[Major Tom Bar](https://www.majortombar.ca)** (40th Floor Scotia Centre, 2 blocks west): Canada’s #1 dining room and sunset cocktail lounge.\n` +
+                `- **[Sub Rosa](https://www.subrosayyc.com)** (8th Ave SW): Underground historic vault cocktail sanctuary.\n` +
+                `- **[The Derrick Gin Mill & Kitchen](https://www.thederrickyyc.com)**: Craft gin flights and elevated gastropub fare.\n\n` +
+                `🚇 **Getting There & Transit**:\n` +
+                `- 1 block south of **Centre Street CTrain Station** (Free within the Downtown Free Fare Zone).\n\n` +
+                `💡 **Quick Next Steps:**\n` +
+                `- [Reserve Table at SKY 360 on Calgary Tower](https://www.sky360.ca)\n` +
+                `- What are the top dinner spots on Stephen Avenue tonight?\n` +
+                `- What live shows are playing at Arts Commons this weekend?`;
+            } else {
+              fallbackText = `### 🏙️ **What’s Happening Around ${city.name} Right Now**\n\n` +
+                `Here is what is currently active around **${district}** and key city landmarks:\n\n` +
+                (cityHub.shows?.length > 0 ? 
+                  `🎭 **Live Shows & Box Office**:\n` +
+                  cityHub.shows.slice(0, 2).map(s => `- **[${s.title}](${s.ticketUrl})** at ${s.venue} (${s.dates})`).join('\n') + '\n\n' : '') +
+                (cityHub.restaurants?.length > 0 ? 
+                  `🍽️ **Trending Dining & Tables**:\n` +
+                  cityHub.restaurants.slice(0, 2).map(r => `- **[${r.name}](${r.reservationUrl})** (${r.neighborhood}): *${r.signatureDish}* • ⭐${r.rating}`).join('\n') + '\n\n' : '') +
+                (cityHub.nightlife?.length > 0 ? 
+                  `🍸 **Top Nightlife & Lounges**:\n` +
+                  cityHub.nightlife.slice(0, 2).map(n => `- **[${n.name}](${n.guestlistUrl})** (${n.neighborhood}): ${n.vibe}`).join('\n') + '\n\n' : '') +
+                `💡 **Quick Next Steps:**\n` +
+                `- Explore top cocktail lounges in ${district}\n` +
+                `- Find dinner spots with available tables near downtown\n` +
+                `- Check real-time transit schedules in ${city.name}`;
+            }
           } else if (isOffTopic) {
             fallbackText = `🍁 **Chat${city.id.toUpperCase()} is dedicated exclusively to ${city.name}, ${city.province} and the ${city.metroArea}.**\n\n` +
               `I can't assist with general coding, homework, or cities outside our Canadian region, but I would love to help you discover ${city.name}!\n\n` +
-              `💡 **Explore ${city.name} Instead:**\n` +
-              `- What are the top nightclubs and cocktail lounges in ${city.name} tonight?\n` +
-              `- Recommend the best dinner spots with open reservations\n` +
+              `💡 **Explore ${city.name} Instead:**\n\n` +
+              `- What are the top nightclubs and cocktail lounges in ${city.name} tonight?\n\n` +
+              `- Recommend the best dinner spots with open reservations\n\n` +
               `- What major concerts and live shows are happening this weekend?`;
           } else if (isNightlife && cityHub.nightlife?.length > 0) {
             fallbackText = `Here are the top nightclubs, speakeasies, and nightlife spots in **${city.name}**: 🍸✨\n\n` +
@@ -609,16 +652,16 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `\n💡 **Quick Next Steps:**\n- Find dining and craft breweries near these parks\n- Check seasonal trail advisories\n- View transit routes`;
           } else {
             fallbackText = `I am your hyper-local **Chat${city.id.toUpperCase()}** AI concierge for **${city.name}, ${city.province}**! 🍁\n\n` +
-              `I can give you real-time answers and direct booking links for:\n` +
-              `- 🍸 **Nightlife & Clubs**: Dance clubs, speakeasies, DJ lounges, and bottle service\n` +
-              `- 🍽️ **Dining & Reservations**: Finding tables at top restaurants\n` +
-              `- 🎟️ **Live Shows & Box Office**: Concerts, theatre, comedy, and tickets\n` +
-              `- 🏒 **Sports**: Schedules, broadcast channels, and scores\n` +
-              `- 🏛️ **Civic & 311 Services**: Bylaws, animal control, transit alerts, and permits\n` +
+              `I can give you real-time answers and direct booking links for:\n\n` +
+              `- 🍸 **Nightlife & Clubs**: Dance clubs, speakeasies, DJ lounges, and bottle service\n\n` +
+              `- 🍽️ **Dining & Reservations**: Finding tables at top restaurants\n\n` +
+              `- 🎟️ **Live Shows & Box Office**: Concerts, theatre, comedy, and tickets\n\n` +
+              `- 🏒 **Sports**: Schedules, broadcast channels, and scores\n\n` +
+              `- 🏛️ **Civic & 311 Services**: Bylaws, animal control, transit alerts, and permits\n\n` +
               `- 🏨 **Hotels & Experiences**: Boutique stays, guided tours, and outdoor escapes\n\n` +
-              `💡 **Quick Next Steps:**\n` +
-              `- What are the best clubs and cocktail lounges in ${city.name} tonight?\n` +
-              `- Where should I go for dinner around ${city.nightlifeDistricts?.[0] || 'downtown'}?\n` +
+              `💡 **Quick Next Steps:**\n\n` +
+              `- What are the best clubs and cocktail lounges in ${city.name} tonight?\n\n` +
+              `- Where should I go for dinner around ${city.nightlifeDistricts?.[0] || 'downtown'}?\n\n` +
               `- What live events are happening this weekend in ${city.name}?`;
           }
 

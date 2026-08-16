@@ -17,8 +17,10 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
     if (!content) return '';
     return content
       .replace(/\r\n/g, '\n')
-      // Ensure space after punctuation before list dash if smashed together e.g. "links for:- 🍸"
-      .replace(/([:!?.])(-\s*)/g, '$1\n\n$2')
+      // Ensure newline before any dash bullet that is glued to text or colon (e.g. "for:- 🍸" or "service- 🍽️")
+      .replace(/([^\n])\s*(-\s+(?:[🍸🍽️🎟️🏒🏛️🏨🌲🐾📍⚡💡•]|\*\*))/gu, '$1\n\n$2')
+      // Ensure newline before any regular bullet dash if glued
+      .replace(/([:!?.])\s*(-\s+)/g, '$1\n\n$2')
       // Ensure newline before headers
       .replace(/\n(#{1,4}\s)/g, '\n\n$1')
       // Ensure clean spacing around thematic horizontal rules
