@@ -12,38 +12,36 @@ interface MarkdownRendererProps {
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, tenantId = 'yyc' }) => {
-  // Normalize markdown text spacing so headers, lists, and bold callouts don't bunch up together
+  // Normalize markdown text spacing cleanly without fragmenting list items
   const formattedContent = React.useMemo(() => {
     if (!content) return '';
     return content
       .replace(/\r\n/g, '\n')
+      // Ensure space after punctuation before list dash if smashed together e.g. "links for:- 🍸"
+      .replace(/([:!?.])(-\s*)/g, '$1\n\n$2')
+      // Ensure newline before headers
       .replace(/\n(#{1,4}\s)/g, '\n\n$1')
-      .replace(/\n(\*\*[^*]+:\*\*)/g, '\n\n$1')
-      // Ensure double newline after a bold label if there isn't one already
-      .replace(/(\*\*[^*]+:\*\*)\n(?!\n)/g, '$1\n\n')
-      // Ensure double newlines around horizontal rules
-      .replace(/\n(---|\*\*\*)\n/g, '\n\n$1\n\n')
-      // Ensure bullet lists start on a new paragraph
-      .replace(/\n(\s*[-*]\s)/g, '\n\n$1');
+      // Ensure clean spacing around thematic horizontal rules
+      .replace(/\n(---|\*\*\*)\n/g, '\n\n$1\n\n');
   }, [content]);
 
   return (
-    <div className="prose prose-invert prose-slate max-w-none text-sm md:text-base leading-relaxed break-words space-y-3">
+    <div className="prose prose-invert prose-slate max-w-none text-sm md:text-base leading-relaxed break-words space-y-2.5">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="mb-3.5 last:mb-0 text-slate-200 leading-relaxed">{children}</p>,
-          strong: ({ children }) => <strong className="font-bold text-white">{children}</strong>,
-          ul: ({ children }) => <ul className="my-3 ml-4 list-disc space-y-2 text-slate-200">{children}</ul>,
-          ol: ({ children }) => <ol className="my-3 ml-4 list-decimal space-y-2 text-slate-200">{children}</ol>,
+          p: ({ children }) => <p className="mb-2.5 last:mb-0 text-slate-200 leading-relaxed">{children}</p>,
+          strong: ({ children }) => <strong className="font-bold text-white tracking-wide">{children}</strong>,
+          ul: ({ children }) => <ul className="my-2.5 ml-4 list-disc space-y-1.5 text-slate-200">{children}</ul>,
+          ol: ({ children }) => <ol className="my-2.5 ml-4 list-decimal space-y-1.5 text-slate-200">{children}</ol>,
           li: ({ children }) => <li className="pl-1 leading-relaxed">{children}</li>,
-          h1: ({ children }) => <h1 className="text-xl font-extrabold mt-5 mb-3 text-white border-b border-slate-800 pb-2">{children}</h1>,
-          h2: ({ children }) => <h2 className="text-lg font-bold mt-4 mb-2.5 text-cyan-300">{children}</h2>,
-          h3: ({ children }) => <h3 className="text-base font-bold mt-4 mb-2 text-white flex items-center gap-2">{children}</h3>,
-          h4: ({ children }) => <h4 className="text-sm font-bold mt-3 mb-1.5 text-slate-200">{children}</h4>,
-          hr: () => <hr className="my-4 border-slate-800/80" />,
+          h1: ({ children }) => <h1 className="text-xl font-extrabold mt-4 mb-2.5 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
+          h2: ({ children }) => <h2 className="text-lg font-bold mt-3.5 mb-2 text-cyan-300">{children}</h2>,
+          h3: ({ children }) => <h3 className="text-base font-bold mt-3 mb-1.5 text-white flex items-center gap-2">{children}</h3>,
+          h4: ({ children }) => <h4 className="text-sm font-bold mt-2.5 mb-1 text-slate-200">{children}</h4>,
+          hr: () => <hr className="my-3 border-slate-800/80" />,
           blockquote: ({ children }) => (
-            <blockquote className="border-l-2 border-cyan-500/60 bg-slate-900/60 px-3.5 py-2 rounded-r-xl my-3 text-slate-300 italic">
+            <blockquote className="border-l-2 border-cyan-500/60 bg-slate-900/60 px-3.5 py-2 rounded-r-xl my-2.5 text-slate-300 italic">
               {children}
             </blockquote>
           ),
@@ -90,17 +88,17 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           table: ({ children }) => (
-            <div className="overflow-x-auto my-3.5 rounded-xl border border-slate-800">
+            <div className="overflow-x-auto my-3 rounded-xl border border-slate-800 bg-slate-900/40 shadow-inner">
               <table className="min-w-full divide-y divide-slate-800 text-left text-xs md:text-sm">
                 {children}
               </table>
             </div>
           ),
           th: ({ children }) => (
-            <th className="bg-slate-850 px-3.5 py-2.5 text-slate-200 font-semibold">{children}</th>
+            <th className="bg-slate-850/90 px-3.5 py-2 text-slate-200 font-semibold">{children}</th>
           ),
           td: ({ children }) => (
-            <td className="px-3.5 py-2.5 border-t border-slate-800/60 text-slate-300">{children}</td>
+            <td className="px-3.5 py-2 border-t border-slate-800/60 text-slate-300">{children}</td>
           ),
         }}
       >

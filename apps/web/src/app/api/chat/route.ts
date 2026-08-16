@@ -523,25 +523,31 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             fallbackText = `### 🚇 **${city.name} Transit & Train Schedules**\n\n` +
               `Here is the latest service and schedule guide for **${transitName}**:\n\n` +
               (city.id === 'yyc' ? 
-                `📍 **CTrain Red Line (Tuscany ↔ Somerset-Bridlewood)**:\n` +
-                `- **Chinook Station**: Located at 61st Ave SW with a direct covered pedestrian skywalk to CF Chinook Centre.\n` +
-                `- **Frequency**: Every **4 to 7 minutes** during rush hours; every **10 to 15 minutes** off-peak and evenings.\n` +
-                `- **Operating Hours**: ~4:30 AM to 1:30 AM daily.\n` +
-                `- **Downtown Free Fare Zone**: Free rides along 7th Avenue between 3rd St East and 11th St West.\n` +
-                `- **Live Next Train Tracker**: [Check Live Schedules on Calgary Transit](${primaryTransitUrl})\n\n` :
-                `📍 **Live Service Status & Schedules**:\n` +
-                `- Trains and rapid transit lines operate every **3 to 10 minutes** throughout the day.\n` +
-                `- [Check Live Schedules on ${transitName}](${primaryTransitUrl})\n\n`) +
+                `#### 📍 CTrain Red Line (Line 201: Tuscany ↔ Somerset-Bridlewood)\n\n` +
+                `| Station / Corridor | Frequency (Peak) | Frequency (Off-Peak) | Daily Hours |\n` +
+                `| :--- | :--- | :--- | :--- |\n` +
+                `| **Chinook Station** (61 Ave SW) | Every 4–7 mins | Every 10–15 mins | 4:30 AM – 1:30 AM |\n` +
+                `| **Downtown 7th Ave Free Zone** | Every 3–5 mins | Every 8–10 mins | 4:30 AM – 1:30 AM |\n` +
+                `| **Full Red Line Route** | Every 5–7 mins | Every 10–15 mins | 21 Hours Daily |\n\n` +
+                `**Chinook Station Key Highlights:**\n` +
+                `- **Access**: 61st Ave SW with a direct covered pedestrian skywalk to **CF Chinook Centre**.\n` +
+                `- **Connecting Bus Routes**: 10, 23, 36, 41, 72, 73, 81, 136.\n` +
+                `- **Park & Ride**: Station parking stalls available.\n` +
+                `- **Live Tracker**: [Calgary Transit Next Train Tracker](${primaryTransitUrl})\n\n` :
+                `#### 📍 Rapid Transit Service Status & Frequencies\n\n` +
+                `| Service Line | Peak Frequency | Off-Peak Frequency | Schedule Tracker |\n` +
+                `| :--- | :--- | :--- | :--- |\n` +
+                `| **Main Line Rapid Transit** | Every 3–6 mins | Every 8–12 mins | [Live Tracker](${primaryTransitUrl}) |\n\n`) +
               `🎟️ **Fares & Passes**:\n` +
-              `- Regular single adult fare: **$3.70** (valid for 90 minutes with unlimited transfers).\n` +
-              `- Day Pass: **$11.60**.\n` +
-              `- Pay via contactless credit/debit card tap at all station fare gates or mobile transit app.\n\n` +
+              `- **Single Adult Ticket**: **$3.70** (valid for 90 minutes with unlimited transfers).\n` +
+              `- **Day Pass**: **$11.60** (unlimited city-wide travel for 24 hours).\n` +
+              `- **How to Pay**: Tap credit/debit card at station validators or buy on mobile transit app.\n\n` +
               (cityHub.transitLines?.length > 0 ? 
-                `⚡ **Live System Status**:\n` +
+                `⚡ **Live System Alerts**:\n` +
                 cityHub.transitLines.map(t => `- **${t.lineName}**: ${t.status} — *${t.details}*`).join('\n') + '\n\n' : '') +
               `💡 **Quick Next Steps:**\n` +
-              `- [Plan Route on ${city.name} Transit Portal](${primaryTransitUrl})\n` +
-              `- What are the parking options at ${city.name} train stations?\n` +
+              `- [Open Live ${city.name} Transit Schedule Tracker](${primaryTransitUrl})\n` +
+              `- What are the connecting bus routes from Chinook Station?\n` +
               `- How do I take transit to the airport from downtown?`;
           } else if (isOffTopic) {
             fallbackText = `🍁 **Chat${city.id.toUpperCase()} is dedicated exclusively to ${city.name}, ${city.province} and the ${city.metroArea}.**\n\n` +

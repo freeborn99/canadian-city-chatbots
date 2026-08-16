@@ -1,5 +1,25 @@
 // Persistent In-Memory Issue & Feedback Store for Canadian AI Hub
 
+export interface SessionDiagnostics {
+  viewport?: string;
+  screenResolution?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  userAgent?: string;
+  currentUrl?: string;
+  persona?: string;
+  clientTimestamp?: string;
+  recentChatTranscript?: Array<{ role: string; content: string }>;
+  networkLatencyMs?: number;
+}
+
+export interface HostPerformanceSnapshot {
+  edgeRegion?: string;
+  p50LatencyMs?: number;
+  p95LatencyMs?: number;
+  cacheHitRatio?: string;
+  activeProvider?: string;
+}
+
 export interface IssueReport {
   id: string;
   timestamp: number;
@@ -11,6 +31,9 @@ export interface IssueReport {
   userDescription: string;
   userEmail?: string;
   status: 'new' | 'investigating' | 'resolved';
+  antigravityPrompt?: string;
+  sessionDiagnostics?: SessionDiagnostics;
+  hostStats?: HostPerformanceSnapshot;
   clientMeta?: {
     userAgent?: string;
     url?: string;
@@ -25,14 +48,23 @@ const globalIssueState: {
       id: 'iss_init_1',
       timestamp: Date.now() - 3600000,
       tenantId: 'yyc',
-      userPrompt: 'i need to call animal control. what do i tell them about a bad dog',
-      aiResponse: 'Here are the top breaking headlines for Calgary right now: Green Line LRT Construction...',
-      aiSuggestedCategory: 'Irrelevant Response / Content Mismatch',
-      aiSuggestedSummary: 'AI returned Green Line LRT transit news instead of Animal Control 311 reporting instructions.',
-      userDescription: 'Chat returned news headlines when I specifically asked for animal control contact info.',
-      userEmail: 'citizen@calgary.ca',
+      userPrompt: 'train schedule chinnok station',
+      aiResponse: 'I am your hyper-local ChatYYC AI concierge for Calgary, Alberta! 🍁 I can give you real-time answers...',
+      aiSuggestedCategory: 'Transit / Schedule Formatting',
+      aiSuggestedSummary: 'User requested CTrain Chinook Station schedule with typo; AI returned generic intro menu.',
+      userDescription: 'The formatting for the train schedule was generic and not structured.',
+      userEmail: 'user@chatyyc.com',
       status: 'resolved',
-    }
+      antigravityPrompt: `Fix transit schedule routing and formatting in ChatYYC:
+- Problem: User asked 'train schedule chinnok station' (Calgary CTrain Chinook Station).
+- Fix: Ensure CTrain Red Line / Blue Line schedule tables and Chinook Station details are rendered with structured markdown tables in apps/web/src/app/api/chat/route.ts and city-data.ts.`,
+      sessionDiagnostics: {
+        viewport: '1440x900',
+        deviceType: 'desktop',
+        persona: 'insider',
+        clientTimestamp: new Date().toISOString(),
+      },
+    },
   ],
 };
 

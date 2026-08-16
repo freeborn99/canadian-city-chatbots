@@ -78,6 +78,10 @@ export function FeedbackModal({
     setIsSubmitting(true);
 
     try {
+      const width = typeof window !== 'undefined' ? window.innerWidth : 1280;
+      const height = typeof window !== 'undefined' ? window.innerHeight : 800;
+      const deviceType = width < 768 ? 'mobile' : width < 1024 ? 'tablet' : 'desktop';
+
       const res = await fetch('/api/feedback/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,6 +93,14 @@ export function FeedbackModal({
           aiSuggestedSummary: aiDiagnosis?.suggestedSummary || 'User reported issue',
           userDescription,
           userEmail,
+          sessionDiagnostics: {
+            viewport: `${width}x${height}`,
+            screenResolution: typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : 'unknown',
+            deviceType,
+            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+            currentUrl: typeof window !== 'undefined' ? window.location.href : '',
+            clientTimestamp: new Date().toISOString(),
+          },
           clientMeta: {
             url: typeof window !== 'undefined' ? window.location.href : '',
             userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',

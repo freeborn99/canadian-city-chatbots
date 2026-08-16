@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       aiSuggestedSummary = '',
       userDescription = '',
       userEmail = '',
+      sessionDiagnostics = {},
       clientMeta = {},
     } = body;
 
@@ -44,6 +45,18 @@ export async function POST(req: Request) {
     const safeSummary = typeof aiSuggestedSummary === 'string' ? aiSuggestedSummary.slice(0, 500) : '';
     const safeCategory = typeof aiSuggestedCategory === 'string' ? aiSuggestedCategory.slice(0, 100) : 'General Issue';
 
+    // Synthesize an actionable prompt ready to paste into Antigravity
+    const antigravityPrompt = `Fix the following bug on Chat${tenantId.toUpperCase()}:
+• Issue Category: ${safeCategory}
+• Summary: ${safeSummary || safeUserDescription || 'Reported UI/Chat anomaly'}
+• User Query: "${safeUserPrompt}"
+• AI Response Snippet: "${safeAiResponse.slice(0, 250)}..."
+• User Feedback / Notes: "${safeUserDescription || 'No additional notes'}"
+• Session Context: ${sessionDiagnostics?.deviceType || 'desktop'} (${sessionDiagnostics?.viewport || '1280x800'}) | URL: ${sessionDiagnostics?.currentUrl || `/${tenantId}`}
+• Instructions for Antigravity:
+  1. Inspect apps/web/src/app/api/chat/route.ts, apps/web/src/lib/city-data.ts, or frontend components to identify why this happened.
+  2. Implement a precise fix, verify formatting and responsiveness, and run tests.`;
+
     // 1. Record the issue in the server issue store
     const newReport = recordIssue({
       tenantId,
@@ -53,6 +66,8 @@ export async function POST(req: Request) {
       aiSuggestedSummary: safeSummary,
       userDescription: safeUserDescription,
       userEmail: safeUserEmail,
+      antigravityPrompt,
+      sessionDiagnostics,
       clientMeta,
     });
 
