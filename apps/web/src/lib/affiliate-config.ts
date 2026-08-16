@@ -145,11 +145,11 @@ export function buildAffiliateUrl(
         break;
 
       case 'Viator': {
-        const partnerId = DEFAULT_AFFILIATE_CONFIG.viator.partnerId || 'bba2dead-f9fa-416b-acc8-3cc64cc6211b';
-        url.searchParams.set('pid', partnerId);
-        url.searchParams.set('mcid', '42383');
-        url.searchParams.set('medium', 'link');
-        url.searchParams.set('sub_id', tenantId);
+        if (DEFAULT_AFFILIATE_CONFIG.viator.partnerId) {
+          url.searchParams.set('pid', DEFAULT_AFFILIATE_CONFIG.viator.partnerId);
+          url.searchParams.set('medium', 'link');
+          url.searchParams.set('sub_id', tenantId);
+        }
         break;
       }
 
@@ -162,9 +162,10 @@ export function buildAffiliateUrl(
         break;
 
       case 'CJ': {
-        const cjKey = DEFAULT_AFFILIATE_CONFIG.cj.apiKey || 'bDOCcy4VFDcylkkHG4tu9B4-cg';
-        url.searchParams.set('publisherId', cjKey);
-        url.searchParams.set('sid', tenantId);
+        if (DEFAULT_AFFILIATE_CONFIG.cj.apiKey) {
+          url.searchParams.set('publisherId', DEFAULT_AFFILIATE_CONFIG.cj.apiKey);
+          url.searchParams.set('sid', tenantId);
+        }
         break;
       }
 
