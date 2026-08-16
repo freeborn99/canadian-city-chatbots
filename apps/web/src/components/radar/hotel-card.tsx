@@ -4,10 +4,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Bed, Star, MapPin, ExternalLink, Bookmark } from 'lucide-react';
 import { HotelStay } from '@/lib/city-data';
+import { buildAffiliateUrl } from '@/lib/affiliate-config';
 
 interface HotelCardProps {
   hotel: HotelStay;
   accentClass: string;
+  tenantId?: string;
   isSaved?: boolean;
   onToggleSave?: () => void;
   onAskAI?: (prompt: string) => void;
@@ -16,10 +18,12 @@ interface HotelCardProps {
 export const HotelCard: React.FC<HotelCardProps> = ({
   hotel,
   accentClass,
+  tenantId = 'yyc',
   isSaved,
   onToggleSave,
   onAskAI,
 }) => {
+  const affiliateUrl = buildAffiliateUrl(hotel.bookingUrl, hotel.bookingPlatform, tenantId);
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -73,7 +77,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({
 
       <div className="flex items-center gap-2 pt-1 border-t border-slate-800/60">
         <a
-          href={hotel.bookingUrl}
+          href={affiliateUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-gradient-to-r ${accentClass} text-white font-semibold text-xs shadow-md hover:opacity-95 transition-opacity`}
