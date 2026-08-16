@@ -65,18 +65,25 @@ export default function AdminPortalPage() {
   const [issueFilter, setIssueFilter] = useState<'all' | 'new' | 'investigating' | 'resolved'>('all');
   const [expandedIssueId, setExpandedIssueId] = useState<string | null>(null);
 
+  // Autonomous AI Optimization & Feature Advisor
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [advisorStats, setAdvisorStats] = useState<any>(null);
+  const [isScanningAdvisor, setIsScanningAdvisor] = useState<boolean>(false);
+  const [copiedAdvisorId, setCopiedAdvisorId] = useState<string | null>(null);
+
   const fetchRealMetrics = useCallback(async (range = timeRange, city = cityFilter) => {
     setIsLoading(true);
     try {
       const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
       const authHeaders = { 'x-admin-token': token };
 
-      const [metricsRes, issuesRes] = await Promise.all([
+      const [metricsRes, issuesRes, advisorRes] = await Promise.all([
         fetch(`/api/admin/metrics?range=${range}&city=${city}`, { headers: authHeaders }),
         fetch('/api/admin/issues', { headers: authHeaders }),
+        fetch(`/api/admin/advisor?range=${range}&city=${city}`, { headers: authHeaders }),
       ]);
 
-      if (metricsRes.status === 401 || issuesRes.status === 401) {
+      if (metricsRes.status === 401 || issuesRes.status === 401 || advisorRes.status === 401) {
         // Token is invalid or expired — force re-login
         sessionStorage.removeItem(AUTH_STORAGE_KEY);
         setIsAuthenticated(false);
@@ -92,6 +99,12 @@ export default function AdminPortalPage() {
       if (issuesJson.status === 'SUCCESS' && issuesJson.issues) {
         setIssues(issuesJson.issues);
       }
+
+      const advisorJson = await advisorRes.json();
+      if (advisorJson.status === 'SUCCESS' && advisorJson.recommendations) {
+        setRecommendations(advisorJson.recommendations);
+        setAdvisorStats(advisorJson.stats);
+      }
     } catch (e) {
       console.error('Failed to fetch real telemetry or issues:', e);
     } finally {
@@ -99,6 +112,32 @@ export default function AdminPortalPage() {
       setIsLoading(false);
     }
   }, [timeRange, cityFilter]);
+
+  const handleTriggerAdvisorScan = async () => {
+    setIsScanningAdvisor(true);
+    try {
+      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
+      const res = await fetch(`/api/admin/advisor?range=${timeRange}&city=${cityFilter}`, {
+        method: 'POST',
+        headers: { 'x-admin-token': token },
+      });
+      const data = await res.json();
+      if (data.status === 'SUCCESS' && data.recommendations) {
+        setRecommendations(data.recommendations);
+        setAdvisorStats(data.stats);
+      }
+    } catch (e) {
+      console.error('Failed to trigger advisor scan:', e);
+    } finally {
+      setIsScanningAdvisor(false);
+    }
+  };
+
+  const handleCopyAdvisorPrompt = (rec: any) => {
+    navigator.clipboard.writeText(rec.antigravityPrompt);
+    setCopiedAdvisorId(rec.id);
+    setTimeout(() => setCopiedAdvisorId(null), 2500);
+  };
 
   // Check saved session on mount
   useEffect(() => {
@@ -489,6 +528,122 @@ export default function AdminPortalPage() {
                 <span>{metrics.affiliateClicks.toLocaleString()} Outbound Clicks</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* 🤖 Autonomous AI Optimization & Feature Advisor */}
+        <div className="glass-panel border border-cyan-500/40 rounded-2xl p-5 md:p-6 space-y-4 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-md">
+                <Sparkles className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
+                    <span>Autonomous AI Optimization &amp; Feature Advisor</span>
+                    <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-bold">
+                      {recommendations.length} Actionable Opportunities
+                    </span>
+                  </h2>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Real-time intelligence engine analyzing telemetry, unmonetized intents &amp; feature gaps to generate 1-click Antigravity implementation prompts
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleTriggerAdvisorScan}
+              disabled={isScanningAdvisor}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all disabled:opacity-50 shadow-sm"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isScanningAdvisor ? 'animate-spin' : ''}`} />
+              <span>{isScanningAdvisor ? 'Scanning Platform Telemetry...' : '⚡ Trigger AI Optimization Scan'}</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative z-10">
+            {recommendations.map((rec) => {
+              const isAffiliate = rec.category === 'AFFILIATE_OPPORTUNITY';
+              const isFeature = rec.category === 'FEATURE_IMPROVEMENT';
+              const isCritical = rec.priority === 'CRITICAL' || rec.priority === 'HIGH';
+
+              return (
+                <div
+                  key={rec.id}
+                  className="p-4 rounded-xl bg-slate-900/90 border border-slate-800/90 hover:border-slate-750 transition-all flex flex-col justify-between space-y-3 shadow-lg"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`text-[9px] font-mono px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
+                          isAffiliate
+                            ? 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
+                            : isFeature
+                            ? 'bg-cyan-950/80 border border-cyan-800 text-cyan-300'
+                            : 'bg-purple-950/80 border border-purple-800 text-purple-300'
+                        }`}
+                      >
+                        {rec.category.replace('_', ' ')}
+                      </span>
+
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                            isCritical
+                              ? 'bg-rose-950 border border-rose-800 text-rose-300'
+                              : 'bg-amber-950 border border-amber-800 text-amber-300'
+                          }`}
+                        >
+                          {rec.priority}
+                        </span>
+                        <span className="text-[10px] font-mono text-emerald-400 font-bold bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                          {rec.estimatedImpact}
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-xs font-bold text-white leading-snug">{rec.title}</h3>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">{rec.summary}</p>
+                    <div className="text-[10px] text-slate-400 bg-slate-950/70 p-2.5 rounded-lg border border-slate-850 space-y-1">
+                      <strong className="text-slate-300 block">💡 AI Rationale &amp; Market Opportunity:</strong>
+                      <p className="leading-relaxed">{rec.rationale}</p>
+                    </div>
+                  </div>
+
+                  {/* 1-Click Antigravity Fix / Feature Prompt Generator */}
+                  <div className="pt-2 border-t border-slate-800/80 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-cyan-400" />
+                        <span>Ready Antigravity Prompt:</span>
+                      </span>
+                      <button
+                        onClick={() => handleCopyAdvisorPrompt(rec)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 hover:text-white text-[10px] font-bold transition-all shadow-sm"
+                      >
+                        {copiedAdvisorId === rec.id ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-400" />
+                            <span className="text-emerald-400">Copied to Clipboard!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3 text-cyan-400" />
+                            <span>Copy Prompt for Antigravity</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <pre className="text-[9px] font-mono text-slate-400 bg-slate-950 p-2 rounded-lg overflow-x-auto whitespace-pre-wrap max-h-24 leading-relaxed border border-slate-800">
+                      {rec.antigravityPrompt}
+                    </pre>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
