@@ -23,7 +23,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Book exclusive Banff day trips, Calgary foodie tours, and Rocky Mountain excursions.',
     imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YYC Tours',
-    destinationUrl: 'https://www.viator.com/Calgary/d914-ttd',
+    destinationUrl: 'https://www.viator.com/Calgary/d817-ttd',
     network: 'viator'
   },
   yvr: {
@@ -55,7 +55,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Bison tracking adventures, Ice District entertainment, and river valley segway tours.',
     imageUrl: 'https://images.unsplash.com/photo-1605330386925-4228c2e68444?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YEG Deals',
-    destinationUrl: 'https://www.viator.com/Edmonton/d915-ttd',
+    destinationUrl: 'https://www.viator.com/Edmonton/d28470-ttd',
     network: 'viator'
   },
   yow: {
@@ -71,7 +71,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Journey to Churchill polar bear exhibits, Forks market tasting tours, and museum passes.',
     imageUrl: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YWG Tours',
-    destinationUrl: 'https://www.viator.com/Winnipeg/d916-ttd',
+    destinationUrl: 'https://www.viator.com/searchResults/all?text=Winnipeg',
     network: 'viator'
   },
   yhz: {
@@ -79,7 +79,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Tall ship harbor cruises, South Shore lighthouse tours, and fresh seafood crawls.',
     imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YHZ Adventures',
-    destinationUrl: 'https://www.viator.com/Halifax/d917-ttd',
+    destinationUrl: 'https://www.viator.com/Halifax/d4416-ttd',
     network: 'viator'
   },
   yyj: {
@@ -87,7 +87,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Orca zodiac safaris, High Tea experiences, and scenic floatplane day trips.',
     imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YYJ Experiences',
-    destinationUrl: 'https://www.viator.com/Victoria/d626-ttd',
+    destinationUrl: 'https://www.viator.com/Victoria/d617-ttd',
     network: 'viator'
   },
   yyt: {
@@ -95,7 +95,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Witless Bay ecological boat safaris, Signal Hill tours, and George Street nightlife crawls.',
     imageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore YYT Safaris',
-    destinationUrl: 'https://www.viator.com/St-Johns/d918-ttd',
+    destinationUrl: 'https://www.viator.com/searchResults/all?text=St.+John%27s+Newfoundland',
     network: 'viator'
   },
   default: {
@@ -103,7 +103,7 @@ const LOCALIZED_COPY: Record<string, { title: string; description: string; image
     description: 'Book the top-rated tours, exclusive events, and luxury stays through verified partners.',
     imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
     ctaText: 'Explore Offers',
-    destinationUrl: 'https://www.viator.com',
+    destinationUrl: 'https://www.viator.com/Canada/d75-ttd',
     network: 'viator'
   }
 };
