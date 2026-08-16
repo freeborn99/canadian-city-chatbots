@@ -52,7 +52,36 @@ import { useAuth } from '@/lib/auth-context';
 
 import { extractChatSpotlightEntities } from '@/lib/entity-extractor';
 
-export type SpotlightTab = 'map' | 'overview' | 'eats' | 'shows' | 'experiences' | 'outdoors' | 'transit';
+export type SpotlightTab = 'hub' | 'map' | 'overview' | 'eats' | 'shows' | 'experiences' | 'outdoors' | 'transit';
+
+export function getProvinceNewsTopic(tenantId: string) {
+  const t = tenantId.toLowerCase();
+  if (t === 'yyc' || t === 'yeg') {
+    return { id: 'province', label: '🛢️ Oil, Gas & Energy', filterTags: ['energy', 'oil', 'gas', 'pipeline', 'carbon', 'clean energy', 'resources'] };
+  }
+  if (t === 'yvr' || t === 'yyj') {
+    return { id: 'province', label: '🌲 Pacific Trade & Tech', filterTags: ['pacific', 'forestry', 'port', 'maritime', 'marine', 'clean', 'gaming', 'vfx', 'green'] };
+  }
+  if (t === 'yyz') {
+    return { id: 'province', label: '📈 Bay St & AI Tech', filterTags: ['bay street', 'finance', 'ai', 'fintech', 'tsx', 'mars', 'housing', 'banking'] };
+  }
+  if (t === 'yow') {
+    return { id: 'province', label: '🏛️ Federal Policy & Defense', filterTags: ['federal', 'parliament', 'policy', 'kanata', 'telecom', 'defense', 'government', 'public service'] };
+  }
+  if (t === 'yul') {
+    return { id: 'province', label: '⚜️ Aerospace & AI Hub', filterTags: ['aerospace', 'mila', 'ai', 'saf', 'bombardier', 'aviation', 'spectacles', 'french'] };
+  }
+  if (t === 'ywg') {
+    return { id: 'province', label: '🌾 Agri-Tech & Logistics', filterTags: ['agri', 'centreport', 'grain', 'freight', 'agriculture', 'logistics', 'transport'] };
+  }
+  if (t === 'yhz') {
+    return { id: 'province', label: '⚓ Ocean Tech & Naval', filterTags: ['ocean', 'naval', 'shipbuilding', 'maritime', 'atlantic', 'ferry', 'supercluster'] };
+  }
+  if (t === 'yyt') {
+    return { id: 'province', label: '🌊 Offshore & Fisheries', filterTags: ['offshore', 'wind', 'fisheries', 'mining', 'minerals', 'subsea', 'ocean'] };
+  }
+  return { id: 'province', label: '💼 Regional Sector', filterTags: ['business', 'development', 'industry'] };
+}
 
 interface SpotlightDeckProps {
   tenant: CityTenant;
@@ -71,16 +100,22 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   hasMessages = false,
   onClose,
   isMobileDrawer = false,
-  initialTab = 'overview',
+  initialTab = 'hub',
 }) => {
   const hubData = getCityHubData(tenant.id);
-  const [activeTab, setActiveTab] = useState<SpotlightTab>(initialTab);
+  const [activeTab, setActiveTab] = useState<SpotlightTab>(initialTab || 'overview');
+  const [newsSubFilter, setNewsSubFilter] = useState<'all' | 'sports' | 'business' | 'province' | 'govt' | 'tech'>('all');
+  const [eatsSubFilter, setEatsSubFilter] = useState<'all' | 'top-rated' | 'patios' | 'late-night'>('all');
+  const [showsSubFilter, setShowsSubFilter] = useState<'all' | 'theatre' | 'concerts' | 'comedy'>('all');
+  const [toursSubFilter, setToursSubFilter] = useState<'all' | 'tours' | 'hotels'>('all');
+  
   const [savedItems, setSavedItems] = useState<string[]>([]);
   const [copiedLink, setCopiedLink] = useState(false);
   const [selectedNewsArticle, setSelectedNewsArticle] = useState<NewsHeadline | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [manualDistrict, setManualDistrict] = useState<GeoSpotlightDistrict | null>(null);
   const { openShareModal } = useAuth();
+  const provinceTopic = getProvinceNewsTopic(tenant.id);
 
   useEffect(() => {
     if (initialTab) {
@@ -91,7 +126,6 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
   const deferredSearch = React.useDeferredValue(searchQuery);
   const normalizedSearch = deferredSearch.trim().toLowerCase();
 
-  // 1. Dynamic Chat Results Entity Extraction: Memoized to eliminate synchronous main-thread blocking
   const chatExtracted = React.useMemo(() => {
     return extractChatSpotlightEntities(allMessagesText + (normalizedSearch ? ` ${normalizedSearch}` : ''), tenant.id);
   }, [allMessagesText, normalizedSearch, tenant.id]);
@@ -100,7 +134,6 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
     return findMatchingGeoSpotlight(allMessagesText + (normalizedSearch ? ` ${normalizedSearch}` : ''), tenant.id);
   }, [allMessagesText, normalizedSearch, tenant.id]);
 
-  // 2. Prioritize dynamic chat results, then manual district, then matched street district, then default
   const dynamicDistrict: GeoSpotlightDistrict | null = React.useMemo(() => {
     if (!chatExtracted.hasResults) return null;
     return {
@@ -129,23 +162,54 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
     );
   }, [manualDistrict, dynamicDistrict, matchedSpotlight, tenant.id]);
 
-  // Memoized Filtered Lists for instant 60fps search
   const filteredSports = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.sports || [];
-    return (hubData.sports || []).filter(
-      (g) => g.team.toLowerCase().includes(normalizedSearch) || g.opponent.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.sports || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (g) => g.team.toLowerCase().includes(normalizedSearch) || g.opponent.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.sports, normalizedSearch]);
 
   const filteredNews = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.news || [];
-    return (hubData.news || []).filter(
-      (n) => n.title.toLowerCase().includes(normalizedSearch) || n.summary.toLowerCase().includes(normalizedSearch)
-    );
-  }, [hubData.news, normalizedSearch]);
+    let list = hubData.news || [];
+    
+    if (newsSubFilter === 'sports') {
+      return [];
+    } else if (newsSubFilter === 'business') {
+      list = list.filter((n) => n.category === 'Business' || n.category === 'Development' || n.category === 'Finance' || /business|market|tsx|economy|commercial/i.test(n.title + ' ' + n.summary));
+    } else if (newsSubFilter === 'province') {
+      list = list.filter((n) => {
+        const text = (n.title + ' ' + n.summary + ' ' + n.category).toLowerCase();
+        return provinceTopic.filterTags.some((tag) => text.includes(tag.toLowerCase()));
+      });
+      if (list.length === 0) list = (hubData.news || []).slice(0, 2);
+    } else if (newsSubFilter === 'govt') {
+      list = list.filter((n) => n.category === 'Civic' || n.category === 'Government' || n.category === 'Policy' || /city council|mayor|province|legislation|transit|infrastructure|budget/i.test(n.title + ' ' + n.summary));
+    } else if (newsSubFilter === 'tech') {
+      list = list.filter((n) => n.category === 'Technology' || /tech|ai|startup|innovation|research|software|incubator/i.test(n.title + ' ' + n.summary));
+      if (list.length === 0) list = (hubData.news || []).filter((n) => /tech|ai|innovation|program/i.test(n.title + ' ' + n.summary));
+    }
+
+    if (normalizedSearch) {
+      list = list.filter(
+        (n) => n.title.toLowerCase().includes(normalizedSearch) || n.summary.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
+  }, [hubData.news, newsSubFilter, normalizedSearch, provinceTopic]);
 
   const filteredRestaurants = React.useMemo(() => {
     let list = hubData.restaurants || [];
+    if (eatsSubFilter === 'top-rated') {
+      list = list.filter((r) => r.rating >= 4.8);
+    } else if (eatsSubFilter === 'patios') {
+      list = list.filter((r) => /patio|view|waterfront|rooftop|terrace/i.test(r.tag + ' ' + r.neighborhood + ' ' + r.name));
+    } else if (eatsSubFilter === 'late-night') {
+      list = list.filter((r) => /bar|cocktail|late|pub|lounge/i.test(r.cuisine + ' ' + r.tag + ' ' + r.name));
+    }
+
     if (normalizedSearch) {
       list = list.filter(
         (r) =>
@@ -155,10 +219,18 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
       );
     }
     return list;
-  }, [hubData.restaurants, normalizedSearch]);
+  }, [hubData.restaurants, eatsSubFilter, normalizedSearch]);
 
   const filteredShows = React.useMemo(() => {
     let list = hubData.shows || [];
+    if (showsSubFilter === 'theatre') {
+      list = list.filter((s) => s.category === 'Theatre' || s.category === 'Symphony');
+    } else if (showsSubFilter === 'concerts') {
+      list = list.filter((s) => s.category === 'Concert');
+    } else if (showsSubFilter === 'comedy') {
+      list = list.filter((s) => s.category === 'Comedy' || s.category === 'Festival');
+    }
+
     if (normalizedSearch) {
       list = list.filter(
         (s) =>
@@ -168,7 +240,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
       );
     }
     return list;
-  }, [hubData.shows, normalizedSearch]);
+  }, [hubData.shows, showsSubFilter, normalizedSearch]);
 
   const filteredHotels = React.useMemo(() => {
     let list = hubData.hotels || [];
@@ -176,8 +248,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
       list = list.filter(
         (h) =>
           h.name.toLowerCase().includes(normalizedSearch) ||
-          h.neighborhood.toLowerCase().includes(normalizedSearch) ||
-          h.tag.toLowerCase().includes(normalizedSearch)
+          h.neighborhood.toLowerCase().includes(normalizedSearch)
       );
     }
     return list;
@@ -189,22 +260,35 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
       list = list.filter(
         (e) =>
           e.title.toLowerCase().includes(normalizedSearch) ||
-          e.operator.toLowerCase().includes(normalizedSearch) ||
-          e.category.toLowerCase().includes(normalizedSearch)
+          e.operator.toLowerCase().includes(normalizedSearch)
       );
     }
     return list;
   }, [hubData.experiences, normalizedSearch]);
 
   const filteredOutdoors = React.useMemo(() => {
-    if (!normalizedSearch) return hubData.outdoors || [];
-    return (hubData.outdoors || []).filter(
-      (p) =>
-        p.name.toLowerCase().includes(normalizedSearch) ||
-        p.neighborhood.toLowerCase().includes(normalizedSearch) ||
-        p.category.toLowerCase().includes(normalizedSearch)
-    );
+    let list = hubData.outdoors || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (o) =>
+          o.name.toLowerCase().includes(normalizedSearch) ||
+          o.neighborhood.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
   }, [hubData.outdoors, normalizedSearch]);
+
+  const filteredTransit = React.useMemo(() => {
+    let list = hubData.transitLines || [];
+    if (normalizedSearch) {
+      list = list.filter(
+        (t) =>
+          t.lineName.toLowerCase().includes(normalizedSearch) ||
+          t.systemName.toLowerCase().includes(normalizedSearch)
+      );
+    }
+    return list;
+  }, [hubData.transitLines, normalizedSearch]);
 
   const toggleSave = (id: string) => {
     setSavedItems((prev) =>
@@ -220,22 +304,24 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
     }
   };
 
-  const tabs = [
-    { id: 'overview' as SpotlightTab, label: 'News & Scores', icon: Newspaper },
-    { id: 'map' as SpotlightTab, label: 'Geo-Map Radar', icon: MapIcon },
-    { id: 'eats' as SpotlightTab, label: 'Dining Resos', icon: Utensils, count: (hubData.restaurants || []).length },
-    { id: 'shows' as SpotlightTab, label: 'Tickets', icon: Ticket, count: (hubData.shows || []).length },
-    { id: 'experiences' as SpotlightTab, label: 'Tours & Stays', icon: Bed, count: (hubData.hotels?.length || 0) + (hubData.experiences?.length || 0) },
-    { id: 'outdoors' as SpotlightTab, label: 'Trails & Parks', icon: Trees, count: (hubData.outdoors || []).length },
-    { id: 'transit' as SpotlightTab, label: 'Transit', icon: Train },
+  const categories = [
+    { id: 'overview' as SpotlightTab, label: 'Local News & Intel', shortLabel: 'News', icon: Newspaper, count: (hubData.news || []).length, desc: 'Breaking news, sports matchups, business & province sectors' },
+    { id: 'map' as SpotlightTab, label: 'Interactive Geo-Map', shortLabel: 'Map Radar', icon: MapIcon, desc: 'Live GPS pins, street districts & neighborhood guide' },
+    { id: 'eats' as SpotlightTab, label: 'Dining & Resos', shortLabel: 'Dining', icon: Utensils, count: (hubData.restaurants || []).length, desc: 'Top-rated culinary spots, patio reservations & food crawls' },
+    { id: 'shows' as SpotlightTab, label: 'Shows & Tickets', shortLabel: 'Tickets', icon: Ticket, count: (hubData.shows || []).length, desc: 'Live arena concerts, Mirvish/Neptune theatre & comedy' },
+    { id: 'experiences' as SpotlightTab, label: 'Tours & Stays', shortLabel: 'Tours & Stays', icon: Bed, count: (hubData.hotels?.length || 0) + (hubData.experiences?.length || 0), desc: 'Viator day tours, Rocky Mountain/harbour trips & hotels' },
+    { id: 'outdoors' as SpotlightTab, label: 'Trails & Parks', shortLabel: 'Trails & Parks', icon: Trees, count: (hubData.outdoors || []).length, desc: 'Urban green pathways, coastal lookouts & hiking trails' },
+    { id: 'transit' as SpotlightTab, label: 'Transit Alerts', shortLabel: 'Transit', icon: Train, count: (hubData.transitLines || []).length, desc: 'Live LRT / Subway status, airport express & road closures' },
   ];
+
+  const currentCategory = categories.find((c) => c.id === activeTab);
 
   return (
     <>
       <aside className={`flex flex-col glass-panel rounded-3xl border border-slate-800/80 shadow-2xl p-4 md:p-5 overflow-hidden transition-all duration-300 ${
         isMobileDrawer ? 'w-full h-full max-h-screen' : 'w-80 md:w-96 xl:w-[430px] h-full'
       }`}>
-        {/* Header */}
+        {/* Top Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 flex-shrink-0">
           <div className="flex items-center gap-2.5">
             <div
@@ -257,7 +343,7 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 </span>
               </div>
               <p className="text-[10px] text-slate-400 font-mono">
-                Interactive AI Geo-Map & Radar
+                {activeTab === 'hub' ? 'All Civic Hubs' : currentCategory?.label || 'Civic Radar'}
               </p>
             </div>
           </div>
@@ -283,54 +369,166 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
           </div>
         </div>
 
-        {/* In-Deck Search & Filter Bar */}
-        <div className="relative mt-2.5 mb-1 flex-shrink-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`Search ${tenant.name} places, streets, zoo, food...`}
-            className="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/60 transition-all"
-          />
-        </div>
-
-        {/* Wrapped Tab Bar (No horizontal scrolling, clean wrapping for full category visibility) */}
-        <div className="flex flex-wrap gap-1.5 p-1.5 my-2 rounded-2xl bg-slate-900/90 border border-slate-800 flex-shrink-0">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isSelected = activeTab === tab.id;
-
-            return (
+        {/* Drillable Navigation Bar: Shows '← Back to All Categories' when drilled down */}
+        {activeTab !== 'hub' ? (
+          <div className="my-2.5 flex-shrink-0 space-y-2">
+            <div className="flex items-center justify-between gap-2">
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl text-[11px] font-semibold transition-all ${
-                  isSelected
-                    ? `bg-slate-800 text-white shadow-md border border-slate-700 ${tenant.glowClass}`
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60 bg-slate-950/40 border border-transparent'
-                }`}
+                onClick={() => setActiveTab('hub')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-xs font-bold text-cyan-300 hover:text-white transition-all shadow-sm active:scale-95 group"
+                title="Return to top level categories"
               >
-                <Icon
-                  className={`w-3.5 h-3.5 ${
-                    isSelected ? 'text-cyan-400' : 'text-slate-400'
-                  }`}
-                />
-                <span>{tab.label}</span>
-                {tab.count !== undefined && tab.count > 0 && (
-                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono ${
-                    isSelected ? 'bg-cyan-950 text-cyan-300 border border-cyan-800/60' : 'bg-slate-800/90 text-slate-400'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
+                <ChevronRight className="w-3.5 h-3.5 rotate-180 text-cyan-400 group-hover:-translate-x-0.5 transition-transform" />
+                <span>All Categories</span>
               </button>
-            );
-          })}
-        </div>
+
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-white bg-slate-950/70 border border-slate-800 px-3 py-1 rounded-xl">
+                {currentCategory?.icon && <currentCategory.icon className="w-3.5 h-3.5 text-cyan-400" />}
+                <span>{currentCategory?.shortLabel}</span>
+              </div>
+            </div>
+
+            {/* Sub-menu Filter Pills for 'Local News' */}
+            {activeTab === 'overview' && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[
+                  { id: 'all', label: '📰 All News' },
+                  { id: 'sports', label: '🏆 Sports Scores' },
+                  { id: 'business', label: '💼 Business' },
+                  { id: 'province', label: provinceTopic.label },
+                  { id: 'govt', label: '🏛️ Civic & Govt' },
+                  { id: 'tech', label: '🚀 Tech & AI' },
+                ].map((pill) => {
+                  const isSelected = newsSubFilter === pill.id;
+                  return (
+                    <button
+                      key={pill.id}
+                      onClick={() => setNewsSubFilter(pill.id as any)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-cyan-500/20 border border-cyan-500/50 text-cyan-300 shadow-sm'
+                          : 'bg-slate-900/90 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                      }`}
+                    >
+                      {pill.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Sub-menu Filter Pills for 'Dining' */}
+            {activeTab === 'eats' && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[
+                  { id: 'all', label: '🍽️ All Dining' },
+                  { id: 'top-rated', label: '⭐ Top Rated (4.8+)' },
+                  { id: 'patios', label: '☀️ Patios & Views' },
+                  { id: 'late-night', label: '🍸 Bars & Late Night' },
+                ].map((pill) => {
+                  const isSelected = eatsSubFilter === pill.id;
+                  return (
+                    <button
+                      key={pill.id}
+                      onClick={() => setEatsSubFilter(pill.id as any)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-cyan-500/20 border border-cyan-500/50 text-cyan-300 shadow-sm'
+                          : 'bg-slate-900/90 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                      }`}
+                    >
+                      {pill.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Sub-menu Filter Pills for 'Shows & Tickets' */}
+            {activeTab === 'shows' && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[
+                  { id: 'all', label: '🎟️ All Shows' },
+                  { id: 'theatre', label: '🎭 Theatre & Symphony' },
+                  { id: 'concerts', label: '🎸 Live Concerts' },
+                  { id: 'comedy', label: '🎪 Comedy & Fests' },
+                ].map((pill) => {
+                  const isSelected = showsSubFilter === pill.id;
+                  return (
+                    <button
+                      key={pill.id}
+                      onClick={() => setShowsSubFilter(pill.id as any)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                        isSelected
+                          ? 'bg-cyan-500/20 border border-cyan-500/50 text-cyan-300 shadow-sm'
+                          : 'bg-slate-900/90 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                      }`}
+                    >
+                      {pill.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Top-Level Mode: Search Bar */
+          <div className="relative mt-2.5 mb-2 flex-shrink-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`Search ${tenant.name} places, news, transit...`}
+              className="w-full bg-slate-900/90 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-cyan-500/60 transition-all"
+            />
+          </div>
+        )}
 
         {/* Scrollable Content Deck */}
         <div className="flex-1 overflow-y-auto pr-1 space-y-3.5">
+          {/* TOP-LEVEL HUB: 7 Visual Drillable Cards */}
+          {activeTab === 'hub' && (
+            <div className="space-y-2.5">
+              <div className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Explore {tenant.name} Civic Categories
+              </div>
+
+              {categories.map((cat) => {
+                const Icon = cat.icon;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveTab(cat.id)}
+                    className="w-full text-left p-3.5 rounded-2xl glass-card border border-slate-800/90 hover:border-cyan-500/60 transition-all group flex items-start justify-between gap-3 shadow-md hover:shadow-xl"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center bg-slate-900 border border-slate-750 group-hover:border-cyan-500/50 group-hover:scale-105 transition-all text-cyan-400`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors">
+                            {cat.label}
+                          </h4>
+                          {cat.count !== undefined && cat.count > 0 && (
+                            <span className="px-1.5 py-0.2 rounded-full bg-cyan-950/80 border border-cyan-800/50 text-[10px] font-mono text-cyan-300">
+                              {cat.count}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                          {cat.desc}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform flex-shrink-0 mt-1" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* TAB 0: INTERACTIVE GEO-MAP RADAR */}
           {activeTab === 'map' && activeGeoSpotlight && (
             <div className="space-y-3">
@@ -341,7 +539,6 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
                 onSelectDistrict={(d) => setManualDistrict(d)}
               />
 
-              {/* Quick Prompt Suggestions */}
               <div className="p-3 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs space-y-2">
                 <span className="font-bold text-slate-300 block text-[11px]">
                   💡 Ask AI about {activeGeoSpotlight.name}:
@@ -368,127 +565,164 @@ export const SpotlightDeck: React.FC<SpotlightDeckProps> = ({
             </div>
           )}
 
-          {/* TAB 1: NEWS & SPORTS SCORES */}
+          {/* TAB 1: LOCAL NEWS & INTEL */}
           {activeTab === 'overview' && (
             <div className="space-y-3.5">
-              {/* Regional News Headlines with Expand Action */}
-              <div>
-                <div className="flex items-center justify-between text-xs px-1 mb-2">
-                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                    <Newspaper className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Regional News Highlights</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Real-time summaries</span>
+              {/* Regional News Headlines with Expand Action (when not filtered strictly to sports) */}
+              {newsSubFilter !== 'sports' && (
+                <div>
+                  <div className="flex items-center justify-between text-xs px-1 mb-2">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <Newspaper className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>
+                        {newsSubFilter === 'business'
+                          ? 'Business & Market News'
+                          : newsSubFilter === 'province'
+                          ? provinceTopic.label
+                          : newsSubFilter === 'govt'
+                          ? 'Civic & Government Updates'
+                          : newsSubFilter === 'tech'
+                          ? 'Tech Startups & Innovation'
+                          : 'Regional Headlines'}
+                      </span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {filteredNews.length} Stories
+                    </span>
+                  </div>
+
+                  {filteredNews.length === 0 ? (
+                    <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-400">
+                      No stories currently matching this filter. Showing general updates.
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {filteredNews.map((n: NewsHeadline) => (
+                        <div
+                          key={n.id}
+                          onClick={() => setSelectedNewsArticle(n)}
+                          className="p-3 rounded-2xl glass-card border border-slate-800/90 hover:border-slate-700/80 shadow-md space-y-1.5 transition-all group cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="font-semibold text-cyan-400">{n.source}</span>
+                            <span className="text-slate-500 font-mono">{n.timeAgo}</span>
+                          </div>
+
+                          <h4 className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug">
+                            {n.title}
+                          </h4>
+
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                            {n.summary}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-1.5 border-t border-slate-800/60 text-[10px]">
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={n.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center gap-1 font-semibold text-cyan-300 hover:text-white bg-cyan-950/60 hover:bg-cyan-900/80 px-2 py-0.5 rounded-lg border border-cyan-800/40 hover:border-cyan-600 transition-colors"
+                              >
+                                <span>Read Story</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                              {n.expandedDetails?.relatedActionUrl && (
+                                <a
+                                  href={n.expandedDetails.relatedActionUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 transition-colors"
+                                >
+                                  <span>{n.expandedDetails.relatedActionText || 'Civic Link'}</span>
+                                  <Compass className="w-2.5 h-2.5 text-cyan-400" />
+                                </a>
+                              )}
+                            </div>
+                            <span className="text-cyan-400 font-medium flex items-center gap-0.5 group-hover:text-cyan-300">
+                              <span>Briefing</span>
+                              <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+              )}
 
-                <div className="space-y-2.5">
-                  {filteredNews.map((n: NewsHeadline) => (
-                    <div
-                      key={n.id}
-                      onClick={() => setSelectedNewsArticle(n)}
-                      className="p-3 rounded-2xl glass-card border border-slate-800/90 hover:border-slate-700/80 shadow-md space-y-1.5 transition-all group cursor-pointer"
-                    >
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="font-semibold text-cyan-400">{n.source}</span>
-                        <span className="text-slate-500 font-mono">{n.timeAgo}</span>
-                      </div>
+              {/* Local Sports Scores (shown on 'all' or 'sports' filter) */}
+              {(newsSubFilter === 'all' || newsSubFilter === 'sports') && (
+                <div>
+                  <div className="flex items-center justify-between text-xs px-1 mb-2 pt-1">
+                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
+                      <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Local Sports &amp; Matchups</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">Live Feeds</span>
+                  </div>
 
-                      <h4 className="text-xs font-bold text-white group-hover:text-cyan-200 transition-colors leading-snug">
-                        {n.title}
-                      </h4>
-
-                      <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
-                        {n.summary}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-1.5 border-t border-slate-800/60 text-[10px]">
-                        <div className="flex items-center gap-2">
-                          <a
-                            href={n.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-1 font-semibold text-cyan-300 hover:text-white bg-cyan-950/60 hover:bg-cyan-900/80 px-2 py-0.5 rounded-lg border border-cyan-800/40 hover:border-cyan-600 transition-colors"
+                  <div className="space-y-2">
+                    {filteredSports.map((game: SportsGameScore) => (
+                      <div
+                        key={game.id}
+                        className="p-3 rounded-2xl bg-slate-900/90 border border-slate-800/90 hover:border-slate-750 transition-colors space-y-2"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-mono text-[10px] font-bold">
+                            {game.league}
+                          </span>
+                          <span
+                            className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-full ${
+                              game.status === 'Live'
+                                ? 'bg-rose-950 text-rose-300 border border-rose-800 animate-pulse'
+                                : game.status === 'Final'
+                                ? 'bg-slate-800 text-slate-400'
+                                : 'bg-cyan-950 text-cyan-300 border border-cyan-800'
+                            }`}
                           >
-                            <span>Read Story</span>
-                            <ExternalLink className="w-2.5 h-2.5" />
-                          </a>
-                          {n.expandedDetails?.relatedActionUrl && (
-                            <a
-                              href={n.expandedDetails.relatedActionUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 font-medium text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2 py-0.5 rounded-lg border border-slate-700 transition-colors"
-                            >
-                              <span>{n.expandedDetails.relatedActionText || 'Civic Link'}</span>
-                              <Compass className="w-2.5 h-2.5 text-cyan-400" />
-                            </a>
+                            {game.status}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-0.5">
+                            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                              <span>{game.team}</span>
+                              {game.isHome && (
+                                <span className="text-[9px] text-cyan-400 font-normal border border-cyan-800/60 bg-cyan-950 px-1 rounded">
+                                  Home
+                                </span>
+                              )}
+                            </h4>
+                            <p className="text-[11px] text-slate-400">vs. {game.opponent}</p>
+                          </div>
+
+                          {game.score ? (
+                            <div className="text-sm font-extrabold font-mono text-cyan-300 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-800">
+                              {game.score}
+                            </div>
+                          ) : (
+                            <div className="text-right">
+                              <span className="text-[11px] font-semibold text-slate-200 block font-mono">
+                                {game.gameTime}
+                              </span>
+                              {game.tvBroadcast && (
+                                <span className="text-[9px] text-slate-400 flex items-center gap-1 justify-end mt-0.5">
+                                  <Tv className="w-2.5 h-2.5 text-cyan-400" />
+                                  <span>{game.tvBroadcast}</span>
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
-                        <span className="text-cyan-400 font-medium flex items-center gap-0.5 group-hover:text-cyan-300">
-                          <span>Briefing</span>
-                          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                        </span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Local Sports Scores */}
-              <div>
-                <div className="flex items-center justify-between text-xs px-1 mb-2">
-                  <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                    <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Local Sports & Matchups</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Live Feeds</span>
-                </div>
-
-                <div className="space-y-2">
-                  {filteredSports.map((game: SportsGameScore) => (
-                    <div
-                      key={game.id}
-                      className="p-3 rounded-2xl glass-card border border-slate-800/90 shadow-md text-xs space-y-1.5"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
-                          {game.league}
-                        </span>
-                        <span
-                          className={`text-[9px] font-semibold px-2 py-0.5 rounded-full border ${
-                            game.status === 'Final'
-                              ? 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300'
-                              : 'bg-cyan-950/60 border-cyan-800/60 text-cyan-300'
-                          }`}
-                        >
-                          {game.status}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center justify-between font-bold text-white text-xs pt-0.5">
-                        <span>{game.team}</span>
-                        {game.score ? (
-                          <span className="text-emerald-400 font-mono text-sm">{game.score}</span>
-                        ) : (
-                          <span className="text-slate-400 text-[11px] font-mono">{game.gameTime}</span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800/60">
-                        <span>vs. {game.opponent}</span>
-                        {game.tvBroadcast && (
-                          <span className="flex items-center gap-1 text-slate-400">
-                            <Tv className="w-3 h-3" />
-                            <span>{game.tvBroadcast}</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              )}
 
               {/* Partner Showcase Injection */}
               <div className="py-1">

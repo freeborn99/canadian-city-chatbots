@@ -98,7 +98,7 @@ export interface NewsHeadline {
   id: string;
   title: string;
   source: string;
-  category: 'Civic' | 'Business' | 'Culture' | 'Development';
+  category: 'Civic' | 'Business' | 'Culture' | 'Development' | 'Regional' | 'Sports' | 'Technology' | 'Government' | 'Energy' | 'Finance' | 'Maritime' | 'Aerospace' | 'Agriculture' | 'Policy' | 'Industry';
   url: string;
   timeAgo: string;
   summary: string;
