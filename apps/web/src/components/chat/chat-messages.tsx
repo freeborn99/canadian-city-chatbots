@@ -155,7 +155,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   return (
     <div
       ref={containerRef}
-      className="h-full overflow-y-auto px-4 md:px-8 py-6 space-y-6 max-w-4xl mx-auto w-full"
+      className="h-full overflow-y-auto px-1 sm:px-4 md:px-8 py-2 sm:py-6 space-y-3.5 sm:space-y-6 max-w-4xl mx-auto w-full"
     >
       <AnimatePresence initial={false}>
         {messages.map((message, index) => {
@@ -172,23 +172,23 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className={`flex gap-3 md:gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}
+              className={`flex gap-1.5 sm:gap-3 md:gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               {/* Bot Avatar */}
               {!isUser && (
                 <div
-                  className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${tenant.gradientClass} p-0.5 shadow-md ${tenant.glowClass}`}
+                  className={`w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${tenant.gradientClass} p-0.5 shadow-md ${tenant.glowClass} mt-0.5`}
                 >
                   <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
+                    <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   </div>
                 </div>
               )}
 
-              {/* Message Bubble Container */}
-              <div className="max-w-[88%] md:max-w-[82%] space-y-2">
+              {/* Message Bubble Container - Expanded to 95% on mobile */}
+              <div className="max-w-[96%] sm:max-w-[90%] md:max-w-[82%] space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial">
                 <div
-                  className={`relative group rounded-2xl p-4 md:p-5 shadow-lg transition-all ${
+                  className={`relative group rounded-2xl p-3 sm:p-4 md:p-5 shadow-lg transition-all ${
                     isUser
                       ? 'glass-bubble-user text-white border-blue-500/20 shadow-blue-900/10'
                       : 'glass-bubble-assistant text-slate-100 border-slate-800/80'
@@ -196,7 +196,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
                 >
                   {/* Header label & Action Bar for assistant */}
                   {!isUser && (
-                    <div className="flex items-center justify-between gap-4 mb-2 pb-1.5 border-b border-slate-800/60 text-xs">
+                    <div className="flex items-center justify-between gap-2 sm:gap-4 mb-2 pb-1.5 border-b border-slate-800/60 text-xs">
                       <div className="flex items-center gap-1.5 font-medium">
                         <span
                           className={`bg-gradient-to-r ${tenant.gradientClass} bg-clip-text text-transparent font-semibold`}

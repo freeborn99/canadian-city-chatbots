@@ -178,7 +178,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="relative z-10 w-full max-w-md sm:max-w-lg h-full bg-slate-950 p-2 sm:p-4 overflow-hidden shadow-2xl flex flex-col"
+              className="relative z-10 w-full sm:max-w-md md:max-w-lg h-full bg-slate-950 p-1.5 sm:p-3 overflow-hidden shadow-2xl flex flex-col"
             >
               <SpotlightDeck
                 tenant={tenant}
@@ -207,27 +207,27 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
 
       {/* Floating Mobile Spotlight Hub Button (When closed on mobile) */}
       {!isMobileRadarOpen && (
-        <div className="fixed bottom-24 right-3 z-30 xl:hidden">
+        <div className="fixed bottom-20 right-2 sm:bottom-24 sm:right-3 z-30 xl:hidden">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileRadarOpen(true)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white text-xs font-bold shadow-2xl backdrop-blur-md transition-all hover:border-cyan-500/80 ${tenant.glowClass}`}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white text-[11px] sm:text-xs font-bold shadow-2xl backdrop-blur-md transition-all hover:border-cyan-500/80 ${tenant.glowClass}`}
           >
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400 animate-pulse" />
             <span>Spotlight & Map</span>
           </motion.button>
         </div>
       )}
 
       {/* Main Workspace: 2-Column Desktop Grid (Center Chat + Right Spotlight Deck) */}
-      <div className="relative z-10 flex-1 min-h-0 w-full flex overflow-hidden px-2 md:px-4 pb-3 pt-1 gap-4 max-w-[1700px] mx-auto">
+      <div className="relative z-10 flex-1 min-h-0 w-full flex overflow-hidden px-1 sm:px-2 md:px-4 pb-2 sm:pb-3 pt-1 gap-2 md:gap-4 max-w-[1700px] mx-auto">
         {/* Center Main Chat Panel */}
-        <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-3xl border border-slate-800/80 shadow-2xl relative">
+        <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative">
           {/* Quick Discovery Category Bar */}
           <div className="flex-shrink-0">
             <QuickCategoryBar
@@ -238,7 +238,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
           </div>
 
           {/* Chat Stream or Empty State Starter Prompts */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
+          <div className="flex-1 min-h-0 overflow-y-auto p-1.5 sm:p-3 md:p-6">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col max-w-3xl mx-auto pb-10">
                 <LiveCivicFeed tenant={tenant} news={hubData.news} />
@@ -258,7 +258,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
           </div>
 
           {/* Partner Showcase between chat and input */}
-          <div className="flex-shrink-0 px-3 md:px-5 py-1.5 border-t border-slate-800/40 bg-slate-950/40">
+          <div className="flex-shrink-0 px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 border-t border-slate-800/40 bg-slate-950/40">
             <LocalPartnerShowcase tenantId={tenant.id} variant="compact" />
           </div>
 
