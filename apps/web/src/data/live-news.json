@@ -1,7 +1,7 @@
 {
   "yyc": [
     {
-      "id": "scrape-1786997580531-784",
+      "id": "scrape-1787004704386-265",
       "title": "Newsroom City of Calgary",
       "source": "City of Calgary Newsroom",
       "category": "Civic",
@@ -23,7 +23,7 @@
   "yvr": [],
   "yul": [
     {
-      "id": "scrape-1786997632006-914",
+      "id": "scrape-1787004756366-308",
       "title": "News",
       "source": "Ville de Montreal News",
       "category": "Civic",
@@ -45,7 +45,7 @@
   "yow": [],
   "ywg": [
     {
-      "id": "scrape-1786997683666-796",
+      "id": "scrape-1787004808486-976",
       "title": "Newsroom",
       "source": "City of Winnipeg News",
       "category": "Civic",
@@ -64,25 +64,6 @@
     }
   ],
   "yhz": [],
-  "yyj": [
-    {
-      "id": "scrape-1786997718517-921",
-      "title": "News | City of Victoria",
-      "source": "City of Victoria News",
-      "category": "Civic",
-      "url": "https://www.victoria.ca/city-government/news",
-      "timeAgo": "Just now",
-      "summary": "Crystal Pool Closure Marks Next Phase of Replacement ProjectDateAugust 11, 2026 New Program Supports Victoria EntrepreneursDateAugust 7, 2026 David Fo...",
-      "expandedDetails": {
-        "keyTakeaways": [
-          "Check the full article for details."
-        ],
-        "localImpact": "Important local update.",
-        "timeline": "Recent",
-        "relatedActionUrl": "https://www.victoria.ca/city-government/news",
-        "relatedActionText": "Read Full Article"
-      }
-    }
-  ],
+  "yyj": [],
   "yyt": []
 }
