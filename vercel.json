@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/refresh-hotspots",
+      "schedule": "0 */4 * * *"
+    }
+  ]
+}

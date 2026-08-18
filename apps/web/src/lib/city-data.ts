@@ -4725,8 +4725,24 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
 export function getCityHubData(tenantId: string): CityHubData {
   const data = CITY_HUB_REGISTRY[tenantId] || CITY_HUB_REGISTRY.yyc;
   
-  // Merge live scraped news if it exists
+  // Merge live scraped news if it exists (from JSON file)
   const liveNews = (liveNewsFeed as any)[tenantId] || [];
+
+  // Merge live RSS-fetched news from the automated cache (if available)
+  let rssCachedNews: NewsHeadline[] = [];
+  try {
+    // Dynamic import to avoid build-time issues — the cache is populated at runtime by the cron
+    const cache = (globalThis as any).__LIVE_NEWS_CACHE__;
+    if (cache && cache[tenantId] && cache[tenantId].articles?.length > 0) {
+      const cacheAge = Date.now() - (cache[tenantId].fetchedAt || 0);
+      // Use cached RSS news if it's less than 6 hours old
+      if (cacheAge < 6 * 60 * 60 * 1000) {
+        rssCachedNews = cache[tenantId].articles;
+      }
+    }
+  } catch {
+    // Cache not available yet — fall through to static data
+  }
 
   // Merge dynamic live hotspot items if available
   const dynamicHotspots = (liveHotspotsFeed as any)?.tenants?.[tenantId] || null;
@@ -4735,9 +4751,19 @@ export function getCityHubData(tenantId: string): CityHubData {
     ? [...dynamicHotspots.transitLines, ...data.transitLines]
     : data.transitLines;
 
+  // Priority: RSS cached news > live scraped JSON news > static hardcoded news
+  // Deduplicate by title to prevent showing the same story twice
+  const seenTitles = new Set<string>();
+  const allNews = [...rssCachedNews, ...liveNews, ...data.news].filter(n => {
+    const key = n.title.toLowerCase().trim();
+    if (seenTitles.has(key)) return false;
+    seenTitles.add(key);
+    return true;
+  });
+
   return {
     ...data,
-    news: [...liveNews, ...data.news].slice(0, 10),
+    news: allNews.slice(0, 12),
     transitLines: mergedTransit.slice(0, 5)
   };
 }

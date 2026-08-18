@@ -60,11 +60,23 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
           h2: ({ children }) => <h2 className="text-lg font-bold mt-3.5 mb-2 text-cyan-300">{children}</h2>,
           h3: ({ children }) => <h3 className="text-base font-bold mt-3 mb-1.5 text-white flex items-center gap-2">{children}</h3>,
           h4: ({ children }) => <h4 className="text-sm font-bold mt-2.5 mb-1 text-slate-200">{children}</h4>,
-          hr: () => <hr className="my-3 border-slate-800/80" />,
+          hr: () => (
+            <div className="my-5 flex items-center gap-3">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+              <span className="text-slate-600 text-[10px]">•</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+            </div>
+          ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-2 border-cyan-500/60 bg-slate-900/60 px-3.5 py-2 rounded-r-xl my-2.5 text-slate-300 italic">
-              {children}
-            </blockquote>
+            <div className="my-3 p-4 rounded-xl bg-gradient-to-br from-slate-900/80 to-slate-900/40 border-l-4 border-cyan-500/60 shadow-inner">
+              <div className="text-slate-300 leading-relaxed italic">{children}</div>
+            </div>
+          ),
+          img: ({ src, alt }) => (
+            <figure className="my-4 rounded-2xl overflow-hidden border border-slate-800 shadow-lg bg-slate-900/50">
+              <img src={src} alt={alt || ''} className="w-full max-h-80 object-cover" loading="lazy" />
+              {alt && <figcaption className="text-xs text-slate-400 text-center py-2 bg-slate-900/60 border-t border-slate-800/50">{alt}</figcaption>}
+            </figure>
           ),
           code: ({ className, children, ...props }) => {
             const match = /language-([\w-]+)/.exec(className || '');
@@ -76,6 +88,41 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
               const transitData = tryParseTransit(rawContent, tenantId);
               if (transitData) {
                 return <TransitWidget data={transitData} />;
+              }
+            }
+
+            // 📰 Render News Card Widget
+            if (lang === 'news-card') {
+              try {
+                const data = JSON.parse(rawContent.trim());
+                return (
+                  <div className="my-4 rounded-xl border border-slate-700/80 bg-gradient-to-b from-slate-800/60 to-slate-900/80 overflow-hidden shadow-lg hover:shadow-cyan-900/20 transition-all">
+                    <div className="p-4 flex flex-col gap-2">
+                      <div className="flex justify-between items-center text-xs">
+                        {data.category && (
+                          <span className="bg-cyan-900/60 text-cyan-200 px-2 py-0.5 rounded-full border border-cyan-700/50">
+                            {data.category}
+                          </span>
+                        )}
+                        <span className="text-slate-400 flex items-center gap-1.5">
+                          {data.source && <span className="font-semibold text-slate-300">{data.source}</span>}
+                          {data.timeAgo && <span>• {data.timeAgo}</span>}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-bold text-white leading-snug">{data.title}</h4>
+                      <p className="text-sm text-slate-300 line-clamp-2">{data.summary}</p>
+                      {data.url && (
+                        <div className="mt-2 pt-2 border-t border-slate-700/50">
+                          <a href={data.url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold flex items-center gap-1 group w-max">
+                            Read Full <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              } catch {
+                // Ignore partial JSON
               }
             }
 
@@ -120,17 +167,41 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           table: ({ children }) => (
-            <div className="overflow-x-auto my-3 rounded-xl border border-slate-800 bg-slate-900/40 shadow-inner">
-              <table className="min-w-full divide-y divide-slate-800 text-left text-xs md:text-sm">
-                {children}
-              </table>
+            <div className="my-5 flex flex-col gap-1.5">
+              <div className="text-xs text-slate-400 font-semibold px-1 flex items-center gap-2">
+                <span>📊</span> Data Table
+              </div>
+              <div className="overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg bg-slate-900/80">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  {children}
+                </table>
+              </div>
             </div>
           ),
+          thead: ({ children }) => (
+            <thead className="bg-gradient-to-r from-slate-800/90 to-slate-850/90 sticky top-0 z-10">
+              {children}
+            </thead>
+          ),
+          tbody: ({ children }) => (
+            <tbody className="divide-y divide-slate-800/60">
+              {children}
+            </tbody>
+          ),
+          tr: ({ children }) => (
+            <tr className="even:bg-slate-900/30 hover:bg-slate-800/40 transition-colors">
+              {children}
+            </tr>
+          ),
           th: ({ children }) => (
-            <th className="bg-slate-850/90 px-3.5 py-2 text-slate-200 font-semibold">{children}</th>
+            <th className="text-[11px] uppercase tracking-wider font-bold text-slate-300 px-4 py-3 border-b border-slate-700/60">
+              {children}
+            </th>
           ),
           td: ({ children }) => (
-            <td className="px-3.5 py-2 border-t border-slate-800/60 text-slate-300">{children}</td>
+            <td className="px-4 py-3 text-slate-200 first:border-l-2 first:border-l-cyan-500/30">
+              {children}
+            </td>
           ),
         }}
       >
