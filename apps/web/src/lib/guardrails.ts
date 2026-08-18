@@ -48,8 +48,8 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
 
   const q = query.trim();
 
-  // Local Intent Fast-Pass: Never block legitimate municipal, outdoor, trail, transit, dining, or lifestyle inquiries
-  const isLocalIntent = /\b(calgary|toronto|vancouver|montreal|edmonton|ottawa|winnipeg|halifax|victoria|st\.?\s*john|yyc|yyz|yvr|yul|yeg|yow|ywg|yhz|yyj|yyt|bike|biking|bicycle|cycling|cyclist|trail|trails|pathway|pathways|park|parks|hike|hiking|outdoor|outdoors|mountain|lake|nature|train|ctrain|subway|bus|transit|station|food|restaurant|dining|eat|bar|club|nightlife|hotel|shows|concert|tickets|event|events|311|bylaw|permit|parking|weather|tower|river|downtown)\b/i.test(q);
+  // Local Intent Fast-Pass: Never block legitimate news, executive briefings, municipal, outdoor, trail, transit, dining, or lifestyle inquiries
+  const isLocalIntent = /\b(calgary|toronto|vancouver|montreal|edmonton|ottawa|winnipeg|halifax|victoria|st\.?\s*john|yyc|yyz|yvr|yul|yeg|yow|ywg|yhz|yyj|yyt|news|headline|headlines|briefing|briefings|executive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|update|updates|traffic|story|stories|article|articles|report|reports|switch to|persona|mode|insider|foodie|family|bike|biking|bicycle|cycling|cyclist|trail|trails|pathway|pathways|park|parks|hike|hiking|outdoor|outdoors|mountain|lake|nature|train|ctrain|subway|bus|transit|station|food|restaurant|dining|eat|bar|club|nightlife|hotel|shows|concert|tickets|event|events|311|bylaw|permit|parking|weather|tower|river|downtown)\b/i.test(q);
 
   if (isLocalIntent) {
     // Only check explicit jailbreak override on local intent

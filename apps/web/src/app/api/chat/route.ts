@@ -497,6 +497,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           const isSports = /\b(sport|sports|game|games|score|scores|match|nhl|cfl|hockey|flames|leafs|canucks|oilers)\b/.test(q);
           const isStay = /\b(hotel|hotels|stay|stays|motel|resort|lodge)\b/.test(q);
           const isOutdoors = /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain|bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway|rotary|nose hill|fish creek|glenmore|bow river|outdoor|outdoors)\b/i.test(q);
+          const isNews = safePersona === 'news' || /\b(news|headline|headlines|briefing|briefings|executive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
 
           let fallbackText = '';
 
@@ -742,6 +743,27 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- How do I contest a parking ticket in ${city.name}?\n` +
               `- Check residential parking permit rules\n` +
               `- View upcoming city council agenda`;
+          } else if (isNews && cityHub.news?.length > 0) {
+            fallbackText = `### 📰 **Executive News Briefing — ${city.name}, ${city.province}** 🍁\n` +
+              `*Live verified headlines & civic updates • Updated ${cityHub.news[0]?.timeAgo || 'today'}*\n\n` +
+              cityHub.news.map((n, i) => {
+                const takeaways = n.expandedDetails?.keyTakeaways?.map((t: string) => `  • ${t}`).join('\n') || `  • ${n.summary}`;
+                const actionLink = n.expandedDetails?.relatedActionUrl
+                  ? `\n\n🔗 **Action / Coverage**: [${n.expandedDetails.relatedActionText || `Read Full Coverage on ${n.source}`}](${n.expandedDetails.relatedActionUrl})`
+                  : `\n\n🔗 **Source**: [Read on ${n.source}](${n.url})`;
+
+                return `#### **${i + 1}. [${n.title}](${n.url})**\n` +
+                  `*Source: [${n.source}](${n.url}) • Category: ${n.category} • ${n.timeAgo}*\n\n` +
+                  `**Executive Summary:**\n${n.summary}\n\n` +
+                  `**Key Takeaways:**\n${takeaways}\n\n` +
+                  `**Local & Civic Impact:**\n${n.expandedDetails?.localImpact || 'General updates for residents, businesses, and transit riders.'}` +
+                  actionLink;
+              }).join('\n\n---\n\n') +
+              `\n\n---\n` +
+              `💡 **Quick Next Steps:**\n` +
+              `- What are the upcoming ${city.name} City Council agenda items?\n` +
+              `- Check current transit service alerts & construction detours\n` +
+              `- Explore business & development highlights in ${city.name}`;
           } else if (isEvents && cityHub.shows?.length > 0) {
             fallbackText = `Here are the top live entertainment events and shows in **${city.name}**: 🎟️\n\n` +
               cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
