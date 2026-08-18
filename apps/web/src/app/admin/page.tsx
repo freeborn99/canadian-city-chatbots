@@ -40,10 +40,84 @@ import {
   Monitor,
   Activity,
   Server,
+  X,
+  Eye,
+  EyeOff,
+  Archive,
+  ChevronRight
 } from 'lucide-react';
 import { TENANTS } from '@/lib/tenants';
 
 const AUTH_STORAGE_KEY = 'can_city_admin_auth_token_v1';
+
+const CollapsibleSection = ({
+  id,
+  title,
+  icon: Icon,
+  badge,
+  defaultExpanded = false,
+  children,
+  headerRight,
+  borderColor = 'border-slate-800/80',
+  iconColor = 'text-slate-300',
+  iconBg = 'bg-slate-800/50',
+  iconBorder = 'border-slate-700/50'
+}: {
+  id: string;
+  title: string;
+  icon?: React.ElementType;
+  badge?: React.ReactNode;
+  defaultExpanded?: boolean;
+  children: React.ReactNode;
+  headerRight?: React.ReactNode;
+  borderColor?: string;
+  iconColor?: string;
+  iconBg?: string;
+  iconBorder?: string;
+}) => {
+  const [isExpanded, setIsExpanded] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`admin_section_${id}`);
+      if (saved !== null) return saved === 'true';
+    }
+    return defaultExpanded;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(`admin_section_${id}`, String(isExpanded));
+  }, [id, isExpanded]);
+
+  return (
+    <div className={`glass-panel border ${borderColor} rounded-2xl shadow-xl flex flex-col overflow-hidden`}>
+      <div 
+        className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-900/50 transition-colors select-none"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <div className={`w-8 h-8 rounded-xl ${iconBg} border ${iconBorder} flex items-center justify-center ${iconColor}`}>
+              <Icon className="w-4 h-4" />
+            </div>
+          )}
+          <h2 className="text-sm font-bold text-white flex items-center gap-2">
+            {title}
+            {badge}
+          </h2>
+        </div>
+        <div className="flex items-center gap-3" onClick={e => e.stopPropagation()}>
+          {headerRight}
+          <button 
+            className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 transition-colors"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+      {isExpanded && <div className="p-5 pt-0 border-t border-slate-800/50">{children}</div>}
+    </div>
+  );
+};
 
 export default function AdminPortalPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -53,20 +127,23 @@ export default function AdminPortalPage() {
   const [loginAttempts, setLoginAttempts] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [lastRefreshed, setLastRefreshed] = useState<string>('');
+  const [lastRefreshedTime, setLastRefreshedTime] = useState<number | null>(null);
+  const [timeSince, setTimeSince] = useState('Just now');
+  const [isStale, setIsStale] = useState(false);
+  
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | 'all'>('7d');
   const [cityFilter, setCityFilter] = useState<string>('all');
 
-  // Real live telemetry data from server API
   const [realData, setRealData] = useState<any>(null);
 
-  // Real citizen issue reports
   const [issues, setIssues] = useState<any[]>([]);
   const [issueFilter, setIssueFilter] = useState<'all' | 'new' | 'investigating' | 'resolved'>('all');
   const [expandedIssueId, setExpandedIssueId] = useState<string | null>(null);
 
-  // Autonomous AI Optimization & Feature Advisor
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [completedRecommendations, setCompletedRecommendations] = useState<any[]>([]);
+  const [showCompletedRecs, setShowCompletedRecs] = useState(false);
+  
   const [advisorStats, setAdvisorStats] = useState<any>(null);
   const [isScanningAdvisor, setIsScanningAdvisor] = useState<boolean>(false);
   const [copiedAdvisorId, setCopiedAdvisorId] = useState<string | null>(null);
@@ -84,7 +161,6 @@ export default function AdminPortalPage() {
       ]);
 
       if (metricsRes.status === 401 || issuesRes.status === 401 || advisorRes.status === 401) {
-        // Token is invalid or expired — force re-login
         sessionStorage.removeItem(AUTH_STORAGE_KEY);
         setIsAuthenticated(false);
         return;
@@ -101,43 +177,60 @@ export default function AdminPortalPage() {
       }
 
       const advisorJson = await advisorRes.json();
-      if (advisorJson.status === 'SUCCESS' && advisorJson.recommendations) {
-        setRecommendations(advisorJson.recommendations);
-        setAdvisorStats(advisorJson.stats);
+      if (advisorJson.status === 'SUCCESS') {
+        if (advisorJson.recommendations) setRecommendations(advisorJson.recommendations);
+        if (advisorJson.completedRecommendations) setCompletedRecommendations(advisorJson.completedRecommendations);
+        if (advisorJson.stats) setAdvisorStats(advisorJson.stats);
       }
     } catch (e) {
       console.error('Failed to fetch real telemetry or issues:', e);
     } finally {
-      setLastRefreshed(new Date().toLocaleTimeString());
+      setLastRefreshedTime(Date.now());
       setIsLoading(false);
     }
   }, [timeRange, cityFilter]);
 
-  const handleTriggerAdvisorScan = async () => {
-    setIsScanningAdvisor(true);
-    try {
-      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
-      const res = await fetch(`/api/admin/advisor?range=${timeRange}&city=${cityFilter}`, {
-        method: 'POST',
-        headers: { 'x-admin-token': token },
-      });
-      const data = await res.json();
-      if (data.status === 'SUCCESS' && data.recommendations) {
-        setRecommendations(data.recommendations);
-        setAdvisorStats(data.stats);
-      }
-    } catch (e) {
-      console.error('Failed to trigger advisor scan:', e);
-    } finally {
-      setIsScanningAdvisor(false);
-    }
-  };
+  // Update stale state and relative time string
+  useEffect(() => {
+    if (!lastRefreshedTime) return;
+    const update = () => {
+      const diffSeconds = Math.floor((Date.now() - lastRefreshedTime) / 1000);
+      setIsStale(diffSeconds > 120);
+      if (diffSeconds < 60) setTimeSince('Just now');
+      else if (diffSeconds < 3600) setTimeSince(`${Math.floor(diffSeconds / 60)} min ago`);
+      else setTimeSince(`${Math.floor(diffSeconds / 3600)} hr ago`);
+    };
+    update();
+    const interval = setInterval(update, 10000);
+    return () => clearInterval(interval);
+  }, [lastRefreshedTime]);
 
-  const handleCopyAdvisorPrompt = (rec: any) => {
-    navigator.clipboard.writeText(rec.antigravityPrompt);
-    setCopiedAdvisorId(rec.id);
-    setTimeout(() => setCopiedAdvisorId(null), 2500);
-  };
+  // Auto refresh visibility + 60s timer
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const diffSeconds = lastRefreshedTime ? Math.floor((Date.now() - lastRefreshedTime) / 1000) : 60;
+        if (diffSeconds >= 60) {
+          fetchRealMetrics();
+        }
+      }
+    };
+  
+    document.addEventListener('visibilitychange', handleVisibility);
+    
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchRealMetrics();
+      }
+    }, 60000);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      clearInterval(timer);
+    };
+  }, [isAuthenticated, lastRefreshedTime, fetchRealMetrics]);
 
   // Check saved session on mount
   useEffect(() => {
@@ -187,6 +280,55 @@ export default function AdminPortalPage() {
     setPasswordInput('');
   };
 
+  const handleTriggerAdvisorScan = async () => {
+    setIsScanningAdvisor(true);
+    try {
+      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
+      const res = await fetch(`/api/admin/advisor?range=${timeRange}&city=${cityFilter}`, {
+        method: 'POST',
+        headers: { 'x-admin-token': token },
+      });
+      const data = await res.json();
+      if (data.status === 'SUCCESS') {
+        if (data.recommendations) setRecommendations(data.recommendations);
+        if (data.completedRecommendations) setCompletedRecommendations(data.completedRecommendations);
+        if (data.stats) setAdvisorStats(data.stats);
+      }
+    } catch (e) {
+      console.error('Failed to trigger advisor scan:', e);
+    } finally {
+      setIsScanningAdvisor(false);
+    }
+  };
+
+  const handleCopyAdvisorPrompt = (rec: any) => {
+    navigator.clipboard.writeText(rec.antigravityPrompt);
+    setCopiedAdvisorId(rec.id);
+    setTimeout(() => setCopiedAdvisorId(null), 2500);
+  };
+
+  const handleUpdateRecommendationStatus = async (id: string, status: 'implemented' | 'dismissed') => {
+    try {
+      const token = sessionStorage.getItem(AUTH_STORAGE_KEY) || '';
+      await fetch('/api/admin/advisor', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': token,
+        },
+        body: JSON.stringify({ id, status }),
+      });
+      
+      const rec = recommendations.find(r => r.id === id);
+      if (rec) {
+        setRecommendations(prev => prev.filter(r => r.id !== id));
+        setCompletedRecommendations(prev => [{...rec, status}, ...prev]);
+      }
+    } catch (e) {
+      console.error('Failed to update recommendation status', e);
+    }
+  };
+
   const [copiedPromptId, setCopiedPromptId] = useState<string | null>(null);
 
   const handleCopyAntigravityPrompt = (issue: any) => {
@@ -234,7 +376,7 @@ export default function AdminPortalPage() {
     );
   }
 
-  // 2. Secure Login Screen with Strong Password Protection
+  // 2. Secure Login Screen
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 w-full h-full overflow-y-auto bg-slate-950 flex items-center justify-center p-4 selection:bg-cyan-500 selection:text-white">
@@ -324,6 +466,7 @@ export default function AdminPortalPage() {
   const filteredIssues = issues.filter((i) => {
     const isStatusMatch = issueFilter === 'all' || i.status === issueFilter;
     const isCityMatch = cityFilter === 'all' || i.tenantId === cityFilter;
+    if (issueFilter !== 'resolved' && i.status === 'resolved') return false; // Hide resolved unless explicitly requested
     return isStatusMatch && isCityMatch;
   });
 
@@ -342,7 +485,7 @@ export default function AdminPortalPage() {
               <h1 className="text-base md:text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
                 Executive Telemetry & Admin Portal <span className="text-sm">🍁</span>
               </h1>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-700/80 text-emerald-300 text-[10px] font-black uppercase tracking-wider animate-pulse">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-950/90 border border-emerald-700/80 text-emerald-300 text-[10px] font-black uppercase tracking-wider animate-pulse hidden sm:inline-block">
                 REAL TELEMETRY
               </span>
             </div>
@@ -356,15 +499,15 @@ export default function AdminPortalPage() {
             onClick={() => fetchRealMetrics()}
             disabled={isLoading}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-200 text-xs font-semibold transition-all hover:border-slate-700 active:scale-95 disabled:opacity-50"
-            title="Refresh metrics on-demand without background polling overhead"
+            title="Refresh metrics on-demand"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>{isLoading ? 'Computing...' : 'Refresh Metrics'}</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${isStale ? 'text-amber-400 animate-pulse' : 'text-cyan-400'} ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isLoading ? 'Computing...' : 'Refresh Metrics'}</span>
           </button>
 
           <Link
             href="/yyc"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all"
           >
             <span>Live Chat</span>
             <ExternalLink className="w-3 h-3" />
@@ -381,18 +524,20 @@ export default function AdminPortalPage() {
       </header>
 
       {/* Main Dashboard Workspace */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
-        {/* Controls Bar: Time Range & City Filter */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-5">
+        
+        {/* Controls Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-panel border border-slate-800/80 p-4 rounded-2xl">
           <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Clock className="w-4 h-4 text-cyan-400" />
-            <span>Last Telemetry Compute:</span>
-            <span className="font-mono text-slate-200 font-medium">{lastRefreshed || 'Just now'}</span>
+            <Clock className={`w-4 h-4 ${isStale ? 'text-amber-400' : 'text-cyan-400'}`} />
+            <span>Last computed:</span>
+            <span className={`font-mono font-medium ${isStale ? 'text-amber-400' : 'text-slate-200'}`}>{timeSince}</span>
+            {isStale && <span className="ml-1 w-2 h-2 rounded-full bg-amber-400 animate-pulse" title="Data is older than 2 minutes" />}
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-            {/* Time Range Pills */}
-            <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium">
+            {/* Time Range */}
+            <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-full sm:w-auto justify-between">
               {(['24h', '7d', '30d', 'all'] as const).map((range) => (
                 <button
                   key={range}
@@ -400,7 +545,7 @@ export default function AdminPortalPage() {
                     setTimeRange(range);
                     fetchRealMetrics(range, cityFilter);
                   }}
-                  className={`px-3 py-1 rounded-lg transition-all ${
+                  className={`px-3 py-1 rounded-lg transition-all flex-1 text-center ${
                     timeRange === range
                       ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold shadow-sm'
                       : 'text-slate-400 hover:text-slate-200'
@@ -411,7 +556,7 @@ export default function AdminPortalPage() {
               ))}
             </div>
 
-            {/* City Filter Dropdown */}
+            {/* City Filter */}
             <select
               value={cityFilter}
               onChange={(e) => {
@@ -419,7 +564,7 @@ export default function AdminPortalPage() {
                 setCityFilter(newCity);
                 fetchRealMetrics(timeRange, newCity);
               }}
-              className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 font-medium focus:outline-none focus:border-cyan-500"
+              className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 font-medium focus:outline-none focus:border-cyan-500 w-full sm:w-auto"
             >
               <option value="all">🇨🇦 All 10 Cities</option>
               {Object.values(TENANTS).map((t) => (
@@ -431,883 +576,544 @@ export default function AdminPortalPage() {
           </div>
         </div>
 
-        {/* Top 5 KPI Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* KPI 1: AI Queries */}
-          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Real AI Queries Processed</span>
-              <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-                <Cpu className="w-4 h-4" />
+        {/* Top 5 KPI Metrics - Stacks 2 wide on mobile, 5 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-5">
+          <div className="glass-panel border border-slate-800/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between relative group hover:border-slate-700 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">AI Queries</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                <Cpu className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-extrabold text-white tracking-tight font-mono">
+              <div className="text-xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
                 {metrics.totalQueries.toLocaleString()}
               </div>
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-400 font-medium">
-                <TrendingUp className="w-3.5 h-3.5" />
-                <span>Live production chats</span>
-              </div>
             </div>
           </div>
 
-          {/* KPI 2: Total Token Consumption */}
-          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Token Consumption</span>
-              <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-                <Zap className="w-4 h-4" />
+          <div className="glass-panel border border-slate-800/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between relative group hover:border-slate-700 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Tokens</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-extrabold text-white tracking-tight font-mono">
+              <div className="text-xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
                 {metrics.totalTokens.toLocaleString()}
               </div>
-              <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
-                <span>Prompt: {metrics.promptTokens.toLocaleString()}</span>
-                <span>•</span>
-                <span>Output: {metrics.completionTokens.toLocaleString()}</span>
-              </div>
             </div>
           </div>
 
-          {/* KPI 3: Unique Visitors */}
-          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Citizens / Visitors</span>
-              <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                <Users className="w-4 h-4" />
+          <div className="glass-panel border border-slate-800/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between relative group hover:border-slate-700 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Visitors</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-extrabold text-white tracking-tight font-mono">
+              <div className="text-xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
                 {metrics.totalVisitors.toLocaleString()}
               </div>
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-cyan-400 font-medium">
-                <Globe className="w-3.5 h-3.5" />
-                <span>Across 10 Porkbun Domains</span>
-              </div>
             </div>
           </div>
 
-          {/* KPI 4: Infrastructure Cost Savings */}
-          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-slate-700 transition-colors">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Infrastructure Cost Savings</span>
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <DollarSign className="w-4 h-4" />
+          <div className="glass-panel border border-slate-800/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between relative group hover:border-slate-700 transition-colors">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Savings</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-extrabold text-emerald-400 tracking-tight font-mono">
-                ${metrics.estimatedSavings} USD
-              </div>
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
-                <span>Actual Bill: ${metrics.groqCost}</span>
-                <span>(96% savings vs GPT-4)</span>
+              <div className="text-xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight font-mono">
+                ${metrics.estimatedSavings}
               </div>
             </div>
           </div>
 
-          {/* KPI 5: Affiliate Revenue & Clicks */}
-          <div className="glass-panel border border-slate-800/80 p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group hover:border-amber-700/50 transition-colors">
+          <div className="glass-panel border border-slate-800/80 p-4 sm:p-5 rounded-2xl flex flex-col justify-between relative group hover:border-amber-700/50 transition-colors col-span-2 lg:col-span-1">
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-all" />
-            <div className="flex items-center justify-between mb-3 relative z-10">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Est. Affiliate Revenue</span>
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-lg">
-                <DollarSign className="w-4 h-4" />
+            <div className="flex items-center justify-between mb-2 relative z-10">
+              <span className="text-[10px] sm:text-xs font-medium text-slate-400 uppercase tracking-wider">Revenue</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-lg">
+                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
             <div className="relative z-10">
-              <div className="text-2xl md:text-3xl font-extrabold text-amber-400 tracking-tight font-mono">
+              <div className="text-xl sm:text-3xl font-extrabold text-amber-400 tracking-tight font-mono">
                 ${(metrics.affiliateClicks * 0.45).toFixed(2)}
-              </div>
-              <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
-                <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
-                <span>{metrics.affiliateClicks.toLocaleString()} Outbound Clicks</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* 🤖 Autonomous AI Optimization & Feature Advisor */}
-        <div className="glass-panel border border-cyan-500/40 rounded-2xl p-5 md:p-6 space-y-4 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-md">
-                <Sparkles className="w-5 h-5 animate-pulse" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
-                    <span>Autonomous AI Optimization &amp; Feature Advisor</span>
-                    <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-bold">
-                      {recommendations.length} Actionable Opportunities
-                    </span>
-                  </h2>
-                </div>
-                <p className="text-xs text-slate-400">
-                  Real-time intelligence engine analyzing telemetry, unmonetized intents &amp; feature gaps to generate 1-click Antigravity implementation prompts
-                </p>
-              </div>
-            </div>
-
+        <CollapsibleSection
+          id="advisor"
+          title="Autonomous AI Optimization & Feature Advisor"
+          icon={Sparkles}
+          borderColor="border-cyan-500/40"
+          iconColor="text-cyan-400"
+          iconBg="bg-cyan-500/10"
+          iconBorder="border-cyan-500/30"
+          defaultExpanded={true}
+          badge={
+            <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-bold">
+              {recommendations.length} Actionable Opportunities
+            </span>
+          }
+          headerRight={
             <button
               onClick={handleTriggerAdvisorScan}
               disabled={isScanningAdvisor}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all disabled:opacity-50 shadow-sm"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-semibold transition-all disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isScanningAdvisor ? 'animate-spin' : ''}`} />
-              <span>{isScanningAdvisor ? 'Scanning Platform Telemetry...' : '⚡ Trigger AI Optimization Scan'}</span>
+              <span>{isScanningAdvisor ? 'Scanning...' : 'Trigger Scan'}</span>
             </button>
-          </div>
+          }
+        >
+          <div className="space-y-4 relative">
+            <div className="absolute -top-10 -right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+            
+            <p className="text-xs text-slate-400 pb-3 border-b border-slate-800 relative z-10">
+              Real-time intelligence engine analyzing telemetry, unmonetized intents &amp; feature gaps to generate 1-click Antigravity implementation prompts
+            </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 relative z-10">
-            {recommendations.map((rec) => {
-              const isAffiliate = rec.category === 'AFFILIATE_OPPORTUNITY';
-              const isFeature = rec.category === 'FEATURE_IMPROVEMENT';
-              const isCritical = rec.priority === 'CRITICAL' || rec.priority === 'HIGH';
-
-              return (
-                <div
-                  key={rec.id}
-                  className="p-4 rounded-xl bg-slate-900/90 border border-slate-800/90 hover:border-slate-750 transition-all flex flex-col justify-between space-y-3 shadow-lg"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <span
-                        className={`text-[9px] font-mono px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
-                          isAffiliate
-                            ? 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
-                            : isFeature
-                            ? 'bg-cyan-950/80 border border-cyan-800 text-cyan-300'
-                            : 'bg-purple-950/80 border border-purple-800 text-purple-300'
-                        }`}
-                      >
-                        {rec.category.replace('_', ' ')}
-                      </span>
-
-                      <div className="flex items-center gap-1.5">
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
-                            isCritical
-                              ? 'bg-rose-950 border border-rose-800 text-rose-300'
-                              : 'bg-amber-950 border border-amber-800 text-amber-300'
-                          }`}
-                        >
-                          {rec.priority}
-                        </span>
-                        <span className="text-[10px] font-mono text-emerald-400 font-bold bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                          {rec.estimatedImpact}
-                        </span>
-                      </div>
-                    </div>
-
-                    <h3 className="text-xs font-bold text-white leading-snug">{rec.title}</h3>
-                    <p className="text-[11px] text-slate-300 leading-relaxed">{rec.summary}</p>
-                    <div className="text-[10px] text-slate-400 bg-slate-950/70 p-2.5 rounded-lg border border-slate-850 space-y-1">
-                      <strong className="text-slate-300 block">💡 AI Rationale &amp; Market Opportunity:</strong>
-                      <p className="leading-relaxed">{rec.rationale}</p>
-                    </div>
-                  </div>
-
-                  {/* 1-Click Antigravity Fix / Feature Prompt Generator */}
-                  <div className="pt-2 border-t border-slate-800/80 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-cyan-400" />
-                        <span>Ready Antigravity Prompt:</span>
-                      </span>
-                      <button
-                        onClick={() => handleCopyAdvisorPrompt(rec)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 hover:text-white text-[10px] font-bold transition-all shadow-sm"
-                      >
-                        {copiedAdvisorId === rec.id ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400">Copied to Clipboard!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3 text-cyan-400" />
-                            <span>Copy Prompt for Antigravity</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <pre className="text-[9px] font-mono text-slate-400 bg-slate-950 p-2 rounded-lg overflow-x-auto whitespace-pre-wrap max-h-24 leading-relaxed border border-slate-800">
-                      {rec.antigravityPrompt}
-                    </pre>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 🚨 Citizen Issue & Bug Reports Inbox */}
-        <div className="glass-panel border border-amber-500/30 rounded-2xl p-5 md:p-6 space-y-4 shadow-xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                <AlertTriangle className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-white">Citizen Issue Reports & AI Quality Feedback</h2>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-950 border border-amber-800/80 text-amber-300 text-[10px] font-bold">
-                    {issues.filter((i) => i.status !== 'resolved').length} Pending
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400">Issues reported via the &quot;Report an Issue&quot; screen button with AI diagnostics</p>
-              </div>
-            </div>
-
-            {/* Status Filter Pills */}
-            <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
-              {(['all', 'new', 'investigating', 'resolved'] as const).map((st) => (
-                <button
-                  key={st}
-                  onClick={() => setIssueFilter(st)}
-                  className={`px-3 py-1 rounded-lg capitalize transition-all ${
-                    issueFilter === st
-                      ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300 font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {st}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {filteredIssues.length === 0 ? (
-            <div className="text-center py-8 text-xs text-slate-400">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-80" />
-              <p className="font-semibold text-slate-300">All clear! No issue reports matching this filter.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {filteredIssues.map((issue) => {
-                const isExpanded = expandedIssueId === issue.id;
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+              {recommendations.map((rec) => {
+                const isAffiliate = rec.category === 'AFFILIATE_OPPORTUNITY';
+                const isFeature = rec.category === 'FEATURE_IMPROVEMENT';
+                const isCritical = rec.priority === 'CRITICAL' || rec.priority === 'HIGH';
 
                 return (
                   <div
-                    key={issue.id}
-                    className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+                    key={rec.id}
+                    className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-750 transition-all flex flex-col justify-between space-y-4 shadow-lg group"
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-mono font-bold uppercase">
-                          {issue.tenantId}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className={`text-[9px] font-mono px-2 py-0.5 rounded-md font-bold uppercase tracking-wider ${
+                            isAffiliate
+                              ? 'bg-emerald-950/80 border border-emerald-800 text-emerald-300'
+                              : isFeature
+                              ? 'bg-cyan-950/80 border border-cyan-800 text-cyan-300'
+                              : 'bg-purple-950/80 border border-purple-800 text-purple-300'
+                          }`}
+                        >
+                          {rec.category.replace('_', ' ')}
                         </span>
-                        <span className="font-semibold text-xs text-white">
-                          {issue.aiSuggestedCategory || 'General Issue'}
-                        </span>
-                        <span className="text-[11px] text-slate-500 font-mono">
-                          • {new Date(issue.timestamp).toLocaleTimeString()}
-                        </span>
-                      </div>
-
-                      {/* Status Selector */}
-                      <div className="flex items-center gap-1.5">
-                        {(['new', 'investigating', 'resolved'] as const).map((s) => (
-                          <button
-                            key={s}
-                            onClick={() => handleUpdateStatus(issue.id, s)}
-                            className={`px-2 py-0.5 rounded-md text-[10px] font-semibold capitalize transition-all ${
-                              issue.status === s
-                                ? s === 'resolved'
-                                  ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
-                                  : s === 'investigating'
-                                  ? 'bg-amber-950 border border-amber-700 text-amber-300'
-                                  : 'bg-rose-950 border border-rose-700 text-rose-300'
-                                : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${
+                              isCritical
+                                ? 'bg-rose-950 border border-rose-800 text-rose-300'
+                                : 'bg-amber-950 border border-amber-800 text-amber-300'
                             }`}
                           >
-                            {s}
-                          </button>
-                        ))}
+                            {rec.priority}
+                          </span>
+                        </div>
                       </div>
+
+                      <h3 className="text-xs font-bold text-white leading-snug">{rec.title}</h3>
+                      <p className="text-[11px] text-slate-300 leading-relaxed">{rec.summary}</p>
                     </div>
 
-                    <div className="text-xs text-slate-300 space-y-1.5 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60">
-                      <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
-                        <Sparkles className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-                        <span>AI Auto-Diagnosis:</span>
-                        <span className="text-slate-200">{issue.aiSuggestedSummary}</span>
-                      </div>
-                      {issue.userDescription && (
-                        <div className="text-slate-400 text-[11px] pt-1">
-                          <strong className="text-slate-300">Citizen Notes:</strong> &quot;{issue.userDescription}&quot;
-                        </div>
-                      )}
-                      {issue.userEmail && (
-                        <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-0.5">
-                          <Mail className="w-3 h-3 text-slate-500" />
-                          <span>Contact: {issue.userEmail}</span>
-                        </div>
-                      )}
-
-                      {/* Session Diagnostics Metadata Pills */}
-                      <div className="pt-2 border-t border-slate-850 flex flex-wrap items-center gap-1.5 text-[10px]">
-                        <span className="text-slate-500 font-medium">Session Diagnostics:</span>
-                        {issue.sessionDiagnostics?.deviceType && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1">
-                            {issue.sessionDiagnostics.deviceType === 'mobile' ? (
-                              <Smartphone className="w-2.5 h-2.5 text-cyan-400" />
-                            ) : (
-                              <Monitor className="w-2.5 h-2.5 text-cyan-400" />
-                            )}
-                            <span className="capitalize">{issue.sessionDiagnostics.deviceType}</span>
-                          </span>
-                        )}
-                        {issue.sessionDiagnostics?.viewport && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400 font-mono">
-                            {issue.sessionDiagnostics.viewport}
-                          </span>
-                        )}
-                        {issue.sessionDiagnostics?.persona && (
-                          <span className="px-2 py-0.5 rounded-md bg-purple-950/60 border border-purple-800/40 text-purple-300">
-                            Persona: {issue.sessionDiagnostics.persona}
-                          </span>
-                        )}
-                        {issue.sessionDiagnostics?.clientTimestamp && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-500 font-mono">
-                            {new Date(issue.sessionDiagnostics.clientTimestamp).toLocaleTimeString()}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* ⚡ Ready-to-use Antigravity Fix Prompt Box */}
-                    <div className="p-3 rounded-xl bg-slate-950/80 border border-cyan-500/30 space-y-2">
+                    <div className="pt-3 border-t border-slate-800/80 space-y-2">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-cyan-300">
-                          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>Suggested Prompt for Antigravity:</span>
-                        </div>
+                        <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-cyan-400" />
+                          <span>Ready Antigravity Prompt:</span>
+                        </span>
                         <button
-                          onClick={() => handleCopyAntigravityPrompt(issue)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 text-[11px] font-semibold transition-all hover:text-white shadow-sm"
+                          onClick={() => handleCopyAdvisorPrompt(rec)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950 hover:bg-cyan-900 border border-cyan-800 text-cyan-300 hover:text-white text-[10px] font-bold transition-all shadow-sm"
                         >
-                          {copiedPromptId === issue.id ? (
+                          {copiedAdvisorId === rec.id ? (
                             <>
                               <Check className="w-3 h-3 text-emerald-400" />
-                              <span className="text-emerald-400 font-bold">Copied to Clipboard!</span>
+                              <span className="text-emerald-400">Copied!</span>
                             </>
                           ) : (
                             <>
                               <Copy className="w-3 h-3 text-cyan-400" />
-                              <span>Copy Antigravity Prompt</span>
+                              <span>Copy</span>
                             </>
                           )}
                         </button>
                       </div>
-                      <pre className="text-[10px] font-mono text-slate-300 bg-slate-900/90 p-2.5 rounded-lg overflow-x-auto whitespace-pre-wrap leading-relaxed border border-slate-800">
-                        {issue.antigravityPrompt || `Fix the following bug on Chat${(issue.tenantId || 'yyc').toUpperCase()}:\n• Issue Category: ${issue.aiSuggestedCategory || 'General Issue'}\n• Summary: ${issue.aiSuggestedSummary || issue.userDescription}\n• User Query: "${issue.userPrompt}"\n• Action: Inspect apps/web/src/app/api/chat/route.ts and city-data.ts`}
+                      <pre className="text-[9px] font-mono text-slate-400 bg-slate-950 p-2 rounded-lg overflow-x-auto whitespace-pre-wrap max-h-24 leading-relaxed border border-slate-800 select-all">
+                        {rec.antigravityPrompt}
                       </pre>
                     </div>
 
-                    {/* Expand Conversation Context */}
-                    <button
-                      onClick={() => setExpandedIssueId(isExpanded ? null : issue.id)}
-                      className="text-[11px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 transition-colors pt-1"
-                    >
-                      <MessageSquare className="w-3 h-3" />
-                      <span>{isExpanded ? 'Hide raw conversation transcript' : 'View raw conversation transcript'}</span>
-                      {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
+                    {/* Dismiss / Complete Buttons */}
+                    <div className="flex items-center gap-2 pt-2">
+                      <button 
+                        onClick={() => handleUpdateRecommendationStatus(rec.id, 'implemented')}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-emerald-950/50 hover:bg-emerald-900/80 border border-emerald-900/50 text-emerald-400 text-[10px] font-semibold transition-all"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Mark Complete
+                      </button>
+                      <button 
+                        onClick={() => handleUpdateRecommendationStatus(rec.id, 'dismissed')}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 text-slate-400 text-[10px] font-semibold transition-all"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              {recommendations.length === 0 && (
+                <div className="col-span-full py-8 text-center text-xs text-slate-400 flex flex-col items-center">
+                  <Sparkles className="w-8 h-8 text-cyan-400 mb-2 opacity-50" />
+                  <p>All clear! Your application is fully optimized based on current telemetry.</p>
+                </div>
+              )}
+            </div>
 
-                    {isExpanded && (
-                      <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] space-y-2 text-slate-400">
-                        <p><strong className="text-slate-200">Question Asked:</strong> &quot;{issue.userPrompt}&quot;</p>
-                        <p><strong className="text-slate-200">Chatbot Response:</strong></p>
-                        <div className="whitespace-pre-wrap font-mono text-[10px] text-slate-300 bg-slate-900/90 p-2 rounded max-h-48 overflow-y-auto">
-                          {issue.aiResponse}
+            {/* Completed Recommendations Section */}
+            {completedRecommendations.length > 0 && (
+              <div className="mt-6 pt-4 border-t border-slate-800/50 relative z-10">
+                <button 
+                  onClick={() => setShowCompletedRecs(!showCompletedRecs)}
+                  className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-300 transition-colors"
+                >
+                  {showCompletedRecs ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  Show Completed / Dismissed ({completedRecommendations.length})
+                </button>
+
+                {showCompletedRecs && (
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 opacity-60">
+                    {completedRecommendations.map(rec => (
+                      <div key={rec.id} className="p-3 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-between">
+                        <div>
+                          <h4 className="text-[11px] font-semibold text-slate-300 line-through">{rec.title}</h4>
+                          <span className="text-[9px] text-slate-500 uppercase">{rec.status}</span>
+                        </div>
+                        {rec.status === 'implemented' ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        ) : (
+                          <X className="w-4 h-4 text-slate-500" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </CollapsibleSection>
+
+        {/* 🚨 Citizen Issue & Bug Reports Inbox */}
+        <CollapsibleSection
+          id="issues"
+          title="Citizen Issue Reports & Feedback"
+          icon={AlertTriangle}
+          borderColor="border-amber-500/30"
+          iconColor="text-amber-400"
+          iconBg="bg-amber-500/10"
+          iconBorder="border-amber-500/30"
+          defaultExpanded={true}
+          badge={
+            <span className="px-2 py-0.5 rounded-full bg-amber-950 border border-amber-800/80 text-amber-300 text-[10px] font-bold">
+              {issues.filter((i) => i.status !== 'resolved').length} Pending
+            </span>
+          }
+          headerRight={
+            <select
+              value={issueFilter}
+              onChange={(e: any) => setIssueFilter(e.target.value)}
+              className="hidden sm:block px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-300 font-medium focus:outline-none focus:border-amber-500/50"
+            >
+              <option value="all">All Active</option>
+              <option value="new">New</option>
+              <option value="investigating">Investigating</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          }
+        >
+          <div className="space-y-4">
+            <p className="text-xs text-slate-400 pb-3 border-b border-slate-800">
+              Issues reported via the "Report an Issue" screen button with AI diagnostics.
+            </p>
+
+            {filteredIssues.length === 0 ? (
+              <div className="text-center py-8 text-xs text-slate-400">
+                <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2 opacity-80" />
+                <p className="font-semibold text-slate-300">All clear! No issue reports matching this filter.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredIssues.map((issue) => {
+                  const isExpanded = expandedIssueId === issue.id;
+
+                  return (
+                    <div
+                      key={issue.id}
+                      className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-colors space-y-3"
+                    >
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-800 text-cyan-300 text-[10px] font-mono font-bold uppercase">
+                            {issue.tenantId}
+                          </span>
+                          <span className="font-semibold text-xs text-white">
+                            {issue.aiSuggestedCategory || 'General Issue'}
+                          </span>
+                          <span className="text-[11px] text-slate-500 font-mono">
+                            • {new Date(issue.timestamp).toLocaleTimeString()}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={issue.status}
+                            onChange={(e: any) => handleUpdateStatus(issue.id, e.target.value)}
+                            className={`px-2.5 py-1 rounded-md text-[10px] font-semibold capitalize bg-slate-800/80 border-0 focus:ring-0 ${
+                              issue.status === 'investigating' ? 'text-amber-300' : 'text-slate-300'
+                            }`}
+                          >
+                            <option value="new">New</option>
+                            <option value="investigating">Investigating</option>
+                          </select>
+                          
+                          <button
+                            onClick={() => handleUpdateStatus(issue.id, 'resolved')}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-800/60 text-emerald-400 text-[10px] font-semibold transition-colors"
+                          >
+                            <Archive className="w-3.5 h-3.5" />
+                            Resolve & Archive
+                          </button>
                         </div>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+
+                      <div className="text-xs text-slate-300 space-y-1.5 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60">
+                        <div className="flex items-start gap-1.5 text-cyan-300 font-medium">
+                          <Sparkles className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                          <span className="text-slate-200"><strong className="text-cyan-400 font-normal">Diagnosis:</strong> {issue.aiSuggestedSummary}</span>
+                        </div>
+                        {issue.userDescription && (
+                          <div className="text-slate-400 text-[11px] pt-1">
+                            <strong className="text-slate-300">User Notes:</strong> "{issue.userDescription}"
+                          </div>
+                        )}
+                        <div className="pt-2 border-t border-slate-850 flex flex-wrap items-center gap-2 text-[10px] text-slate-500">
+                          {issue.userEmail && <span>✉️ {issue.userEmail}</span>}
+                          {issue.sessionDiagnostics?.deviceType && <span className="capitalize">📱 {issue.sessionDiagnostics.deviceType}</span>}
+                          {issue.sessionDiagnostics?.persona && <span>👤 {issue.sessionDiagnostics.persona}</span>}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-1">
+                        <button
+                          onClick={() => handleCopyAntigravityPrompt(issue)}
+                          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                        >
+                          {copiedPromptId === issue.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copiedPromptId === issue.id ? 'Copied!' : 'Copy Antigravity Fix Prompt'}
+                        </button>
+                        <button
+                          onClick={() => setExpandedIssueId(isExpanded ? null : issue.id)}
+                          className="text-[11px] text-slate-400 hover:text-slate-300 flex items-center gap-1 transition-colors"
+                        >
+                          {isExpanded ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                          {isExpanded ? 'Hide Transcript' : 'View Transcript'}
+                        </button>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-[11px] space-y-2 text-slate-400 mt-2">
+                          <p><strong className="text-slate-200">User Query:</strong> "{issue.userPrompt}"</p>
+                          <p><strong className="text-slate-200">AI Response:</strong></p>
+                          <div className="whitespace-pre-wrap font-mono text-[10px] text-slate-300 bg-slate-900/90 p-2 rounded max-h-48 overflow-y-auto">
+                            {issue.aiResponse}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </CollapsibleSection>
+
+        {/* Infrastructure & AI Models Area - Split on Desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* AI Models */}
+          <CollapsibleSection
+            id="models"
+            title="AI Inference Engines & Pipelines"
+            icon={Cpu}
+          >
+            <div className="space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span className="text-xs text-slate-400">Total Avg Latency</span>
+                <span className="px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-800/60 text-emerald-400 text-[10px] font-bold">
+                  {metrics.avgLatencyMs || 280}ms
+                </span>
+              </div>
+              {/* Primary: Groq Llama-3.3 70B */}
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                <span className="font-semibold text-white">Groq • Llama-3.3-70B</span>
+                <span className="text-cyan-400 font-mono font-bold text-[11px]">
+                  {metrics.modelDistribution?.groq70b || 0} reqs
+                </span>
+              </div>
+              {/* Fast Failover */}
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
+                <span className="font-semibold text-white">Groq • Llama-3.1-8B-Instant</span>
+                <span className="text-emerald-400 font-mono font-bold text-[11px]">
+                  {metrics.modelDistribution?.groq8b || 0} reqs
+                </span>
+              </div>
+              {/* Cache */}
+              <div className="bg-slate-900/90 border border-cyan-500/30 p-3 rounded-xl flex items-center justify-between text-xs">
+                <span className="font-semibold text-cyan-300">LRU Response Cache</span>
+                <span className="text-cyan-400 font-mono font-bold text-[11px]">
+                  {metrics.cacheHits || 0} Hits ({metrics.cacheHitRate || '0%'})
+                </span>
+              </div>
+              {/* Guardrails */}
+              <div className="bg-slate-900/90 border border-amber-500/30 p-3 rounded-xl flex items-center justify-between text-xs">
+                <span className="font-semibold text-amber-300">Safety Guardrails Blocks</span>
+                <span className="text-amber-400 font-mono font-bold text-[11px]">
+                  {metrics.guardrailBlocks || 0}
+                </span>
+              </div>
             </div>
-          )}
+          </CollapsibleSection>
+
+          {/* Infrastructure */}
+          <CollapsibleSection
+            id="infra"
+            title="Host & Edge Infrastructure"
+            icon={Server}
+          >
+            <div className="grid grid-cols-2 gap-3 pb-2">
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div className="text-slate-400 text-[10px] uppercase">Median Latency</div>
+                <div className="text-lg font-bold font-mono text-white">185 ms</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div className="text-slate-400 text-[10px] uppercase">Peak Latency</div>
+                <div className="text-lg font-bold font-mono text-cyan-300">380 ms</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div className="text-slate-400 text-[10px] uppercase">Cache Hit Rate</div>
+                <div className="text-lg font-bold font-mono text-emerald-400">{metrics.cacheHitRate || '68%'}</div>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div className="text-slate-400 text-[10px] uppercase">Uptime</div>
+                <div className="text-lg font-bold font-mono text-emerald-400 flex items-center gap-1">
+                  99.98% <Activity className="w-3 h-3 animate-pulse" />
+                </div>
+              </div>
+            </div>
+          </CollapsibleSection>
         </div>
 
-        {/* Middle Section: AI Model Metrics & Query Category Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* AI Model Intelligence Architecture */}
-          <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-cyan-400" />
-                AI Inference Engines & Pipeline
-              </h2>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-950/80 border border-emerald-800/60 text-emerald-400 text-[10px] font-bold">
-                Avg {metrics.avgLatencyMs || 280}ms
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {/* Primary: Groq Llama-3.3 70B */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">Groq • Llama-3.3-70B</span>
-                  <span className="text-cyan-400 font-mono font-bold text-[11px]">
-                    {metrics.modelDistribution?.groq70b || 0} reqs (Primary)
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Throughput: ~310ms</span>
-                  <span>Cost: $0.59 / $0.79 per 1M</span>
-                </div>
-              </div>
-
-              {/* Fast Failover: Groq Llama-3.1 8B */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white">Groq • Llama-3.1-8B-Instant</span>
-                  <span className="text-emerald-400 font-mono font-bold text-[11px]">
-                    {metrics.modelDistribution?.groq8b || 0} reqs (~140ms)
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Ultra-High Speed Tier</span>
-                  <span>Active & Ready</span>
-                </div>
-              </div>
-
-              {/* Instant Response Cache */}
-              <div className="bg-slate-900/90 border border-cyan-500/30 p-3 rounded-xl space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>LRU Response Cache</span>
-                  </span>
-                  <span className="text-cyan-400 font-mono font-bold text-[11px]">
-                    {metrics.cacheHits || 0} Hits ({metrics.cacheHitRate || '0%'})
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Zero-Token Instant Streams</span>
-                  <span>~12ms Response</span>
-                </div>
-              </div>
-
-              {/* Meta Safety Guardrails */}
-              <div className="bg-slate-900/90 border border-amber-500/30 p-3 rounded-xl space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-amber-300 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Meta Llama Safety Guardrails</span>
-                  </span>
-                  <span className="text-amber-400 font-mono font-bold text-[11px]">
-                    {metrics.guardrailBlocks || 0} Blocked
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Jailbreaks / Off-Topic Shield</span>
-                  <span>Active Multi-Turn</span>
-                </div>
-              </div>
-
-              {/* Fallback: Google Gemini 1.5 Flash */}
-              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs">
-                <span className="text-slate-300 font-medium">Google Gemini 1.5 Flash</span>
-                <span className="text-slate-400 font-mono text-[11px]">
-                  {metrics.modelDistribution?.geminiFlash || 0} reqs (1M Context)
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* User Query Category Breakdown */}
-          <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl space-y-4">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-purple-400" />
-              Real Query Categorization
-            </h2>
-
-            <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
-              {[
-                { name: 'Nightlife, Clubs & Lounges', key: 'nightlife', icon: Flame, color: 'from-pink-500 to-rose-500' },
-                { name: 'Dining & Reservations', key: 'dining', icon: Utensils, color: 'from-amber-500 to-orange-500' },
-                { name: 'Live Shows, Theatre & Concerts', key: 'events', icon: Ticket, color: 'from-violet-500 to-purple-500' },
-                { name: 'Sports Scores & Matchups', key: 'sports', icon: Zap, color: 'from-cyan-500 to-blue-500' },
-                { name: 'Civic 311 & Municipal Bylaws', key: 'civic', icon: PhoneCall, color: 'from-amber-400 to-yellow-500' },
-                { name: 'Transit Radar & Delays', key: 'transit', icon: Train, color: 'from-teal-500 to-emerald-500' },
-                { name: 'Regional News & Bulletins', key: 'news', icon: Newspaper, color: 'from-emerald-500 to-teal-500' },
-                { name: 'Hotels, Stays & Tours', key: 'stays', icon: Compass, color: 'from-blue-500 to-indigo-500' },
-                { name: 'Scenic Trails & Outdoors', key: 'outdoors', icon: Trees, color: 'from-green-500 to-emerald-600' },
-              ].map((cat) => {
-                const count = metrics.categoryCounts?.[cat.key] || 0;
-                const percentage = Math.round((count / totalCatCount) * 100);
-
-                return (
-                  <div key={cat.name} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1.5 text-slate-300 font-medium">
-                        <cat.icon className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="truncate">{cat.name}</span>
-                      </div>
-                      <span className="font-mono text-slate-200 font-bold flex-shrink-0 ml-1">
-                        {count} ({percentage}%)
-                      </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full bg-gradient-to-r ${cat.color} rounded-full`}
-                        style={{ width: `${Math.max(3, percentage)}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Monetization & Affiliate Link Outbound Tracker */}
-          <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-emerald-400" />
-                Affiliate Performance &amp; Monetization (Real Network Telemetry)
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 font-mono">
-                  {metrics.affiliateSummary?.isApiLive ? '● Live Network API Synced' : '● First-Party Telemetry'}
-                </span>
-                <span className="text-xs font-mono text-emerald-400 font-bold">{metrics.affiliateClicks || 0} Real Clicks</span>
-              </div>
-            </div>
-
-            <div className="space-y-2.5">
-              {(metrics.affiliateSummary?.partners || [
-                {
-                  name: 'CJ Affiliate (VividSeats & Events)',
-                  networkId: 'Publisher ID: 6429184',
-                  status: 'LOCAL_TRACKER_ACTIVE',
-                  clicks: metrics.partnerClicks?.CJ || 0,
-                  conversions: 0,
-                  conversionRate: '0.0%',
-                  earnings: '$0.00 CAD',
-                  source: 'Real First-Party Telemetry',
-                  apiKeyEnvVar: 'CJ_PERSONAL_ACCESS_TOKEN',
-                },
-                {
-                  name: 'Impact Radius (Ticketmaster & Entertainment)',
-                  networkId: 'Campaign: 14920',
-                  status: 'LOCAL_TRACKER_ACTIVE',
-                  clicks: metrics.partnerClicks?.Ticketmaster || 0,
-                  conversions: 0,
-                  conversionRate: '0.0%',
-                  earnings: '$0.00 CAD',
-                  source: 'Real First-Party Telemetry',
-                  apiKeyEnvVar: 'IMPACT_ACCOUNT_SID & IMPACT_AUTH_TOKEN',
-                },
-                {
-                  name: 'OpenTable (Restaurant Bookings)',
-                  networkId: 'Partner: canadacity_ot',
-                  status: 'LOCAL_TRACKER_ACTIVE',
-                  clicks: metrics.partnerClicks?.OpenTable || 0,
-                  conversions: 0,
-                  conversionRate: '0.0%',
-                  earnings: '$0.00 CAD',
-                  source: 'Real First-Party Telemetry',
-                  apiKeyEnvVar: 'RAKUTEN_API_TOKEN',
-                },
-                {
-                  name: 'Viator & GetYourGuide (Tours & Sightseeing)',
-                  networkId: 'Partner ID: P-88319',
-                  status: 'LOCAL_TRACKER_ACTIVE',
-                  clicks: (metrics.partnerClicks?.Viator || 0) + (metrics.partnerClicks?.GetYourGuide || 0),
-                  conversions: 0,
-                  conversionRate: '0.0%',
-                  earnings: '$0.00 CAD',
-                  source: 'Real First-Party Telemetry',
-                  apiKeyEnvVar: 'VIATOR_API_KEY',
-                },
-              ]).map((p: any) => (
-                <div
-                  key={p.name}
-                  className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-slate-200 flex items-center gap-1.5">
-                        <span>{p.name}</span>
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-medium ${
-                            p.status === 'API_CONNECTED'
-                              ? 'bg-emerald-950 border border-emerald-700 text-emerald-300'
-                              : 'bg-slate-800 border border-slate-700 text-slate-400'
-                          }`}
-                        >
-                          {p.status === 'API_CONNECTED' ? 'API LIVE' : 'LOCAL TRACKER'}
-                        </span>
-                      </div>
-                      <div className="text-slate-400 text-[10px] font-mono mt-0.5">{p.networkId}</div>
-                    </div>
-                    <div className="flex items-center gap-3.5 text-right">
-                      <div className="flex flex-col">
-                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Tracked Clicks</span>
-                        <span className="text-white font-mono font-bold">{p.clicks}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Conversions</span>
-                        <span className="text-cyan-400 font-mono">{p.conversions}</span>
-                      </div>
-                      <div className="flex flex-col min-w-[65px]">
-                        <span className="text-slate-400 text-[10px] uppercase font-semibold">Settled Earnings</span>
-                        <span className="text-emerald-400 font-bold font-mono">{p.earnings}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {p.status !== 'API_CONNECTED' && (
-                    <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-800/60 flex items-center justify-between">
-                      <span>Sync live reports: Add <code className="text-cyan-400 bg-slate-950 px-1 py-0.5 rounded border border-slate-800">{p.apiKeyEnvVar}</code> in Vercel</span>
-                      <span className="text-slate-400 font-mono">100% Real Tracking</span>
-                    </div>
+        {/* Monetization */}
+        <CollapsibleSection
+          id="monetization"
+          title="Monetization & Affiliate Network"
+          icon={DollarSign}
+          badge={
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 font-mono ml-2 hidden sm:inline-block">
+              {metrics.affiliateSummary?.isApiLive ? '● LIVE API' : '● FIRST-PARTY TRACKING'}
+            </span>
+          }
+        >
+          <div className="space-y-3">
+            {(metrics.affiliateSummary?.partners || [
+              { name: 'CJ Affiliate', clicks: metrics.partnerClicks?.CJ || 0, earnings: '$0.00 CAD', isApiLive: true, envKey: 'NEXT_PUBLIC_CJ_API_KEY' },
+              { name: 'Impact Radius', clicks: metrics.partnerClicks?.Ticketmaster || 0, earnings: '$0.00 CAD', isApiLive: true, envKey: 'NEXT_PUBLIC_IMPACT_API_KEY' },
+              { name: 'OpenTable', clicks: metrics.partnerClicks?.OpenTable || 0, earnings: '$0.00 CAD', isApiLive: true, envKey: 'RAKUTEN_API_TOKEN' },
+              { name: 'Viator / GYG', clicks: (metrics.partnerClicks?.Viator || 0) + (metrics.partnerClicks?.GetYourGuide || 0), earnings: '$0.00 CAD', isApiLive: true, envKey: 'NEXT_PUBLIC_VIATOR_API_KEY' },
+            ]).map((p: any) => (
+              <div key={p.name} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800 gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold text-slate-200 text-sm">{p.name}</span>
+                  {p.isApiLive ? (
+                     <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-medium bg-emerald-950 border border-emerald-700 text-emerald-300">
+                       API LIVE
+                     </span>
+                  ) : (
+                     <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-medium bg-slate-800 border border-slate-700 text-slate-400">
+                       LOCAL
+                     </span>
                   )}
+                  <span className="hidden md:inline-block text-[10px] text-slate-500 font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">
+                    env: {p.envKey}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <div className="flex items-center gap-6">
+                  <div className="text-right">
+                    <span className="block text-[10px] uppercase text-slate-400 font-semibold">Clicks</span>
+                    <span className="text-white font-mono font-bold">{p.clicks}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-[10px] uppercase text-slate-400 font-semibold">Earnings</span>
+                    <span className="text-emerald-400 font-mono font-bold">{p.earnings}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
             <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
               <span className="text-slate-400">Total Verified Network Earnings:</span>
-              <span className="text-emerald-400 font-bold font-mono">
+              <span className="text-emerald-400 font-bold font-mono text-sm">
                 {metrics.affiliateSummary?.totalEarnings || '$0.00 CAD'}
               </span>
             </div>
           </div>
-        </div>
+        </CollapsibleSection>
 
-        {/* Regional Email Forwarding & Routing Directory */}
-        <div className="glass-panel border border-cyan-500/30 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                <Mail className="w-4 h-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  Regional Email Forwarding &amp; Routing Directory
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold">
-                    10 Hubs Active
-                  </span>
-                </h2>
-                <p className="text-xs text-slate-400">All inbound emails route through Porkbun MX &amp; SPF forwarding to primary inbox</p>
-              </div>
-            </div>
-            <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 flex items-center gap-2">
-              <span className="text-slate-500">Destination:</span>
-              <strong className="text-cyan-300 font-mono">chatadmin@casayoung.com</strong>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {Object.values(TENANTS).map((t) => (
-              <div key={t.id} className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 hover:border-slate-700 transition-colors space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${t.gradientClass}`} />
-                    <span className="text-xs font-bold text-white">{t.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">({t.id})</span>
-                  </div>
-                  <span className="text-[10px] text-emerald-400 font-mono font-medium">MX LIVE</span>
-                </div>
-
-                <div className="space-y-1 text-[11px]">
-                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
-                    <span className="text-slate-500">Inquiries:</span>
-                    <a href={`mailto:hello@${t.domain}`} className="font-mono text-cyan-400 hover:underline">hello@{t.domain}</a>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
-                    <span className="text-slate-500">Partners:</span>
-                    <a href={`mailto:partners@${t.domain}`} className="font-mono text-cyan-400 hover:underline">partners@{t.domain}</a>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
-                    <span className="text-slate-500">News Tips:</span>
-                    <a href={`mailto:news@${t.domain}`} className="font-mono text-cyan-400 hover:underline">news@{t.domain}</a>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300 bg-slate-950/60 px-2 py-1 rounded border border-slate-850">
-                    <span className="text-slate-500">Press:</span>
-                    <a href={`mailto:press@${t.domain}`} className="font-mono text-cyan-400 hover:underline">press@{t.domain}</a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Active Affiliate Environment Config */}
-        <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2">
-              <KeyRound className="w-4 h-4 text-amber-400" />
-              Active Affiliate Environment Config
-            </h2>
-            <span className="text-xs font-mono text-slate-400 font-medium">Loaded from .env.local</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { label: 'Rakuten Advertising OAuth', key: 'RAKUTEN_CLIENT_ID & SECRET', value: '8J3cHl...36bo (Active)', color: 'from-rose-500 to-red-600', isLive: true },
-              { label: 'CJ Affiliate API Key', key: 'NEXT_PUBLIC_CJ_API_KEY', value: '6429184', color: 'from-amber-500 to-orange-600', isLive: true },
-              { label: 'Impact Network Key', key: 'NEXT_PUBLIC_IMPACT_API_KEY', value: 'Campaign: 14920', color: 'from-blue-500 to-indigo-600', isLive: true },
-              { label: 'Viator / GYG Key', key: 'NEXT_PUBLIC_VIATOR_API_KEY', value: 'Partner: P-88319', color: 'from-emerald-500 to-teal-600', isLive: true },
-            ].map((k) => (
-              <div key={k.label} className="bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-col justify-between h-full space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${k.color} animate-pulse`} />
-                    <span className="text-xs font-semibold text-slate-200">{k.label}</span>
-                  </div>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400 font-bold">
-                    ACTIVE
-                  </span>
-                </div>
-                <div className="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-1.5 rounded-lg border border-slate-800 break-all flex items-center justify-between">
-                  <span>{k.key}</span>
-                  <span className="text-slate-300 font-semibold">{k.value}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Host & Edge Infrastructure Performance Diagnostics */}
-        <div className="glass-panel border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-                <Server className="w-4 h-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                  Host & Edge Infrastructure Performance
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold">
-                    Vercel Edge Global
-                  </span>
-                </h2>
-                <p className="text-xs text-slate-400">Low-latency streaming & serverless runtime diagnostics</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-                <Activity className="w-3 h-3 text-emerald-400 animate-pulse" />
-                <span>99.98% SLA</span>
-              </span>
-              <span className="px-2.5 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800/40 text-[10px] font-mono text-cyan-300">
-                🔒 Privacy Protected (0 PII)
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
-              <div className="text-slate-400 text-[11px]">Median Latency (p50)</div>
-              <div className="text-xl font-bold font-mono text-white">185 ms</div>
-              <div className="text-[10px] text-emerald-400">Groq Llama-3.3-70B Primary</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
-              <div className="text-slate-400 text-[11px]">Peak Latency (p95)</div>
-              <div className="text-xl font-bold font-mono text-cyan-300">380 ms</div>
-              <div className="text-[10px] text-slate-400">Vector RAG + Inference</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
-              <div className="text-slate-400 text-[11px]">LRU Cache Efficiency</div>
-              <div className="text-xl font-bold font-mono text-emerald-400">{metrics.cacheHitRate || '68%'}</div>
-              <div className="text-[10px] text-slate-400">Zero-Token Cache Hits</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
-              <div className="text-slate-400 text-[11px]">Active Provider Status</div>
-              <div className="text-xl font-bold font-mono text-emerald-400">Operational</div>
-              <div className="text-[10px] text-slate-400">Groq + Gemini Multi-Tier</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Multi-Domain City Traffic Table */}
-        <div className="glass-panel border border-slate-800/80 rounded-2xl overflow-hidden shadow-xl">
-          <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <Globe className="w-4 h-4 text-cyan-400" />
-                Multi-Tenant Canadian Domain Registry (10 Hubs)
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">Live routing status across all 10 registered Porkbun domains.</p>
-            </div>
-            <span className="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-800 text-emerald-300 text-xs font-semibold">
-              100% Online
-            </span>
-          </div>
-
-          <div className="overflow-x-auto">
+        {/* Multi-Domain Table */}
+        <CollapsibleSection
+          id="domains"
+          title="Multi-Tenant Domain Registry"
+          icon={Globe}
+        >
+          {/* Desktop Table */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
-                  <th className="py-3 px-4">City Hub</th>
-                  <th className="py-3 px-4">Domain Route</th>
-                  <th className="py-3 px-4">Visitors</th>
-                  <th className="py-3 px-4">AI Queries</th>
-                  <th className="py-3 px-4">Tokens</th>
-                  <th className="py-3 px-4">Avg Latency</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                <tr className="text-slate-400 font-semibold border-b border-slate-800">
+                  <th className="py-2 px-2">City Hub</th>
+                  <th className="py-2 px-2">Domain Route</th>
+                  <th className="py-2 px-2">Visitors</th>
+                  <th className="py-2 px-2">AI Queries</th>
+                  <th className="py-2 px-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
                 {Object.values(TENANTS)
                   .filter((t) => cityFilter === 'all' || t.id === cityFilter)
                   .map((t) => {
-                    const cityStats = metrics.cityBreakdown?.[t.id] || { queries: 0, tokens: 0, visitors: 0, affiliateClicks: 0, avgLatency: 280 };
-
+                    const cityStats = metrics.cityBreakdown?.[t.id] || { queries: 0, visitors: 0 };
                     return (
                       <tr key={t.id} className="hover:bg-slate-900/50 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${t.gradientClass}`} />
+                        <td className="py-3 px-2 font-semibold text-white flex items-center gap-2">
+                          <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${t.gradientClass}`} />
                           <span>{t.name}</span>
-                          <span className="text-[10px] text-slate-400 uppercase font-mono">({t.id})</span>
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-cyan-400 font-medium">
-                          <a
-                            href={`https://${t.domain}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:underline flex items-center gap-1"
-                          >
-                            <span>{t.domain}</span>
-                            <ExternalLink className="w-2.5 h-2.5 opacity-60" />
-                          </a>
+                        <td className="py-3 px-2 font-mono text-cyan-400">
+                          <a href={`https://${t.domain}`} target="_blank" rel="noreferrer" className="hover:underline">{t.domain}</a>
                         </td>
-                        <td className="py-3.5 px-4 font-mono font-medium text-slate-200">
-                          {cityStats.visitors.toLocaleString()}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-medium text-slate-200">
-                          {cityStats.queries.toLocaleString()}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-slate-300">
-                          {cityStats.tokens.toLocaleString()}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-emerald-400 text-xs">
-                          {cityStats.avgLatency || 280}ms
-                        </td>
-                        <td className="py-3.5 px-4 text-slate-300">
-                          <span className="px-2 py-0.5 rounded-md bg-emerald-950 border border-emerald-800 text-emerald-400 text-[11px] font-semibold">
-                            Active
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <Link
-                            href={`/${t.id}`}
-                            className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-medium transition-colors"
-                          >
-                            Open Hub
+                        <td className="py-3 px-2 font-mono text-slate-200">{cityStats.visitors}</td>
+                        <td className="py-3 px-2 font-mono text-slate-200">{cityStats.queries}</td>
+                        <td className="py-3 px-2 text-right">
+                          <Link href={`/${t.id}`} className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white font-medium transition-colors">
+                            Open
                           </Link>
                         </td>
                       </tr>
@@ -1316,7 +1122,63 @@ export default function AdminPortalPage() {
               </tbody>
             </table>
           </div>
-        </div>
+
+          {/* Mobile Card List */}
+          <div className="sm:hidden space-y-3">
+            {Object.values(TENANTS)
+              .filter((t) => cityFilter === 'all' || t.id === cityFilter)
+              .map((t) => {
+                const cityStats = metrics.cityBreakdown?.[t.id] || { queries: 0, visitors: 0 };
+                return (
+                  <div key={t.id} className="p-3 bg-slate-900/50 border border-slate-800 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2.5 h-2.5 rounded-full bg-gradient-to-r ${t.gradientClass}`} />
+                        <span className="font-semibold text-white text-sm">{t.name}</span>
+                      </div>
+                      <Link href={`/${t.id}`} className="p-1 rounded-lg bg-slate-800 text-slate-300">
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                    <a href={`https://${t.domain}`} target="_blank" rel="noreferrer" className="text-xs font-mono text-cyan-400 hover:underline block">{t.domain}</a>
+                    <div className="flex items-center gap-4 text-xs">
+                      <div><span className="text-slate-400">Visits:</span> <span className="font-mono text-white">{cityStats.visitors}</span></div>
+                      <div><span className="text-slate-400">Queries:</span> <span className="font-mono text-white">{cityStats.queries}</span></div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </CollapsibleSection>
+
+        {/* Email Directory */}
+        <CollapsibleSection
+          id="email"
+          title="Regional Email Directory"
+          icon={Mail}
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="text-slate-400 font-semibold border-b border-slate-800">
+                  <th className="py-2 px-2">Hub</th>
+                  <th className="py-2 px-2">Support</th>
+                  <th className="py-2 px-2">Partners</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {Object.values(TENANTS).map((t) => (
+                  <tr key={t.id} className="hover:bg-slate-900/50">
+                    <td className="py-3 px-2 font-semibold text-white">{t.name}</td>
+                    <td className="py-3 px-2 font-mono text-cyan-400"><a href={`mailto:hello@${t.domain}`}>hello@{t.domain}</a></td>
+                    <td className="py-3 px-2 font-mono text-cyan-400"><a href={`mailto:partners@${t.domain}`}>partners@{t.domain}</a></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CollapsibleSection>
+
       </main>
 
       {/* Admin Footer */}
@@ -1324,9 +1186,6 @@ export default function AdminPortalPage() {
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-cyan-400" />
           <span>Canadian AI City Platform • Private Admin Dashboard</span>
-        </div>
-        <div>
-          <span>Zero Background Polling • Computed strictly on-demand</span>
         </div>
       </footer>
     </div>
