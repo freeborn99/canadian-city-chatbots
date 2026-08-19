@@ -18,10 +18,7 @@ function tryParseTransit(raw: string, tenantId: string): TransitItinerary | null
     if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
       const parsed = JSON.parse(trimmed);
       if (parsed.origin && parsed.destination && Array.isArray(parsed.steps)) {
-        return {
-          ...parsed,
-          cityId: parsed.cityId || tenantId,
-        };
+        return { ...parsed, cityId: parsed.cityId || tenantId };
       }
     }
   } catch {
@@ -30,21 +27,77 @@ function tryParseTransit(raw: string, tenantId: string): TransitItinerary | null
   return null;
 }
 
+/**
+ * Safely normalize markdown spacing WITHOUT breaking tables or code blocks.
+ * Splits content into protected blocks (tables, code) vs prose, only modifying prose.
+ */
+function normalizeMarkdown(content: string): string {
+  if (!content) return '';
+
+  const normalized = content.replace(/\r\n/g, '\n');
+
+  // Split the content preserving code blocks and table blocks
+  // We identify tables as consecutive lines that contain pipes |
+  const lines = normalized.split('\n');
+  const result: string[] = [];
+  let inCodeBlock = false;
+  let inTable = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Track code block boundaries
+    if (trimmed.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      result.push(line);
+      continue;
+    }
+
+    // Don't modify anything inside code blocks
+    if (inCodeBlock) {
+      result.push(line);
+      continue;
+    }
+
+    // Detect table rows (lines with | characters that aren't just standalone |)
+    const isTableRow = /\|.*\|/.test(trimmed);
+    const isTableSeparator = /^\|?[\s\-:|]+\|/.test(trimmed);
+
+    if (isTableRow || isTableSeparator) {
+      // If we just entered the table, add a blank line before for remark-gfm
+      if (!inTable && result.length > 0 && result[result.length - 1].trim() !== '') {
+        result.push('');
+      }
+      inTable = true;
+      result.push(line);
+      continue;
+    }
+
+    // If we just left a table, add a blank line after
+    if (inTable && !isTableRow && !isTableSeparator) {
+      inTable = false;
+      if (result.length > 0 && result[result.length - 1].trim() !== '') {
+        result.push('');
+      }
+    }
+
+    // For normal prose lines, apply spacing fixes
+    let processed = line;
+
+    // Ensure headers have preceding blank line
+    if (/^#{1,4}\s/.test(trimmed) && result.length > 0 && result[result.length - 1].trim() !== '') {
+      result.push('');
+    }
+
+    result.push(processed);
+  }
+
+  return result.join('\n');
+}
+
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, tenantId = 'yyc' }) => {
-  // Normalize markdown text spacing cleanly without fragmenting list items
-  const formattedContent = React.useMemo(() => {
-    if (!content) return '';
-    return content
-      .replace(/\r\n/g, '\n')
-      // Ensure newline before any dash bullet that is glued to text or colon (e.g. "for:- 🍸" or "service- 🍽️")
-      .replace(/([^\n])\s*(-\s+(?:[🍸🍽️🎟️🏒🏛️🏨🌲🐾📍⚡💡•]|\*\*))/gu, '$1\n\n$2')
-      // Ensure newline before any regular bullet dash if glued
-      .replace(/([:!?.])\s*(-\s+)/g, '$1\n\n$2')
-      // Ensure newline before headers
-      .replace(/\n(#{1,4}\s)/g, '\n\n$1')
-      // Ensure clean spacing around thematic horizontal rules
-      .replace(/\n(---|\*\*\*)\n/g, '\n\n$1\n\n');
-  }, [content]);
+  const formattedContent = React.useMemo(() => normalizeMarkdown(content), [content]);
 
   return (
     <div className="prose prose-invert prose-slate max-w-none text-sm md:text-base leading-relaxed break-words space-y-2.5">
@@ -53,6 +106,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
         components={{
           p: ({ children }) => <p className="mb-2.5 last:mb-0 text-slate-200 leading-relaxed">{children}</p>,
           strong: ({ children }) => <strong className="font-bold text-white tracking-wide">{children}</strong>,
+          em: ({ children }) => <em className="text-slate-300 italic">{children}</em>,
           ul: ({ children }) => <ul className="my-2.5 ml-4 list-disc space-y-1.5 text-slate-200">{children}</ul>,
           ol: ({ children }) => <ol className="my-2.5 ml-4 list-decimal space-y-1.5 text-slate-200">{children}</ol>,
           li: ({ children }) => <li className="pl-1 leading-relaxed">{children}</li>,
@@ -129,13 +183,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             const isInline = !match && !rawContent.includes('\n');
             if (isInline) {
               return (
-                <code className="bg-slate-850 text-cyan-300 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-750" {...props}>
+                <code className="bg-slate-800/80 text-cyan-300 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-700/60" {...props}>
                   {children}
                 </code>
               );
             }
             return (
-              <pre className="bg-slate-900/90 border border-slate-750 rounded-xl p-3.5 my-3 overflow-x-auto text-xs font-mono text-slate-200">
+              <pre className="bg-slate-900/90 border border-slate-700/60 rounded-xl p-3.5 my-3 overflow-x-auto text-xs font-mono text-slate-200">
                 <code>{children}</code>
               </pre>
             );
@@ -167,39 +221,36 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           table: ({ children }) => (
-            <div className="my-5 flex flex-col gap-1.5">
-              <div className="text-xs text-slate-400 font-semibold px-1 flex items-center gap-2">
-                <span>📊</span> Data Table
-              </div>
-              <div className="overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg bg-slate-900/80">
-                <table className="w-full text-left text-sm whitespace-nowrap">
+            <div className="my-4 flex flex-col gap-1">
+              <div className="overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg">
+                <table className="w-full text-left text-sm">
                   {children}
                 </table>
               </div>
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-gradient-to-r from-slate-800/90 to-slate-850/90 sticky top-0 z-10">
+            <thead className="bg-gradient-to-r from-slate-800 to-slate-800/90">
               {children}
             </thead>
           ),
           tbody: ({ children }) => (
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-slate-800/60 bg-slate-900/50">
               {children}
             </tbody>
           ),
           tr: ({ children }) => (
-            <tr className="even:bg-slate-900/30 hover:bg-slate-800/40 transition-colors">
+            <tr className="even:bg-slate-800/20 hover:bg-slate-800/40 transition-colors">
               {children}
             </tr>
           ),
           th: ({ children }) => (
-            <th className="text-[11px] uppercase tracking-wider font-bold text-slate-300 px-4 py-3 border-b border-slate-700/60">
+            <th className="text-[11px] uppercase tracking-wider font-bold text-cyan-300 px-3 py-2.5 border-b border-slate-700/60 whitespace-nowrap">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-4 py-3 text-slate-200 first:border-l-2 first:border-l-cyan-500/30">
+            <td className="px-3 py-2 text-slate-200 text-sm">
               {children}
             </td>
           ),

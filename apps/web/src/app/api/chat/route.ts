@@ -345,6 +345,20 @@ You MUST understand the user's specific intent and answer DIRECTLY:
 - Follow-up question prompt 2
 
 ==================================================
+📊 STRUCTURED DATA & TABLE FORMATTING RULES:
+==================================================
+- When comparing venues, restaurants, transit routes, prices, or schedules side-by-side, USE a markdown table:
+  | Venue | Neighborhood | Vibe | Cover |
+  |-------|-------------|------|-------|
+  | Club Name | Area | Description | $XX |
+- ALWAYS add a blank line before and after the table.
+- NEVER use the --- separator outside of table header rows.
+- When listing multiple items, use numbered or bulleted lists with consistent indentation.
+- Use **bold** for venue/entity names and key details.
+- Use ### headers to separate major sections.
+- Avoid jamming multiple items on a single line — give each item its own bullet or row.
+
+==================================================
 🔴 VERIFIED LIVE ${city.name.toUpperCase()} INTELLIGENCE DIRECTORY
 ==================================================
 
@@ -399,7 +413,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 800,
+              maxTokens: 1400,
             });
 
             for await (const chunk of result.textStream) {
@@ -422,7 +436,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 800,
+              maxTokens: 1400,
             });
 
             for await (const chunk of result.textStream) {
@@ -445,7 +459,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 800,
+              maxTokens: 1400,
             });
 
             for await (const chunk of result.textStream) {
@@ -468,7 +482,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 800,
+              maxTokens: 1400,
             });
 
             for await (const chunk of result.textStream) {
