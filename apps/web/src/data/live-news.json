@@ -1,7 +1,7 @@
 {
   "yyc": [
     {
-      "id": "scrape-1787156252112-299",
+      "id": "scrape-1787163382674-537",
       "title": "Newsroom City of Calgary",
       "source": "City of Calgary Newsroom",
       "category": "Civic",
@@ -23,7 +23,7 @@
   "yvr": [],
   "yul": [
     {
-      "id": "scrape-1787156303583-242",
+      "id": "scrape-1787163434519-327",
       "title": "News",
       "source": "Ville de Montreal News",
       "category": "Civic",
@@ -45,13 +45,13 @@
   "yow": [],
   "ywg": [
     {
-      "id": "scrape-1787156356870-611",
+      "id": "scrape-1787163487821-165",
       "title": "Newsroom",
       "source": "City of Winnipeg News",
       "category": "Civic",
       "url": "https://winnipeg.ca/news",
       "timeAgo": "Just now",
-      "summary": "Subscribe to receive the latest news and updates.\n\nMan wanted for property offences in Winnipeg and Headingley, taken into custody: C26-192127August 1...",
+      "summary": "Subscribe to receive the latest news and updates.\n\nTwo people arrested for two separate transit-related assaults: August 19, 2026City takes next step ...",
       "expandedDetails": {
         "keyTakeaways": [
           "Check the full article for details."
@@ -66,7 +66,7 @@
   "yhz": [],
   "yyj": [
     {
-      "id": "scrape-1787156392586-468",
+      "id": "scrape-1787163522824-136",
       "title": "News | City of Victoria",
       "source": "City of Victoria News",
       "category": "Civic",
