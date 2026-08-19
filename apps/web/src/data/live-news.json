@@ -1,7 +1,7 @@
 {
   "yyc": [
     {
-      "id": "scrape-1787149296959-529",
+      "id": "scrape-1787156252112-299",
       "title": "Newsroom City of Calgary",
       "source": "City of Calgary Newsroom",
       "category": "Civic",
@@ -23,7 +23,7 @@
   "yvr": [],
   "yul": [
     {
-      "id": "scrape-1787149348509-665",
+      "id": "scrape-1787156303583-242",
       "title": "News",
       "source": "Ville de Montreal News",
       "category": "Civic",
@@ -45,13 +45,13 @@
   "yow": [],
   "ywg": [
     {
-      "id": "scrape-1787149401931-439",
+      "id": "scrape-1787156356870-611",
       "title": "Newsroom",
       "source": "City of Winnipeg News",
       "category": "Civic",
       "url": "https://winnipeg.ca/news",
       "timeAgo": "Just now",
-      "summary": "Subscribe to receive the latest news and updates.\n\nWinnipeg Fire Paramedic Service responds to gas leak on Henderson HighwayAugust 17, 2026Commercial ...",
+      "summary": "Subscribe to receive the latest news and updates.\n\nMan wanted for property offences in Winnipeg and Headingley, taken into custody: C26-192127August 1...",
       "expandedDetails": {
         "keyTakeaways": [
           "Check the full article for details."
@@ -66,7 +66,7 @@
   "yhz": [],
   "yyj": [
     {
-      "id": "scrape-1787149437416-941",
+      "id": "scrape-1787156392586-468",
       "title": "News | City of Victoria",
       "source": "City of Victoria News",
       "category": "Civic",
