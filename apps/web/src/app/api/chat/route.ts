@@ -62,13 +62,13 @@ export async function POST(req: Request) {
     const validPersonas = ['insider', 'news', 'foodie', 'family'] as const;
     const safePersona = validPersonas.includes(persona as any) ? persona : 'insider';
 
-    // Truncate message history to last 20 messages to prevent unbounded token costs
-    const truncatedMessages = messages.slice(-20);
+    // Truncate message history to last 8 messages to prevent unbounded token costs and stay comfortably within free tier limits
+    const truncatedMessages = messages.slice(-8);
 
-    // Validate individual message content length (4000 char max per message)
+    // Validate individual message content length (3000 char max per message)
     for (const msg of truncatedMessages) {
-      if (typeof msg.content === 'string' && msg.content.length > 4000) {
-        return new Response(JSON.stringify({ error: 'Message too long. Maximum 4000 characters per message.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      if (typeof msg.content === 'string' && msg.content.length > 3000) {
+        return new Response(JSON.stringify({ error: 'Message too long. Maximum 3000 characters per message.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
       }
     }
 
@@ -165,71 +165,79 @@ export async function POST(req: Request) {
     let retrievedContext = '';
     if (lastUserMessage) {
       try {
-        retrievedContext = await queryTenantContext(lastUserMessage, activeTenantId, 3);
+        retrievedContext = await queryTenantContext(lastUserMessage, activeTenantId, 2);
       } catch (ragErr) {
         console.warn('[RAG Vector Lookup Skipped]:', ragErr);
       }
     }
 
-    // 2. Format Structured Regional Intelligence Categories
+    // 2. Format Structured Regional Intelligence Categories (Token-Optimized)
     const liveNewsFeed = (cityHub.news || [])
-      .filter((n) => n.category !== 'Culture')
+      .slice(0, 5)
       .map(
         (n) =>
-          `News Story:\nTitle: ${n.title}\nSource: ${n.source}\nTimeAgo: ${n.timeAgo}\nCategory: ${n.category || 'News'}\nSummary: ${n.summary}\nURL: ${n.url}`
+          `Headline: ${n.title}\nSource: ${n.source} (${n.timeAgo})\nCategory: ${n.category || 'Civic'}\nBriefing: ${n.summary}\nURL: ${n.url}`
       )
       .join('\n\n');
 
     const liveShowsFeed = (cityHub.shows || [])
+      .slice(0, 4)
       .map(
         (s, i) =>
-          `[Event ${i + 1}]: **${s.title}** (${s.category})\n- Venue & Location: [${s.venue}](${s.ticketUrl}) (${s.neighborhood})\n- Dates/Times: ${s.dates}\n- Ticket Price: ${s.ticketPriceRange} (Status: ${s.availabilityStatus})\n- Direct Box Office Booking: [Get Tickets for ${s.title} on ${s.ticketPlatform}](${s.ticketUrl})`
+          `[Event ${i + 1}]: **${s.title}** (${s.category}) at [${s.venue}](${s.ticketUrl}) | Dates: ${s.dates} | Price: ${s.ticketPriceRange} | [Get Tickets](${s.ticketUrl})`
       )
-      .join('\n\n');
+      .join('\n');
 
     const liveNightlifeFeed = (cityHub.nightlife || [])
+      .slice(0, 4)
       .map(
         (n) =>
-          `- 🍸 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood} • ${n.category}): ${n.vibe}. Hours: ${n.hours}. Entry/VIP: ${n.coverOrVip}. Direct Guestlist & Entry: [${n.name} Guestlist / VIP](${n.guestlistUrl})`
+          `- 🍸 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood}): ${n.vibe}. Hours: ${n.hours}. [Guestlist / VIP](${n.guestlistUrl})`
       )
       .join('\n');
 
     const liveSportsFeed = (cityHub.sports || [])
+      .slice(0, 3)
       .map(
         (s) =>
-          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): Match Status [${s.status}] | ${s.score ? `Current Score: ${s.score}` : `Game Time: ${s.gameTime}`} | Home/Away: ${s.isHome ? 'Home Game' : 'Away'} | Broadcast Channel: ${s.tvBroadcast || 'Sportsnet / TSN'} | Official Tickets: [${s.team} Box Office](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
+          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} | [${s.team} Box Office](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
       )
       .join('\n');
 
     const liveResoFeed = (cityHub.restaurants || [])
+      .slice(0, 4)
       .map(
         (r) =>
-          `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating} • ${r.cuisine}): Must-Order Signature "${r.signatureDish}". Available Slots: ${r.availableTimes.join(', ')}. Instant Table Reservation: [Book ${r.name} on ${r.bookingPlatform}](${r.reservationUrl})`
+          `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating}): Signature: "${r.signatureDish}". [Book ${r.name} on ${r.bookingPlatform}](${r.reservationUrl})`
       )
       .join('\n');
 
     const liveHotelsFeed = (cityHub.hotels || [])
+      .slice(0, 3)
       .map(
         (h) =>
-          `- 🏨 **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight}): ${h.description}. Reserve: [Book ${h.name} on ${h.bookingPlatform}](${h.bookingUrl})`
+          `- 🏨 **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight}): [Book on ${h.bookingPlatform}](${h.bookingUrl})`
       )
       .join('\n');
 
     const liveToursFeed = (cityHub.experiences || [])
+      .slice(0, 3)
       .map(
         (e) =>
-          `- 🧭 **[${e.title}](${e.bookingUrl})** by ${e.operator} (${e.duration} • ${e.priceFrom}): Booking: [Book ${e.title} on ${e.bookingPlatform}](${e.bookingUrl})`
+          `- 🧭 **[${e.title}](${e.bookingUrl})** (${e.duration} • ${e.priceFrom}): [Book on ${e.bookingPlatform}](${e.bookingUrl})`
       )
       .join('\n');
 
     const liveOutdoorFeed = (cityHub.outdoors || [])
+      .slice(0, 3)
       .map(
         (o) =>
-          `- 🌲 **${o.name}** (${o.category} • ${o.neighborhood}): ${o.features.join(', ')} (Difficulty: ${o.difficulty} • Best Time: ${o.bestTime} • Parking: ${o.parkingTips})`
+          `- 🌲 **${o.name}** (${o.category} • ${o.neighborhood}): ${o.features.slice(0, 2).join(', ')} (Best Time: ${o.bestTime})`
       )
       .join('\n');
 
     const liveCivicServices = (cityHub.civicServices || [])
+      .slice(0, 3)
       .map(
         (c) =>
           `- 🏛️ **[${c.title}](${c.actionUrl})** (${c.department}): ${c.description} -> [${c.actionText}](${c.actionUrl})`
@@ -239,24 +247,27 @@ export async function POST(req: Request) {
     // 3. Persona Tuning
     const personaGuides = {
       insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
-      news: `Voice: Executive Civic News Briefing. Be concise and factual.
-Formatting: For news briefings, output a structured header then each story MUST be a JSON block wrapped in \`\`\`news-card\`\`\` backticks.
+      news: `Voice: Executive Civic News Briefing. Be structured, crisp, and high-impact.
 
-Example format:
-### 📰 Executive Briefing
+CRITICAL FORMATTING INSTRUCTIONS FOR EXECUTIVE NEWS:
+1. Start with a bold heading: "### 📰 Executive Briefing: ${city.name}"
+2. Present each news story as a distinct, beautifully structured card separated by "---":
 
-\`\`\`news-card
-{
-  "category": "Politics",
-  "source": "City News",
-  "timeAgo": "2h ago",
-  "title": "Mayor Announces New Transit Line",
-  "summary": "City council has approved funding for the new green line expansion.",
-  "url": "https://example.com/news/123"
-}
-\`\`\`
+### 📌 [Story Headline](URL)
+*Source: [Source Name] • [TimeAgo] • [Category]*
 
-CRITICAL RULE: DO NOT use markdown tables for news. NEVER output a table. ONLY use the \`\`\`news-card\`\`\` JSON format for each story. Separate multiple stories with a blank line. End with Quick Next Steps.`,
+- **Briefing**: 1-2 concise, factual sentences summarizing the development.
+- **Local Impact**: 1 sentence explaining what this means for ${city.name} residents, businesses, or commuters.
+- 🔗 [Read Full Coverage on [Source Name] →](URL)
+
+---
+
+3. ALWAYS put a blank line and "---" between each story so they never blend into a blob of text.
+4. Keep the summary punchy and easy to scan.
+5. End with:
+💡 **Executive Follow-Ups:**
+- [Action link or relevant query 1]
+- [Action link or relevant query 2]`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -348,7 +359,7 @@ You MUST understand the user's specific intent and answer DIRECTLY:
   | Venue | Neighborhood | Vibe | Cover |
   |-------|-------------|------|-------|
   | Club Name | Area | Description | $XX |
-- NEVER use tables for the Executive News Briefing! News MUST use the \`\`\`news-card\`\`\` format.
+- NEVER use tables for Executive News Briefings! Follow the card format with bold headers and "---" dividers.
 - ALWAYS add a blank line before and after the table.
 - NEVER use the --- separator outside of table header rows.
 - When listing multiple items, use numbered or bulleted lists with consistent indentation.

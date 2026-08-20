@@ -12,6 +12,7 @@ import { TenantSwitcher } from '@/components/layout/tenant-switcher';
 import { SocialAuthModal } from '@/components/auth/social-auth-modal';
 import { SocialShareDialog } from '@/components/social/social-share-dialog';
 import { PersonaSwitcher, AIPersona } from './persona-switcher';
+import { SponsoredBanner } from '../ads/sponsored-banner';
 
 interface ChatContainerProps {
   initialTenantId: string;
@@ -139,7 +140,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
       />
 
       {/* Main Workspace: Single Column Centered Chat */}
-      <div className="relative z-10 flex-1 min-h-0 w-full flex justify-center overflow-hidden px-2 sm:px-4 md:px-8 pb-3 pt-2 max-w-5xl mx-auto">
+      <div className="relative z-10 flex-1 min-h-0 w-full flex flex-col justify-center overflow-hidden px-2 sm:px-4 md:px-8 pb-3 pt-1 max-w-5xl mx-auto">
+        <SponsoredBanner tenant={tenant} />
         <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative w-full">
           
           {/* Chat Stream or Empty State Starter Prompts */}

@@ -33,3 +33,5 @@ test-*.js
 scratch/
 *.log
 scripts/*.js
+.vercel
+.env*

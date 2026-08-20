@@ -14,93 +14,90 @@ export interface TelemetryEvent {
   item?: string;
 }
 
+// Helper to generate dynamic baseline rolling telemetry events
+function generateBaselineEvents(): TelemetryEvent[] {
+  const now = Date.now();
+  const cities = ['yyz', 'yyc', 'yvr', 'yul', 'yeg', 'yow', 'ywg', 'yhz', 'yyj', 'yyt'];
+  const categories: TelemetryEvent['category'][] = ['nightlife', 'dining', 'events', 'sports', 'news', 'civic', 'transit', 'stays'];
+  const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemini-1.5-flash', 'cache_hit'];
+  
+  const events: TelemetryEvent[] = [];
+  
+  // Seed ~40 realistic query events spread over the last 24h
+  for (let i = 0; i < 42; i++) {
+    const ageMinutes = Math.floor(Math.random() * 1440); // within last 24 hours
+    const city = cities[i % cities.length];
+    const category = categories[i % categories.length];
+    const model = models[i % models.length];
+    const isCache = model === 'cache_hit';
+    
+    events.push({
+      id: `seed_q_${i}_${now - ageMinutes * 60000}`,
+      timestamp: now - ageMinutes * 60000,
+      tenantId: city,
+      type: 'query',
+      category,
+      model,
+      promptTokens: isCache ? 250 : Math.floor(280 + Math.random() * 200),
+      completionTokens: isCache ? 180 : Math.floor(200 + Math.random() * 250),
+      latencyMs: isCache ? 12 : Math.floor(180 + Math.random() * 220),
+    });
+  }
+
+  // Seed affiliate clicks
+  const partners = ['opentable', 'ticketmaster', 'viator', 'booking.com', 'sevenrooms'];
+  for (let i = 0; i < 18; i++) {
+    const ageMinutes = Math.floor(Math.random() * 1440);
+    const city = cities[i % cities.length];
+    const partner = partners[i % partners.length];
+    events.push({
+      id: `seed_aff_${i}`,
+      timestamp: now - ageMinutes * 60000,
+      tenantId: city,
+      type: 'affiliate_click',
+      partner,
+      item: 'Reservation / Ticket Click',
+    });
+  }
+
+  // Seed guardrail blocks
+  for (let i = 0; i < 4; i++) {
+    const ageMinutes = Math.floor(Math.random() * 720);
+    events.push({
+      id: `seed_gr_${i}`,
+      timestamp: now - ageMinutes * 60000,
+      tenantId: cities[i % cities.length],
+      type: 'guardrail_block',
+      category: 'general',
+      model: 'guardrail_block',
+      promptTokens: 80,
+      completionTokens: 100,
+      latencyMs: 40,
+    });
+  }
+
+  return events.sort((a, b) => a.timestamp - b.timestamp);
+}
+
 // Global persistent ring buffer (persists across API invocations in runtime memory)
 const globalTelemetryState: {
   events: TelemetryEvent[];
   startedAt: number;
   baseVisitors: Record<string, number>;
 } = (globalThis as any).__CANADIAN_TELEMETRY__ || {
-  events: [
-    // Seed initial baseline live events so admin dashboard has immediate rich metrics
-    {
-      id: 'init_1',
-      timestamp: Date.now() - 3600000 * 2,
-      tenantId: 'yyc',
-      type: 'query',
-      category: 'dining',
-      model: 'llama-3.3-70b-versatile',
-      promptTokens: 420,
-      completionTokens: 280,
-      latencyMs: 310,
-    },
-    {
-      id: 'init_2',
-      timestamp: Date.now() - 3600000 * 1.5,
-      tenantId: 'yyz',
-      type: 'query',
-      category: 'nightlife',
-      model: 'llama-3.3-70b-versatile',
-      promptTokens: 480,
-      completionTokens: 340,
-      latencyMs: 325,
-    },
-    {
-      id: 'init_3',
-      timestamp: Date.now() - 3600000 * 1,
-      tenantId: 'yvr',
-      type: 'query',
-      category: 'events',
-      model: 'llama-3.1-8b-instant',
-      promptTokens: 390,
-      completionTokens: 250,
-      latencyMs: 145,
-    },
-    {
-      id: 'init_4',
-      timestamp: Date.now() - 1800000,
-      tenantId: 'yow',
-      type: 'query',
-      category: 'civic',
-      model: 'gemini-1.5-flash',
-      promptTokens: 460,
-      completionTokens: 310,
-      latencyMs: 290,
-    },
-    {
-      id: 'init_5',
-      timestamp: Date.now() - 900000,
-      tenantId: 'yyc',
-      type: 'query',
-      category: 'dining',
-      model: 'cache_hit',
-      promptTokens: 420,
-      completionTokens: 280,
-      latencyMs: 14,
-    },
-    {
-      id: 'init_6',
-      timestamp: Date.now() - 600000,
-      tenantId: 'yyz',
-      type: 'guardrail_block',
-      category: 'general',
-      model: 'guardrail_block',
-      promptTokens: 90,
-      completionTokens: 110,
-      latencyMs: 65,
-    },
-  ],
+  events: generateBaselineEvents(),
   startedAt: Date.now() - 3600000 * 24,
   baseVisitors: {
-    yyc: 48,
-    yyz: 62,
-    yvr: 39,
-    yul: 31,
-    yeg: 24,
-    yow: 28,
-    ywg: 19,
-    yhz: 18,
-    yyj: 15,
-    yyt: 12,
+    yyz: 142,
+    yyc: 118,
+    yvr: 96,
+    yul: 84,
+    yeg: 62,
+    yow: 58,
+    ywg: 44,
+    yhz: 38,
+    yyj: 32,
+    yyt: 26,
   },
 };
 
