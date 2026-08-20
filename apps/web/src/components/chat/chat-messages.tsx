@@ -84,11 +84,11 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   }
 
   const parseFollowups = (content: string): { mainText: string; followups: FollowupItem[] } => {
-    if (!content.includes('Quick Next Steps:') && !content.includes('💡')) {
+    if (!content.includes('Next Steps') && !content.includes('Follow-Ups') && !content.includes('💡')) {
       return { mainText: content, followups: [] };
     }
 
-    const parts = content.split(/💡\s*\*\*Quick Next Steps:\*\*/i);
+    const parts = content.split(/💡\s*\*\*(?:Quick Next Steps|Executive Follow-Ups|Follow-Ups|Next Steps):\*\*/i);
     if (parts.length < 2) {
       return { mainText: content, followups: [] };
     }
@@ -155,7 +155,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   return (
     <div
       ref={containerRef}
-      className="h-full overflow-y-auto px-1 sm:px-4 md:px-8 py-2 sm:py-6 space-y-3.5 sm:space-y-6 max-w-4xl mx-auto w-full"
+      className="h-full overflow-y-auto px-1 sm:px-4 md:px-8 py-2 sm:py-6 space-y-3 sm:space-y-6 max-w-4xl mx-auto w-full"
     >
       <AnimatePresence initial={false}>
         {messages.map((message, index) => {
@@ -177,18 +177,18 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
               {/* Bot Avatar */}
               {!isUser && (
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${tenant.gradientClass} p-0.5 shadow-md ${tenant.glowClass} mt-0.5`}
+                  className={`w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-lg sm:rounded-xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${tenant.gradientClass} p-0.5 shadow-md ${tenant.glowClass} mt-0.5`}
                 >
-                  <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                    <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                  <div className="w-full h-full bg-slate-950 rounded-[6px] sm:rounded-[10px] flex items-center justify-center">
+                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                 </div>
               )}
 
-              {/* Message Bubble Container - Expanded to 95% on mobile */}
-              <div className="max-w-[96%] sm:max-w-[90%] md:max-w-[82%] space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial">
+              {/* Message Bubble Container - Optimized for mobile width & padding */}
+              <div className="max-w-[98%] sm:max-w-[90%] md:max-w-[84%] space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial min-w-0">
                 <div
-                  className={`relative group rounded-2xl p-3 sm:p-4 md:p-5 shadow-lg transition-all ${
+                  className={`relative group rounded-2xl p-2.5 sm:p-4 md:p-5 shadow-lg transition-all ${
                     isUser
                       ? 'glass-bubble-user text-white border-blue-500/20 shadow-blue-900/10'
                       : 'glass-bubble-assistant text-slate-100 border-slate-800/80'

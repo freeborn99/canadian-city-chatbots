@@ -253,7 +253,7 @@ CRITICAL FORMATTING INSTRUCTIONS FOR EXECUTIVE NEWS:
 1. Start with a bold heading: "### 📰 Executive Briefing • ${city.name}"
 2. Output exactly 3-4 top stories. Wrap EACH story in a dedicated markdown blockquote card (using ">"):
 
-> ### 📌 [Story Headline](URL)
+> 📌 **[Story Headline](URL)**
 > 🏷️ \`Category\` • **Source Name** • *TimeAgo*
 >
 > • **The Story**: 1-2 concise, factual sentences summarizing the development.

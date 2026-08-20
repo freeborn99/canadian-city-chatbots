@@ -100,30 +100,30 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
   const formattedContent = React.useMemo(() => normalizeMarkdown(content), [content]);
 
   return (
-    <div className="prose prose-invert prose-slate max-w-none text-sm md:text-base leading-relaxed break-words space-y-2.5">
+    <div className="prose prose-invert prose-slate max-w-none text-xs sm:text-sm md:text-base leading-relaxed break-words space-y-2 sm:space-y-2.5">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="mb-2.5 last:mb-0 text-slate-200 leading-relaxed">{children}</p>,
+          p: ({ children }) => <p className="mb-2 last:mb-0 text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base">{children}</p>,
           strong: ({ children }) => <strong className="font-bold text-white tracking-wide">{children}</strong>,
           em: ({ children }) => <em className="text-slate-300 italic">{children}</em>,
-          ul: ({ children }) => <ul className="my-2.5 ml-4 list-disc space-y-1.5 text-slate-200">{children}</ul>,
-          ol: ({ children }) => <ol className="my-2.5 ml-4 list-decimal space-y-1.5 text-slate-200">{children}</ol>,
-          li: ({ children }) => <li className="pl-1 leading-relaxed">{children}</li>,
-          h1: ({ children }) => <h1 className="text-xl font-extrabold mt-4 mb-2.5 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
-          h2: ({ children }) => <h2 className="text-lg font-bold mt-3.5 mb-2 text-cyan-300">{children}</h2>,
-          h3: ({ children }) => <h3 className="text-base font-bold mt-3 mb-1.5 text-white flex items-center gap-2">{children}</h3>,
-          h4: ({ children }) => <h4 className="text-sm font-bold mt-2.5 mb-1 text-slate-200">{children}</h4>,
+          ul: ({ children }) => <ul className="my-1.5 sm:my-2.5 ml-3 sm:ml-4 list-disc space-y-1 sm:space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ul>,
+          ol: ({ children }) => <ol className="my-1.5 sm:my-2.5 ml-3 sm:ml-4 list-decimal space-y-1 sm:space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ol>,
+          li: ({ children }) => <li className="pl-0.5 sm:pl-1 leading-relaxed">{children}</li>,
+          h1: ({ children }) => <h1 className="text-lg sm:text-xl font-extrabold mt-3.5 mb-2 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
+          h2: ({ children }) => <h2 className="text-base sm:text-lg font-bold mt-3 mb-1.5 text-cyan-300">{children}</h2>,
+          h3: ({ children }) => <h3 className="text-sm sm:text-base md:text-lg font-bold mt-2.5 sm:mt-3 mb-1 text-white flex items-center gap-2">{children}</h3>,
+          h4: ({ children }) => <h4 className="text-xs sm:text-sm font-bold mt-2 mb-1 text-slate-200">{children}</h4>,
           hr: () => (
-            <div className="my-5 flex items-center gap-3">
+            <div className="my-4 sm:my-5 flex items-center gap-3">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
-              <span className="text-slate-500 text-[11px] font-mono">✦</span>
+              <span className="text-slate-500 text-[10px] font-mono">✦</span>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
             </div>
           ),
           blockquote: ({ children }) => (
-            <div className="my-3.5 p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-850/90 to-slate-900/95 border border-slate-700/80 hover:border-cyan-500/40 shadow-xl space-y-2 relative overflow-hidden backdrop-blur-md transition-all">
-              <div className="text-slate-200 leading-relaxed text-sm sm:text-base not-italic space-y-2">{children}</div>
+            <div className="my-2.5 sm:my-3.5 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-850/90 to-slate-900/95 border border-slate-700/80 hover:border-cyan-500/40 shadow-md sm:shadow-xl space-y-1.5 sm:space-y-2 relative overflow-hidden backdrop-blur-md transition-all">
+              <div className="text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base not-italic space-y-1.5 sm:space-y-2">{children}</div>
             </div>
           ),
           img: ({ src, alt }) => (
