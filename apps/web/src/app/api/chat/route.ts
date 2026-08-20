@@ -239,27 +239,15 @@ export async function POST(req: Request) {
     // 3. Persona Tuning
     const personaGuides = {
       insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
-      news: `Voice: Executive Civic News Briefing.
-Formatting Directives (MANDATORY LINKS FOR EVERY STORY):
-- Every single news story MUST include clickable markdown links for the headline, source, and civic actions.
-- For each story, format as:
-  ### 📰 [Headline Title](Article URL)
-  *Source: [Source Name](Article URL) • Published: Time*
+      news: `Voice: Executive Civic News Briefing. Be concise and factual.
+Formatting: For news briefings, output a structured header then each story as a simple block:
 
-  **Executive Summary:**
-  [1-2 clear summary sentences with embedded markdown links to relevant locations/entities]
+### 📰 [Headline](URL)
+*Source • Time*
 
-  **Key Takeaways:**
-  • [Core fact 1]
-  • [Core fact 2]
+Summary sentence.
 
-  **City Impact:**
-  [What residents, transit riders, or local businesses need to know]
-
-  🔗 **Related Links:** [Read Full Coverage on Source Name](Article URL)
-
-  ---
-- Always insert a horizontal rule (---) between separate stories.`,
+Do NOT use nested bold sections like "Executive Summary:" or "Key Takeaways:" or "Local & Civic Impact:" — just write the summary directly. Keep each story to 2-3 lines max. Separate stories with a blank line. End with Quick Next Steps.`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -762,26 +750,18 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- Check residential parking permit rules\n` +
               `- View upcoming city council agenda`;
           } else if (isNews && cityHub.news?.length > 0) {
-            fallbackText = `### 📰 **Executive News Briefing — ${city.name}, ${city.province}** 🍁\n` +
-              `*Live verified headlines & civic updates • Updated ${cityHub.news[0]?.timeAgo || 'today'}*\n\n` +
-              cityHub.news.map((n, i) => {
-                const takeaways = n.expandedDetails?.keyTakeaways?.map((t: string) => `  • ${t}`).join('\n') || `  • ${n.summary}`;
-                const actionLink = n.expandedDetails?.relatedActionUrl
-                  ? `\n\n🔗 **Action / Coverage**: [${n.expandedDetails.relatedActionText || `Read Full Coverage on ${n.source}`}](${n.expandedDetails.relatedActionUrl})`
-                  : `\n\n🔗 **Source**: [Read on ${n.source}](${n.url})`;
-
-                return `#### **${i + 1}. [${n.title}](${n.url})**\n` +
-                  `*Source: [${n.source}](${n.url}) • Category: ${n.category} • ${n.timeAgo}*\n\n` +
-                  `**Executive Summary:**\n${n.summary}\n\n` +
-                  `**Key Takeaways:**\n${takeaways}\n\n` +
-                  `**Local & Civic Impact:**\n${n.expandedDetails?.localImpact || 'General updates for residents, businesses, and transit riders.'}` +
-                  actionLink;
-              }).join('\n\n---\n\n') +
-              `\n\n---\n` +
-              `💡 **Quick Next Steps:**\n` +
+            const stories = cityHub.news.slice(0, 6);
+            fallbackText = `### 📰 Executive Briefing — ${city.name}\n\n` +
+              stories.map((n, i) => 
+                `**${i + 1}. [${n.title}](${n.url})**\n` +
+                `*${n.source} • ${n.category} • ${n.timeAgo}*\n\n` +
+                `${n.summary}\n\n` +
+                `[Read on ${n.source} →](${n.url})`
+              ).join('\n\n---\n\n') +
+              `\n\n💡 **Quick Next Steps:**\n` +
               `- What are the upcoming ${city.name} City Council agenda items?\n` +
-              `- Check current transit service alerts & construction detours\n` +
-              `- Explore business & development highlights in ${city.name}`;
+              `- Check current transit service alerts\n` +
+              `- Explore business highlights in ${city.name}`;
           } else if (isEvents && cityHub.shows?.length > 0) {
             fallbackText = `Here are the top live entertainment events and shows in **${city.name}**: 🎟️\n\n` +
               cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
