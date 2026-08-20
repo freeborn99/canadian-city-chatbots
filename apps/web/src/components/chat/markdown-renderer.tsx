@@ -176,7 +176,20 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
                   </div>
                 );
               } catch {
-                // Ignore partial JSON
+                // Return a loading skeleton while streaming instead of raw JSON code block
+                return (
+                  <div className="my-4 rounded-xl border border-slate-700/50 bg-slate-800/40 overflow-hidden shadow-lg animate-pulse">
+                    <div className="p-4 flex flex-col gap-3">
+                      <div className="flex justify-between items-center">
+                        <div className="w-16 h-4 bg-slate-700/50 rounded-full"></div>
+                        <div className="w-24 h-4 bg-slate-700/50 rounded-full"></div>
+                      </div>
+                      <div className="w-3/4 h-6 bg-slate-700/50 rounded-md"></div>
+                      <div className="w-full h-4 bg-slate-700/50 rounded-md"></div>
+                      <div className="w-5/6 h-4 bg-slate-700/50 rounded-md"></div>
+                    </div>
+                  </div>
+                );
               }
             }
 
