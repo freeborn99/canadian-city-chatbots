@@ -188,7 +188,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
               {/* Message Bubble Container - Optimized for mobile width & padding */}
               <div className="max-w-[98%] sm:max-w-[90%] md:max-w-[84%] space-y-1.5 sm:space-y-2 flex-1 sm:flex-initial min-w-0">
                 <div
-                  className={`relative group rounded-2xl p-2.5 sm:p-4 md:p-5 shadow-lg transition-all ${
+                  className={`relative group rounded-2xl p-2.5 sm:p-4 md:p-5 shadow-lg transition-all overflow-hidden break-words max-w-full ${
                     isUser
                       ? 'glass-bubble-user text-white border-blue-500/20 shadow-blue-900/10'
                       : 'glass-bubble-assistant text-slate-100 border-slate-800/80'

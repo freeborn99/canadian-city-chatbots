@@ -100,7 +100,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
   const formattedContent = React.useMemo(() => normalizeMarkdown(content), [content]);
 
   return (
-    <div className="prose prose-invert prose-slate max-w-none text-xs sm:text-sm md:text-base leading-relaxed break-words space-y-2 sm:space-y-2.5">
+    <div className="prose prose-invert prose-slate max-w-full overflow-hidden text-xs sm:text-sm md:text-base leading-relaxed break-words space-y-2 sm:space-y-2.5">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

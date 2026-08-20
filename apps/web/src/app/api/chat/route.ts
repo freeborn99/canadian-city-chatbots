@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const { messages, tenantId, persona = 'insider' } = (await req.json()) as {
       messages: Message[];
       tenantId?: string;
-      persona?: 'insider' | 'news' | 'foodie' | 'family';
+      persona?: 'insider' | 'events' | 'foodie' | 'family' | 'news';
     };
 
     // Input validation
@@ -59,8 +59,8 @@ export async function POST(req: Request) {
     }
 
     // Validate persona
-    const validPersonas = ['insider', 'news', 'foodie', 'family'] as const;
-    const safePersona = validPersonas.includes(persona as any) ? persona : 'insider';
+    const validPersonas = ['insider', 'events', 'foodie', 'family', 'news'] as const;
+    const safePersona = validPersonas.includes(persona as any) ? (persona === 'news' ? 'events' : persona) : 'insider';
 
     // Truncate message history to last 8 messages to prevent unbounded token costs and stay comfortably within free tier limits
     const truncatedMessages = messages.slice(-8);
@@ -247,26 +247,7 @@ export async function POST(req: Request) {
     // 3. Persona Tuning
     const personaGuides = {
       insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
-      news: `Voice: Executive Civic News Briefing. Be structured, crisp, high-impact, and scannable.
-
-CRITICAL FORMATTING INSTRUCTIONS FOR EXECUTIVE NEWS:
-1. Start with a bold heading: "### 📰 Executive Briefing • ${city.name}"
-2. Output exactly 3-4 top stories. Wrap EACH story in a dedicated markdown blockquote card (using ">"):
-
-> 📌 **[Story Headline](URL)**
-> 🏷️ \`Category\` • **Source Name** • *TimeAgo*
->
-> • **The Story**: 1-2 concise, factual sentences summarizing the development.
-> • **Local Impact**: 1 sentence explaining what this means for ${city.name} citizens or businesses.
->
-> 🔗 [Read Full Coverage on Source Name →](URL)
-
-3. Put a blank line between each ">" story card so they render as distinct, beautiful glass cards.
-4. DO NOT write long generic introductions or walls of text.
-5. End with:
-💡 **Executive Follow-Ups:**
-- [Prompt or follow-up question 1]
-- [Prompt or follow-up question 2]`,
+      events: `Voice: Ultimate Live Entertainment & Box Office Concierge for ${city.name}. Highlight premier concerts, Broadway/theatre shows, comedy clubs, sports matches, and major festivals from the 🎟️ LIVE SHOWS & CONCERTS feed with direct venue ticket booking links.`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };

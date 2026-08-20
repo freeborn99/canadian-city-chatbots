@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, Newspaper, Utensils, Users, Loader2 } from 'lucide-react';
+import { Compass, Ticket, Utensils, Users, Loader2 } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 
-export type AIPersona = 'insider' | 'news' | 'foodie' | 'family';
+export type AIPersona = 'insider' | 'events' | 'foodie' | 'family';
 
 export interface PersonaDefinition {
   id: AIPersona;
@@ -19,15 +19,15 @@ export const PERSONA_DEFINITIONS: PersonaDefinition[] = [
     id: 'insider',
     label: 'Local Insider',
     icon: Compass,
-    desc: 'Hidden spots & shortcuts',
+    desc: 'Hidden gems & local tips',
     activationPrompt: 'Switch to Local Insider mode — give me the hidden gems, local shortcuts, and insider tips that only a true local would know.',
   },
   {
-    id: 'news',
-    label: 'Executive News',
-    icon: Newspaper,
-    desc: 'Live headlines & civic briefings',
-    activationPrompt: 'Provide the Executive News Briefing for today — give me the top 3 curated stories as executive briefing cards with key takeaways and local impact.',
+    id: 'events',
+    label: 'Events & Shows',
+    icon: Ticket,
+    desc: 'Concerts, theatre & tickets',
+    activationPrompt: 'Switch to Events & Shows mode — what are the top concerts, theatre productions, comedy shows, and major live events happening in town right now with ticket booking links?',
   },
   {
     id: 'foodie',
