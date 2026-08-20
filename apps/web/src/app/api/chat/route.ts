@@ -425,6 +425,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           } catch (t1Err) {
             console.warn('[Tier 1 Groq 70B Rate Limit / Error, Falling to Tier 2]:', t1Err);
           }
+          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
         // Tier 2: Groq Llama-3.1-8B Instant (Ultra-High Throughput & Speed Failover)
@@ -448,6 +449,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           } catch (t2Err) {
             console.warn('[Tier 2 Groq 8B Error, Falling to Tier 3]:', t2Err);
           }
+          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
         // Tier 3: Google Gemini 1.5 Flash (1M Context Auto-Failover)
@@ -471,6 +473,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           } catch (t3Err) {
             console.warn('[Tier 3 Gemini Flash Error, Falling to Tier 4]:', t3Err);
           }
+          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
         // Tier 4: Google Gemini 1.5 Pro
@@ -494,6 +497,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           } catch (t4Err) {
             console.warn('[Tier 4 Gemini Pro Error, Falling to Tier 5]:', t4Err);
           }
+          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
         // Tier 5: Intelligent Local Knowledge Synthesis Engine (Guaranteed 100% Uptime Fallback)
@@ -905,7 +909,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- What live events are happening this weekend in ${city.name}?`;
           }
 
-          const chunks = fallbackText.match(/.{1,12}/g) || [fallbackText];
+          const chunks = fallbackText.match(/.{1,80}/g) || [fallbackText];
           for (const chunk of chunks) {
             controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
             streamedResponse += chunk;
@@ -941,9 +945,22 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
     });
   } catch (error: unknown) {
     console.error('[Chat API Global Error]:', error);
-    return new Response(
-      JSON.stringify({ error: 'An error occurred processing your request. Please try again.' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    
+    const errorMessage = 'An error occurred processing your request. Please try again.';
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(encoder.encode(`0:${JSON.stringify(errorMessage)}\n`));
+        controller.enqueue(encoder.encode('d:{"finishReason":"error"}\n'));
+        controller.close();
+      }
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Vercel-AI-Data-Stream': 'v1',
+      },
+    });
   }
 }

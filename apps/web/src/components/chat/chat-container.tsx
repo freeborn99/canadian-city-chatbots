@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, ChevronRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useChat } from '@ai-sdk/react';
 import { CityTenant, getTenantById } from '@/lib/tenants';
 import { CityHeader } from '@/components/layout/city-header';
@@ -11,15 +11,10 @@ import { StarterPrompts } from './starter-prompts';
 import { ChatMessages } from './chat-messages';
 import { ChatInput } from './chat-input';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
-import { QuickCategoryBar, CivicCategory } from '@/components/radar/quick-category-bar';
 import { SpotlightDeck } from '@/components/radar/spotlight-deck';
-import { AuthProvider } from '@/lib/auth-context';
 import { SocialAuthModal } from '@/components/auth/social-auth-modal';
 import { SocialShareDialog } from '@/components/social/social-share-dialog';
 import { PersonaSwitcher, AIPersona } from './persona-switcher';
-import { LocalPartnerShowcase } from '@/components/radar/local-partner-showcase';
-import { LiveCivicFeed } from '@/components/radar/live-civic-feed';
-import { getCityHubData } from '@/lib/city-data';
 
 interface ChatContainerProps {
   initialTenantId: string;
@@ -29,11 +24,9 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
   const [activeTenantId, setActiveTenantId] = useState<string>(initialTenantId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileRadarOpen, setIsMobileRadarOpen] = useState(false);
-  const [activeRadarCategory, setActiveRadarCategory] = useState<CivicCategory>('overview');
   const [activePersona, setActivePersona] = useState<AIPersona>('insider');
 
   const tenant: CityTenant = getTenantById(activeTenantId);
-  const hubData = getCityHubData(activeTenantId);
 
   // Vercel AI SDK useChat hook
   const {
@@ -65,14 +58,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
     () => messages.map((m) => m.content).join(' '),
     [messages]
   );
-
-  const handleSelectQuickCategory = (cat: CivicCategory) => {
-    setActiveRadarCategory(cat);
-    // On mobile (< 1280px), automatically open the Spotlight deck to that tab!
-    if (typeof window !== 'undefined' && window.innerWidth < 1280) {
-      setIsMobileRadarOpen(true);
-    }
-  };
 
   const handleSelectStarterPrompt = (promptText: string) => {
     append({
@@ -190,15 +175,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
                 }}
                 onClose={() => setIsMobileRadarOpen(false)}
                 isMobileDrawer={true}
-                initialTab={
-                  activeRadarCategory === 'eats'
-                    ? 'eats'
-                    : activeRadarCategory === 'shows'
-                    ? 'shows'
-                    : activeRadarCategory === 'transit'
-                    ? 'transit'
-                    : 'overview'
-                }
+                initialTab={'overview'}
               />
             </motion.div>
           </div>
@@ -228,24 +205,24 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
       <div className="relative z-10 flex-1 min-h-0 w-full flex overflow-hidden px-1 sm:px-2 md:px-4 pb-2 sm:pb-3 pt-1 gap-2 md:gap-4 max-w-[1700px] mx-auto">
         {/* Center Main Chat Panel */}
         <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative">
-          {/* Quick Discovery Category Bar */}
-          <div className="flex-shrink-0">
-            <QuickCategoryBar
-              tenant={tenant}
-              activeCategory={activeRadarCategory}
-              onSelectCategory={handleSelectQuickCategory}
-            />
-          </div>
-
+          
           {/* Chat Stream or Empty State Starter Prompts */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-1.5 sm:p-3 md:p-6">
+          <div className="flex-1 min-h-0 overflow-y-auto p-1.5 sm:p-3 md:p-6 flex flex-col">
             {messages.length === 0 ? (
-              <div className="h-full flex flex-col max-w-3xl mx-auto pb-10">
-                <LiveCivicFeed tenant={tenant} news={hubData.news} />
-                <StarterPrompts
-                  tenant={tenant}
-                  onSelectPrompt={handleSelectStarterPrompt}
-                />
+              <div className="h-full flex flex-col items-center justify-center max-w-3xl mx-auto pb-10 w-full">
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl md:text-5xl font-extrabold mb-3 flex items-center justify-center gap-3">
+                    <span>🍁</span>
+                    <span>Chat{tenant.id.toUpperCase()}</span>
+                  </h1>
+                  <p className="text-lg text-slate-400">Your AI guide to {tenant.name}</p>
+                </div>
+                <div className="w-full">
+                  <StarterPrompts
+                    tenant={tenant}
+                    onSelectPrompt={handleSelectStarterPrompt}
+                  />
+                </div>
               </div>
             ) : (
               <ChatMessages
@@ -255,11 +232,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
                 onSendFollowup={handleSelectStarterPrompt}
               />
             )}
-          </div>
-
-          {/* Partner Showcase between chat and input */}
-          <div className="flex-shrink-0 px-2 sm:px-3 md:px-5 py-1 sm:py-1.5 border-t border-slate-800/40 bg-slate-950/40">
-            <LocalPartnerShowcase tenantId={tenant.id} variant="compact" />
           </div>
 
           {/* Persona Mood Switcher & Pinned Bottom Glass Input Bar */}
@@ -291,15 +263,7 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
             allMessagesText={allConversationText}
             hasMessages={messages.length > 0}
             onAskAI={handleSelectStarterPrompt}
-            initialTab={
-              activeRadarCategory === 'eats'
-                ? 'eats'
-                : activeRadarCategory === 'shows'
-                ? 'shows'
-                : activeRadarCategory === 'transit'
-                ? 'transit'
-                : 'overview'
-            }
+            initialTab={'overview'}
           />
         </div>
       </div>

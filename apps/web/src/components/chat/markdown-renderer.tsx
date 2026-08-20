@@ -195,28 +195,39 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           a: ({ href, children }) => {
-            const finalUrl = href ? buildAffiliateUrl(href, inferPlatformFromUrl(href), tenantId) : '#';
+            let finalUrl = href || '#';
+            let isExternal = false;
+            
+            if (href) {
+              const platform = inferPlatformFromUrl(href);
+              if (platform !== 'Direct') {
+                finalUrl = buildAffiliateUrl(href, platform, tenantId);
+              }
+              isExternal = href.startsWith('http');
+            }
+
             return (
               <a
                 href={finalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 font-semibold text-cyan-300 hover:text-white underline decoration-cyan-500/40 hover:decoration-cyan-400 underline-offset-4 transition-all group bg-cyan-950/40 hover:bg-cyan-900/50 px-1.5 py-0.5 rounded-md border border-cyan-800/40 hover:border-cyan-600/60 shadow-sm"
+                {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className="inline-flex items-center gap-1 text-cyan-400 hover:text-cyan-300 underline underline-offset-2 font-medium transition-colors group"
               >
                 <span>{children}</span>
-                <svg
-                  className="w-3 h-3 opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
+                {isExternal && (
+                  <svg
+                    className="w-2.5 h-2.5 opacity-70 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                )}
               </a>
             );
           },
