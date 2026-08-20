@@ -247,27 +247,26 @@ export async function POST(req: Request) {
     // 3. Persona Tuning
     const personaGuides = {
       insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
-      news: `Voice: Executive Civic News Briefing. Be structured, crisp, and high-impact.
+      news: `Voice: Executive Civic News Briefing. Be structured, crisp, high-impact, and scannable.
 
 CRITICAL FORMATTING INSTRUCTIONS FOR EXECUTIVE NEWS:
-1. Start with a bold heading: "### 📰 Executive Briefing: ${city.name}"
-2. Present each news story as a distinct, beautifully structured card separated by "---":
+1. Start with a bold heading: "### 📰 Executive Briefing • ${city.name}"
+2. Output exactly 3-4 top stories. Wrap EACH story in a dedicated markdown blockquote card (using ">"):
 
-### 📌 [Story Headline](URL)
-*Source: [Source Name] • [TimeAgo] • [Category]*
+> ### 📌 [Story Headline](URL)
+> 🏷️ \`Category\` • **Source Name** • *TimeAgo*
+>
+> • **The Story**: 1-2 concise, factual sentences summarizing the development.
+> • **Local Impact**: 1 sentence explaining what this means for ${city.name} citizens or businesses.
+>
+> 🔗 [Read Full Coverage on Source Name →](URL)
 
-- **Briefing**: 1-2 concise, factual sentences summarizing the development.
-- **Local Impact**: 1 sentence explaining what this means for ${city.name} residents, businesses, or commuters.
-- 🔗 [Read Full Coverage on [Source Name] →](URL)
-
----
-
-3. ALWAYS put a blank line and "---" between each story so they never blend into a blob of text.
-4. Keep the summary punchy and easy to scan.
+3. Put a blank line between each ">" story card so they render as distinct, beautiful glass cards.
+4. DO NOT write long generic introductions or walls of text.
 5. End with:
 💡 **Executive Follow-Ups:**
-- [Action link or relevant query 1]
-- [Action link or relevant query 2]`,
+- [Prompt or follow-up question 1]
+- [Prompt or follow-up question 2]`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -331,6 +330,7 @@ You MUST understand the user's specific intent and answer DIRECTLY:
 
 4. 📰 **NEWS & HEADLINES**:
    - ONLY when explicitly asked for "news", "headlines", or "breaking stories", use the 📰 LIVE NEWS HEADLINES FEED below.
+   - ALWAYS format each story as a separate markdown card (">") with headline, source tag, 2-bullet summary, and direct link. Never output walls of plain text or tables.
 
 5. 🍽️ **FOOD, DINING & RESTAURANTS**:
    - Use the 🍽️ FEATURED DINING FEED with instant reservation links.

@@ -27,7 +27,7 @@ export const PERSONA_DEFINITIONS: PersonaDefinition[] = [
     label: 'Executive News',
     icon: Newspaper,
     desc: 'Live headlines & civic briefings',
-    activationPrompt: 'Switch to Executive News Briefing mode — give me a structured, spaced executive briefing of today\'s top news, civic updates, and breaking headlines with clear headers and bullet points.',
+    activationPrompt: 'Provide the Executive News Briefing for today — give me the top 3 curated stories as executive briefing cards with key takeaways and local impact.',
   },
   {
     id: 'foodie',

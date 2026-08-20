@@ -117,13 +117,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
           hr: () => (
             <div className="my-5 flex items-center gap-3">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
-              <span className="text-slate-600 text-[10px]">•</span>
+              <span className="text-slate-500 text-[11px] font-mono">✦</span>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
             </div>
           ),
           blockquote: ({ children }) => (
-            <div className="my-3 p-4 rounded-xl bg-gradient-to-br from-slate-900/80 to-slate-900/40 border-l-4 border-cyan-500/60 shadow-inner">
-              <div className="text-slate-300 leading-relaxed italic">{children}</div>
+            <div className="my-3.5 p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-850/90 to-slate-900/95 border border-slate-700/80 hover:border-cyan-500/40 shadow-xl space-y-2 relative overflow-hidden backdrop-blur-md transition-all">
+              <div className="text-slate-200 leading-relaxed text-sm sm:text-base not-italic space-y-2">{children}</div>
             </div>
           ),
           img: ({ src, alt }) => (
