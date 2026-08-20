@@ -11,15 +11,11 @@ interface CityHeaderProps {
   tenant: CityTenant;
   onToggleSidebar: () => void;
   isSidebarOpen: boolean;
-  onToggleRadar: () => void;
-  isRadarOpen: boolean;
 }
 
 export const CityHeader: React.FC<CityHeaderProps> = ({
   tenant,
   onToggleSidebar,
-  onToggleRadar,
-  isRadarOpen,
 }) => {
   const { openShareModal } = useAuth();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -50,20 +46,6 @@ export const CityHeader: React.FC<CityHeaderProps> = ({
             <h1 className="text-sm sm:text-base md:text-lg font-bold tracking-tight text-white flex items-center">
               Chat<span className={`bg-gradient-to-r ${tenant.gradientClass} bg-clip-text text-transparent`}>{tenant.id.toUpperCase()}</span>
             </h1>
-
-            {/* Mobile-first Spotlight Button (Placed right beside the title as requested) */}
-            <button
-              onClick={onToggleRadar}
-              className={`xl:hidden flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all shadow-sm active:scale-95 border ${
-                isRadarOpen
-                  ? 'bg-slate-800 text-white border-cyan-500 shadow-cyan-500/20'
-                  : 'bg-cyan-950/80 border-cyan-700/60 text-cyan-300 hover:text-white hover:bg-cyan-900/80'
-              }`}
-              title="Open Spotlight Hub & Interactive Map"
-            >
-              <Sparkles className="w-3 h-3 text-cyan-400 animate-pulse" />
-              <span>Spotlight</span>
-            </button>
 
             {/* Desktop Location Badge */}
             <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800/80 text-[11px] font-medium text-slate-300 border border-slate-700/50">

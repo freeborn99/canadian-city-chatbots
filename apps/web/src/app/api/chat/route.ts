@@ -240,14 +240,23 @@ export async function POST(req: Request) {
     const personaGuides = {
       insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
       news: `Voice: Executive Civic News Briefing. Be concise and factual.
-Formatting: For news briefings, output a structured header then each story as a simple block:
+Formatting: For news briefings, output a structured header then each story MUST be a JSON block wrapped in \`\`\`news-card\`\`\` backticks.
 
-### 📰 [Headline](URL)
-*Source • Time*
+Example format:
+### 📰 Executive Briefing
 
-Summary sentence.
+\`\`\`news-card
+{
+  "category": "Politics",
+  "source": "City News",
+  "timeAgo": "2h ago",
+  "title": "Mayor Announces New Transit Line",
+  "summary": "City council has approved funding for the new green line expansion.",
+  "url": "https://example.com/news/123"
+}
+\`\`\`
 
-Do NOT use nested bold sections like "Executive Summary:" or "Key Takeaways:" or "Local & Civic Impact:" — just write the summary directly. Keep each story to 2-3 lines max. Separate stories with a blank line. End with Quick Next Steps.`,
+Do NOT use standard markdown for news stories. ONLY use the \`\`\`news-card\`\`\` JSON format for each story. Separate multiple stories with a blank line. End with Quick Next Steps.`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -753,11 +762,17 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const stories = cityHub.news.slice(0, 6);
             fallbackText = `### 📰 Executive Briefing — ${city.name}\n\n` +
               stories.map((n, i) => 
-                `**${i + 1}. [${n.title}](${n.url})**\n` +
-                `*${n.source} • ${n.category} • ${n.timeAgo}*\n\n` +
-                `${n.summary}\n\n` +
-                `[Read on ${n.source} →](${n.url})`
-              ).join('\n\n---\n\n') +
+                `\`\`\`news-card\n` +
+                JSON.stringify({
+                  category: n.category || 'Local',
+                  source: n.source || 'News',
+                  timeAgo: n.timeAgo || 'Recently',
+                  title: n.title,
+                  summary: n.summary,
+                  url: n.url
+                }, null, 2) +
+                `\n\`\`\``
+              ).join('\n\n') +
               `\n\n💡 **Quick Next Steps:**\n` +
               `- What are the upcoming ${city.name} City Council agenda items?\n` +
               `- Check current transit service alerts\n` +

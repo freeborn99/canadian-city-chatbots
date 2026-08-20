@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 import { useChat } from '@ai-sdk/react';
 import { CityTenant, getTenantById } from '@/lib/tenants';
 import { CityHeader } from '@/components/layout/city-header';
@@ -11,7 +9,6 @@ import { StarterPrompts } from './starter-prompts';
 import { ChatMessages } from './chat-messages';
 import { ChatInput } from './chat-input';
 import { TenantSwitcher } from '@/components/layout/tenant-switcher';
-import { SpotlightDeck } from '@/components/radar/spotlight-deck';
 import { SocialAuthModal } from '@/components/auth/social-auth-modal';
 import { SocialShareDialog } from '@/components/social/social-share-dialog';
 import { PersonaSwitcher, AIPersona } from './persona-switcher';
@@ -23,7 +20,6 @@ interface ChatContainerProps {
 export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId }) => {
   const [activeTenantId, setActiveTenantId] = useState<string>(initialTenantId);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobileRadarOpen, setIsMobileRadarOpen] = useState(false);
   const [activePersona, setActivePersona] = useState<AIPersona>('insider');
 
   const tenant: CityTenant = getTenantById(activeTenantId);
@@ -122,8 +118,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
           tenant={tenant}
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
           isSidebarOpen={isSidebarOpen}
-          onToggleRadar={() => setIsMobileRadarOpen(!isMobileRadarOpen)}
-          isRadarOpen={isMobileRadarOpen}
         />
       </div>
 
@@ -144,70 +138,12 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
         onSwitchTenant={handleSwitchTenant}
       />
 
-      {/* Mobile Drawer Spotlight Hub (for < xl screens) */}
-      <AnimatePresence>
-        {isMobileRadarOpen && (
-          <div className="fixed inset-0 z-50 xl:hidden flex justify-end">
-            {/* Dark Blur Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileRadarOpen(false)}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm"
-            />
-
-            {/* Slide-in Mobile Drawer */}
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="relative z-10 w-full sm:max-w-md md:max-w-lg h-full bg-slate-950 p-1.5 sm:p-3 overflow-hidden shadow-2xl flex flex-col"
-            >
-              <SpotlightDeck
-                tenant={tenant}
-                allMessagesText={allConversationText}
-                hasMessages={messages.length > 0}
-                onAskAI={(p) => {
-                  setIsMobileRadarOpen(false);
-                  handleSelectStarterPrompt(p);
-                }}
-                onClose={() => setIsMobileRadarOpen(false)}
-                isMobileDrawer={true}
-                initialTab={'overview'}
-              />
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Mobile Spotlight Hub Button (When closed on mobile) */}
-      {!isMobileRadarOpen && (
-        <div className="fixed bottom-20 right-2 sm:bottom-24 sm:right-3 z-30 xl:hidden">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsMobileRadarOpen(true)}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white text-[11px] sm:text-xs font-bold shadow-2xl backdrop-blur-md transition-all hover:border-cyan-500/80 ${tenant.glowClass}`}
-          >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400 animate-pulse" />
-            <span>Spotlight & Map</span>
-          </motion.button>
-        </div>
-      )}
-
-      {/* Main Workspace: 2-Column Desktop Grid (Center Chat + Right Spotlight Deck) */}
-      <div className="relative z-10 flex-1 min-h-0 w-full flex overflow-hidden px-1 sm:px-2 md:px-4 pb-2 sm:pb-3 pt-1 gap-2 md:gap-4 max-w-[1700px] mx-auto">
-        {/* Center Main Chat Panel */}
-        <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative">
+      {/* Main Workspace: Single Column Centered Chat */}
+      <div className="relative z-10 flex-1 min-h-0 w-full flex justify-center overflow-hidden px-2 sm:px-4 md:px-8 pb-3 pt-2 max-w-5xl mx-auto">
+        <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative w-full">
           
           {/* Chat Stream or Empty State Starter Prompts */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-1.5 sm:p-3 md:p-6 flex flex-col">
+          <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 flex flex-col">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center max-w-3xl mx-auto pb-10 w-full">
                 <div className="text-center mb-8">
@@ -255,17 +191,6 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
             />
           </div>
         </main>
-
-        {/* Right Desktop Showcase Canvas (Directly fills the highlighted empty area) */}
-        <div className="hidden xl:flex flex-shrink-0 h-full overflow-hidden">
-          <SpotlightDeck
-            tenant={tenant}
-            allMessagesText={allConversationText}
-            hasMessages={messages.length > 0}
-            onAskAI={handleSelectStarterPrompt}
-            initialTab={'overview'}
-          />
-        </div>
       </div>
 
       {/* Social Auth Modal */}
