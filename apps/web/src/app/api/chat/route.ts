@@ -175,8 +175,8 @@ export async function POST(req: Request) {
     const liveNewsFeed = (cityHub.news || [])
       .filter((n) => n.category !== 'Culture')
       .map(
-        (n, i) =>
-          `[News Story ${i + 1}]: "${n.title}"\n- Direct Article Link: [${n.title}](${n.url})\n- Source Link: [${n.source}](${n.url}) (${n.timeAgo})\n- Summary: ${n.summary}\n- Key Facts: ${n.expandedDetails?.keyTakeaways?.join('; ') || ''}\n- Local Impact: ${n.expandedDetails?.localImpact || ''}\n- Action/Civic Link: ${n.expandedDetails?.relatedActionUrl ? `[${n.expandedDetails.relatedActionText || 'Official Civic Link'}](${n.expandedDetails.relatedActionUrl})` : `[Read Full Coverage on ${n.source}](${n.url})`}`
+        (n) =>
+          `News Story:\nTitle: ${n.title}\nSource: ${n.source}\nTimeAgo: ${n.timeAgo}\nCategory: ${n.category || 'News'}\nSummary: ${n.summary}\nURL: ${n.url}`
       )
       .join('\n\n');
 
@@ -256,7 +256,7 @@ Example format:
 }
 \`\`\`
 
-Do NOT use standard markdown for news stories. ONLY use the \`\`\`news-card\`\`\` JSON format for each story. Separate multiple stories with a blank line. End with Quick Next Steps.`,
+CRITICAL RULE: DO NOT use markdown tables for news. NEVER output a table. ONLY use the \`\`\`news-card\`\`\` JSON format for each story. Separate multiple stories with a blank line. End with Quick Next Steps.`,
       foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
       family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
     };
@@ -348,6 +348,7 @@ You MUST understand the user's specific intent and answer DIRECTLY:
   | Venue | Neighborhood | Vibe | Cover |
   |-------|-------------|------|-------|
   | Club Name | Area | Description | $XX |
+- NEVER use tables for the Executive News Briefing! News MUST use the \`\`\`news-card\`\`\` format.
 - ALWAYS add a blank line before and after the table.
 - NEVER use the --- separator outside of table header rows.
 - When listing multiple items, use numbered or bulleted lists with consistent indentation.
