@@ -353,19 +353,11 @@ You MUST understand the user's specific intent and answer DIRECTLY:
 - Follow-up question prompt 2
 
 ==================================================
-📊 STRUCTURED DATA & TABLE FORMATTING RULES:
+🚫 STRICT NO-TABLE DIRECTIVE (MOBILE-FIRST FORMATTING):
 ==================================================
-- When comparing venues, restaurants, transit routes, prices, or schedules side-by-side, USE a markdown table:
-  | Venue | Neighborhood | Vibe | Cover |
-  |-------|-------------|------|-------|
-  | Club Name | Area | Description | $XX |
-- NEVER use tables for Executive News Briefings! Follow the card format with bold headers and "---" dividers.
-- ALWAYS add a blank line before and after the table.
-- NEVER use the --- separator outside of table header rows.
-- When listing multiple items, use numbered or bulleted lists with consistent indentation.
-- Use **bold** for venue/entity names and key details.
-- Use ### headers to separate major sections.
-- Avoid jamming multiple items on a single line — give each item its own bullet or row.
+- NEVER output Markdown tables (e.g. | col 1 | col 2 | ... |). Tables create 10-20 column wide unreadable layouts on mobile screens.
+- ALWAYS present comparisons, lists, news briefings, venues, and schedules using vertical CARD BLOCKS ('>') or structured bullet points.
+- Keep each entity on its own line with bold headers and clickable markdown links.
 
 ==================================================
 🔴 VERIFIED LIVE ${city.name.toUpperCase()} INTELLIGENCE DIRECTORY
@@ -771,21 +763,18 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- Check residential parking permit rules\n` +
               `- View upcoming city council agenda`;
           } else if (isNews && cityHub.news?.length > 0) {
-            const stories = cityHub.news.slice(0, 6);
-            fallbackText = `### 📰 Executive Briefing — ${city.name}\n\n` +
-              stories.map((n, i) => 
-                `\`\`\`news-card\n` +
-                JSON.stringify({
-                  category: n.category || 'Local',
-                  source: n.source || 'News',
-                  timeAgo: n.timeAgo || 'Recently',
-                  title: n.title,
-                  summary: n.summary,
-                  url: n.url
-                }, null, 2) +
-                `\n\`\`\``
+            const stories = cityHub.news.slice(0, 4);
+            fallbackText = `### 📰 Executive Briefing • ${city.name}\n\n` +
+              stories.map((n) => 
+                `> 📌 **[${n.title}](${n.url})**\n` +
+                `> 🏷️ \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
+                `>\n` +
+                `> • **The Story**: ${n.summary}\n` +
+                `> • **Local Impact**: ${n.expandedDetails?.localImpact || `Key civic development for ${city.name} residents.`}\n` +
+                `>\n` +
+                `> 🔗 [Read Full Coverage on ${n.source || 'Official Source'} →](${n.url})`
               ).join('\n\n') +
-              `\n\n💡 **Quick Next Steps:**\n` +
+              `\n\n💡 **Executive Follow-Ups:**\n` +
               `- What are the upcoming ${city.name} City Council agenda items?\n` +
               `- Check current transit service alerts\n` +
               `- Explore business highlights in ${city.name}`;

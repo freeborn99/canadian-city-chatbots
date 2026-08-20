@@ -245,21 +245,19 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           table: ({ children }) => (
-            <div className="my-4 flex flex-col gap-1">
-              <div className="overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg">
-                <table className="w-full text-left text-sm">
-                  {children}
-                </table>
-              </div>
+            <div className="my-3 overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg max-w-full">
+              <table className="w-full text-left text-xs sm:text-sm">
+                {children}
+              </table>
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-gradient-to-r from-slate-800 to-slate-800/90">
+            <thead className="bg-slate-800/90 text-cyan-300">
               {children}
             </thead>
           ),
           tbody: ({ children }) => (
-            <tbody className="divide-y divide-slate-800/60 bg-slate-900/50">
+            <tbody className="divide-y divide-slate-800/60 bg-slate-900/60">
               {children}
             </tbody>
           ),
@@ -269,12 +267,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             </tr>
           ),
           th: ({ children }) => (
-            <th className="text-[11px] uppercase tracking-wider font-bold text-cyan-300 px-3 py-2.5 border-b border-slate-700/60 whitespace-nowrap">
+            <th className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-cyan-300 px-2.5 py-2 border-b border-slate-700/60">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-3 py-2 text-slate-200 text-sm">
+            <td className="px-2.5 py-2 text-slate-200 text-xs sm:text-sm leading-snug break-words">
               {children}
             </td>
           ),
