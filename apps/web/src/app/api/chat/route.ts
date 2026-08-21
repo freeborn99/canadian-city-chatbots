@@ -107,7 +107,7 @@ export async function POST(req: Request) {
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
-          const chunks = refusalText.match(/.{1,16}/g) || [refusalText];
+          const chunks = refusalText.match(/[\s\S]{1,16}/g) || [refusalText];
           for (const chunk of chunks) {
             controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
             await new Promise((res) => setTimeout(res, 12));
@@ -142,7 +142,7 @@ export async function POST(req: Request) {
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
-          const chunks = cachedResponse.match(/.{1,16}/g) || [cachedResponse];
+          const chunks = cachedResponse.match(/[\s\S]{1,16}/g) || [cachedResponse];
           for (const chunk of chunks) {
             controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
             await new Promise((res) => setTimeout(res, 10));
@@ -782,75 +782,6 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- How do I contest a parking ticket in ${city.name}?\n` +
               `- Check residential parking permit rules\n` +
               `- View upcoming city council agenda`;
-          } else if (safePersona === 'news' || (!isFood && !isEvents && !isFamily && !isInsider && isNews && cityHub.news?.length > 0)) {
-            const stories = (cityHub.news || []).slice(0, 4);
-            fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
-              stories.map((n) => 
-                `#### 📌 [${n.title}](${n.url})\n` +
-                `- **Category & Source**: \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
-                `- **The Story**: ${n.summary}\n` +
-                `- **Local Impact**: ${n.expandedDetails?.localImpact || `Key civic development for ${city.name} residents.`}\n` +
-                `- **Full Coverage**: [Read Story on ${n.source || 'Official Source'} →](${n.url})`
-              ).join('\n\n') +
-              `\n\n💡 **Executive Follow-Ups:**\n` +
-              `- What are the upcoming ${city.name} City Council agenda items?\n` +
-              `- Check current transit service alerts\n` +
-              `- Explore business highlights in ${city.name}`;
-          } else if (safePersona === 'events' || (!isFood && !isNews && isEvents && cityHub.shows?.length > 0)) {
-            fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
-              `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
-              cityHub.shows.map(s => 
-                `#### 🎭 [${s.title}](${s.ticketUrl}) (${s.category})\n` +
-                `- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
-                `- **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
-                `- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
-              ).join('\n') +
-              `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
-          } else if (safePersona === 'foodie' || (!isEvents && !isNews && isFood && (cityHub.restaurants?.length > 0 || cityHub.nightlife?.length > 0))) {
-            fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
-              `Here are top trending dining spots and cocktail lounges in **${city.name}** with open tables tonight:\n\n` +
-              (cityHub.restaurants || []).slice(0, 3).map(r => 
-                `#### 🍷 [${r.name}](${r.reservationUrl}) (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
-                `- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
-                `- **Available Tables**: ${r.availableTimes.join(', ')}\n` +
-                `- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
-              ).join('\n') +
-              (cityHub.nightlife?.length > 0 ? 
-                `\n#### 🍸 Trending Nightclubs & Speakeasies\n` +
-                cityHub.nightlife.slice(0, 2).map(n => `- 🪩 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood} • ${n.category}): ${n.vibe} — [Reserve VIP / Guestlist](${n.guestlistUrl})\n`).join('') : '') +
-              `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
-          } else if (safePersona === 'family' || isFamily) {
-            fallbackText = `### 👨‍👩‍👧‍👦 **Family & Weekend Adventures • ${city.name}**\n\n` +
-              `Here are top family-friendly activities, kid-approved spots, and weekend outings in **${city.name}**:\n\n` +
-              (cityHub.outdoors?.length > 0 ? 
-                `#### 🌲 Scenic Parks & Outdoor Playgrounds\n` +
-                cityHub.outdoors.slice(0, 3).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Family Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
-              (cityHub.shows?.length > 0 ? 
-                `#### 🎭 Family Shows & Live Entertainment\n` +
-                cityHub.shows.slice(0, 2).map(s => `- 🎟️ **[${s.title}](${s.ticketUrl})** at ${s.venue} (${s.dates}) — [Get Family Tickets](${s.ticketUrl})\n`).join('\n') + '\n' : '') +
-              (cityHub.restaurants?.length > 0 ? 
-                `#### 🍕 Kid-Friendly Dining & Sweet Treats\n` +
-                cityHub.restaurants.slice(0, 2).map(r => `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Favorites**: *${r.signatureDish}* — [Book Table](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
-              `💡 **Family Next Steps:**\n` +
-              `- Find free indoor play centres and science discovery spots\n` +
-              `- Check weekend family festival schedules in ${city.name}\n` +
-              `- View stroller-accessible park and trail routes`;
-          } else if (safePersona === 'insider' || isInsider) {
-            fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
-              `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
-              (cityHub.nightlife?.length > 0 ? 
-                `#### 🍸 Hidden Speakeasies & Cocktail Secrets\n` +
-                cityHub.nightlife.slice(0, 2).map(n => `- 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n  • **Vibe**: ${n.vibe}\n  • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n  • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
-              (cityHub.restaurants?.length > 0 ? 
-                `#### 🍽️ Underrated Neighborhood Eateries\n` +
-                cityHub.restaurants.slice(0, 2).map(r => `- 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Must-Order**: *${r.signatureDish}*\n  • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
-              (cityHub.outdoors?.length > 0 ? 
-                `#### 🌲 Secret Scenic Lookouts & Quiet Trails\n` +
-                cityHub.outdoors.slice(0, 2).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
-              `💡 **Quick Next Steps:**\n` +
-              `- What are the best hidden rooftop patios in ${city.name}?\n` +
-              `- Show me scenic river and skyline walk shortcuts\n` +
-              `- Find late-night underground food spots`;
           } else if (isLandmarkOrArea) {
             const isTower = /\b(tower|calgary tower|cn tower|observation deck)\b/i.test(q);
             const district = city.nightlifeDistricts?.[0] || 'Downtown';
@@ -1046,11 +977,11 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- What live events are happening this weekend in ${city.name}?`;
           }
 
-          const chunks = fallbackText.match(/.{1,80}/g) || [fallbackText];
+          const chunks = fallbackText.match(/[\s\S]{1,60}/g) || [fallbackText];
           for (const chunk of chunks) {
             controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
             streamedResponse += chunk;
-            await new Promise((res) => setTimeout(res, 18));
+            await new Promise((res) => setTimeout(res, 14));
           }
         }
 

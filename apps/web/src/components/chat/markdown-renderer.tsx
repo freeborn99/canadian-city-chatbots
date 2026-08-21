@@ -33,16 +33,27 @@ function tryParseTransit(raw: string, tenantId: string): TransitItinerary | null
 function normalizeMarkdown(content: string): string {
   if (!content) return '';
 
-  return content
-    .replace(/\r\n/g, '\n')
-    // Ensure major section headings have clean top breathing room
-    .replace(/\n(#{1,4}\s)/g, '\n\n$1')
-    // Convert any stray unicode bullets at start of lines to standard markdown list items
-    .replace(/\n\s*•\s+/g, '\n- ')
-    // Ensure lists and bullet points have proper separation
-    .replace(/([:!?.])\s*(-\s+(?:[🍸🍽️🎟️🎭🏒🏛️🏨🌲🐾📍⚡💡•]|\[|\*\*))/gu, '$1\n\n$2')
-    // Ensure card blockquotes have distinct margins
-    .replace(/\n(>\s*📌)/g, '\n\n$1');
+  let text = content.replace(/\r\n/g, '\n');
+
+  // 1. Ensure any inline or colon-attached headings like ":####" or "text####" break onto their own line
+  text = text.replace(/([^\n])\s*(#{1,4}\s+)/g, '$1\n\n$2');
+
+  // 2. Ensure every heading line has a blank line after it (so heading doesn't swallow body text)
+  text = text.replace(/^(#{1,4}\s+[^\n]+)\n(?!\n|#{1,4}\s)/gm, '$1\n\n');
+
+  // 3. Convert any stray unicode bullets at start of lines to standard markdown list items
+  text = text.replace(/^[ \t]*•[ \t]+/gm, '- ');
+
+  // 4. Ensure any inline list items attached to sentences break onto new lines
+  text = text.replace(/([:!?.])\s*(-\s+(?:[🍸🍽️🎟️🎭🏒🏛️🏨🌲🐾📍⚡💡•]|\[|\*\*))/gu, '$1\n\n$2');
+
+  // 5. Ensure card blockquotes have distinct margins
+  text = text.replace(/\n(>\s*📌)/g, '\n\n$1');
+
+  // 6. Ensure multiple consecutive newlines don't exceed 2
+  text = text.replace(/\n{3,}/g, '\n\n');
+
+  return text.trim();
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, tenantId = 'yyc' }) => {
