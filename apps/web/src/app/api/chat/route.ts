@@ -398,14 +398,14 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
       async start(controller) {
         let streamSuccess = false;
         let streamedResponse = '';
-        let modelUsed = 'llama-3.3-70b-versatile';
+        let modelUsed = 'gemini-2.5-flash';
 
-        // Tier 1: Groq Llama-3.3-70B Versatile
-        if (!streamSuccess && groqKey) {
+        // Tier 1: Google Gemini 2.5 Flash (Ultra-Fast, Real-Time Deep Intelligence)
+        if (!streamSuccess && googleKey) {
           try {
-            const groq = createGroq({ apiKey: groqKey });
+            const google = createGoogleGenerativeAI({ apiKey: googleKey });
             const result = streamText({
-              model: groq('llama-3.3-70b-versatile'),
+              model: google('gemini-2.5-flash'),
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
@@ -417,19 +417,19 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
-            modelUsed = 'llama-3.3-70b-versatile';
+            modelUsed = 'gemini-2.5-flash';
           } catch (t1Err) {
-            console.warn('[Tier 1 Groq 70B Rate Limit / Error, Falling to Tier 2]:', t1Err);
+            console.warn('[Tier 1 Gemini 2.5 Flash Rate Limit / Error, Falling to Tier 2]:', t1Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
-        // Tier 2: Groq Llama-3.1-8B Instant (Ultra-High Throughput & Speed Failover)
+        // Tier 2: Groq OpenAI GPT-OSS 120B (High-Throughput Reasoning Failover)
         if (!streamSuccess && groqKey) {
           try {
             const groq = createGroq({ apiKey: groqKey });
             const result = streamText({
-              model: groq('llama-3.1-8b-instant'),
+              model: groq('openai/gpt-oss-120b'),
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
@@ -441,19 +441,19 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
-            modelUsed = 'llama-3.1-8b-instant';
+            modelUsed = 'openai/gpt-oss-120b';
           } catch (t2Err) {
-            console.warn('[Tier 2 Groq 8B Error, Falling to Tier 3]:', t2Err);
+            console.warn('[Tier 2 Groq 120B Error, Falling to Tier 3]:', t2Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
-        // Tier 3: Google Gemini 1.5 Flash (1M Context Auto-Failover)
+        // Tier 3: Google Gemini 2.0 Flash (Secondary Google Engine Failover)
         if (!streamSuccess && googleKey) {
           try {
             const google = createGoogleGenerativeAI({ apiKey: googleKey });
             const result = streamText({
-              model: google('gemini-1.5-flash'),
+              model: google('gemini-2.0-flash'),
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
@@ -465,19 +465,19 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
-            modelUsed = 'gemini-1.5-flash';
+            modelUsed = 'gemini-2.0-flash';
           } catch (t3Err) {
-            console.warn('[Tier 3 Gemini Flash Error, Falling to Tier 4]:', t3Err);
+            console.warn('[Tier 3 Gemini 2.0 Flash Error, Falling to Tier 4]:', t3Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
-        // Tier 4: Google Gemini 1.5 Pro
-        if (!streamSuccess && googleKey) {
+        // Tier 4: Groq Qwen 3.6 27B
+        if (!streamSuccess && groqKey) {
           try {
-            const google = createGoogleGenerativeAI({ apiKey: googleKey });
+            const groq = createGroq({ apiKey: groqKey });
             const result = streamText({
-              model: google('gemini-1.5-pro'),
+              model: groq('qwen/qwen3.6-27b'),
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
@@ -489,9 +489,9 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
-            modelUsed = 'gemini-1.5-pro';
+            modelUsed = 'qwen/qwen3.6-27b';
           } catch (t4Err) {
-            console.warn('[Tier 4 Gemini Pro Error, Falling to Tier 5]:', t4Err);
+            console.warn('[Tier 4 Groq Qwen Error, Falling to Tier 5]:', t4Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
@@ -500,13 +500,20 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
         if (!streamSuccess) {
           modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
+          const isActivationPrompt = (
+            q.includes('give me top local insider secrets') ||
+            q.includes('provide the exclusive news & executive briefing') ||
+            q.includes('show me top concerts, live theatre productions') ||
+            q.includes('show me trending nightclubs, cocktail speakeasies') ||
+            q.includes('show me top family-friendly activities')
+          );
           const isRooftopOrPatio = /\b(rooftop|rooftops|patio|patios|terrace|terraces|skyline view|outdoor dining|outdoor drinks|heated patio|open air|sunset patio)\b/i.test(q);
           const isSpeakeasyOrHiddenGem = /\b(speakeasy|speakeasies|secret bar|hidden bar|password|underground bar|secret door|bookcase|hidden gem|hidden gems|secret spots)\b/i.test(q);
-          const isInsider = safePersona === 'insider' || isSpeakeasyOrHiddenGem || /\b(insider|hidden gem|gems|shortcut|shortcuts|secret|secrets|local tip|tips|local favorite|favorites|underrated)\b/i.test(q);
-          const isNews = safePersona === 'news' || /\b(news|headline|headlines|briefing|briefings|executive|exclusive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
-          const isEvents = safePersona === 'events' || /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|gig|comedy)\b/i.test(q);
-          const isFood = safePersona === 'foodie' || isRooftopOrPatio || /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table|cocktail|cocktails|speakeasy|speakeasies|nightlife|club|clubs|bar|bars)\b/i.test(q);
-          const isFamily = safePersona === 'family' || /\b(family|kid|kids|child|children|weekend|toddler|stroller|free event|play)\b/i.test(q);
+          const isInsider = (isActivationPrompt && safePersona === 'insider') || /\b(insider secret|insider secrets|hidden gem|hidden gems|secret shortcut|secret shortcuts|hidden cocktail|secret spots|secret spot|local secrets)\b/i.test(q);
+          const isNews = (isActivationPrompt && safePersona === 'news') || /\b(news|headline|headlines|briefing|briefings|executive|exclusive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
+          const isEvents = (isActivationPrompt && safePersona === 'events') || /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|gig|comedy)\b/i.test(q);
+          const isFood = (isActivationPrompt && safePersona === 'foodie') || isRooftopOrPatio || /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table|cocktail|cocktails|speakeasy|speakeasies|nightlife|club|clubs|bar|bars)\b/i.test(q);
+          const isFamily = (isActivationPrompt && safePersona === 'family') || /\b(family|kid|kids|child|children|weekend|toddler|stroller|free event|play)\b/i.test(q);
           const isTransit = /\b(train|trains|ctrain|subway|metro|bus|buses|transit|station|stations|schedule|schedules|route|routes|commute|lrt|skytrain|rem|ferry|line|lines|fare|fares|chinook|chinnok|tuscan|somerset|brentwood|stampede|crowfoot|saddletowne|dalhousie|sunnyside|erlton|heritage|southland|anderson|canyon meadows|fish creek|shawnessy|bridlewood|lion’s park|saith|banff trail|university|whitehorn|rundle|marlborough|franklin|barlow|max)\b/i.test(q);
           const isLandmarkOrArea = /\b(calgary tower|cn tower|tower|towers|stephen ave|stephen avenue|17th ave|17th avenue|kensington|inglewood|east village|mission|bridgeland|chinook|eau claire|prince's island|saddledome|rogers place|scotiabank arena|bell centre|granville|yaletown|gastown|stanley park|byward|parliament|the forks|old montreal|vieux-montr|waterfront|peggy's cove|signal hill|inner harbour|downtown|what is happening|what's happening|right now|happening around|things to do|going on|attraction|attractions|landmark|landmarks)\b/i.test(q);
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
@@ -560,7 +567,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- What are the top rooftop cocktail lounges in ${city.name}?\n` +
               `- Find late-night underground dining spots\n` +
               `- What live shows are playing tonight?`;
-          } else if (safePersona === 'news') {
+          } else if (isNews) {
             const stories = (cityHub.news || []).slice(0, 5);
             fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
               stories.map((n) => 
@@ -574,7 +581,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- What are the upcoming ${city.name} City Council agenda items?\n` +
               `- Check current transit service alerts\n` +
               `- Explore business highlights in ${city.name}`;
-          } else if (safePersona === 'events') {
+          } else if (isEvents) {
             fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
               `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
               (cityHub.shows || []).map(s => 
@@ -585,13 +592,13 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
                 `- **Official Tickets**: [Get Tickets on ${s.ticketPlatform} →](${s.ticketUrl})`
               ).join('\n\n') +
               `\n\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
-          } else if (safePersona === 'foodie') {
+          } else if (isFood) {
             const restaurants = (cityHub.restaurants || []).slice(0, 4);
             const rooftops = (ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || []).slice(0, 2);
             const nightlife = (cityHub.nightlife || []).slice(0, 2);
 
-            fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
-              `Here are top trending dining spots, chef tasting tables, rooftop lounges, and cocktail sanctuaries in **${city.name}** with open tables tonight:\n\n` +
+            fallbackText = `### 🍽️ **Top Dining & Nightlife Recommendations • ${city.name}**\n\n` +
+              `Here are top dining spots, chef tables, and cocktail venues in **${city.name}** matching your search:\n\n` +
               restaurants.map(r => 
                 `#### 🍷 [${r.name}](${r.reservationUrl})\n` +
                 `- **Cuisine & Rating**: ${r.cuisine} • \`${r.priceLevel}\` • ⭐${r.rating} (${r.neighborhood})\n` +
@@ -614,7 +621,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
                 `- **VIP & Guestlist**: [Reserve VIP / Entry →](${n.guestlistUrl})`
               ).join('\n\n') +
               `\n\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
-          } else if (safePersona === 'family') {
+          } else if (isFamily) {
             const outdoors = (cityHub.outdoors || []).slice(0, 3);
             const shows = (cityHub.shows || []).slice(0, 2);
             const familyRestos = (cityHub.restaurants || []).slice(0, 2);
@@ -644,7 +651,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- Find free indoor play centres and science discovery spots\n` +
               `- Check weekend family festival schedules in ${city.name}\n` +
               `- View stroller-accessible park and trail routes`;
-          } else if (safePersona === 'insider') {
+          } else if (isInsider) {
             const speakeasies = (SPEAKEASIES[activeTenantId] || SPEAKEASIES.yyc || []).slice(0, 2);
             const rooftops = (ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || []).slice(0, 2);
             const restaurants = (cityHub.restaurants || []).slice(0, 2);
