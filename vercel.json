@@ -1,7 +1,4 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "turbo run build --filter=@canadian-chatbots/web",
-  "outputDirectory": "apps/web/.next",
   "crons": [
     {
       "path": "/api/cron/refresh-hotspots",
