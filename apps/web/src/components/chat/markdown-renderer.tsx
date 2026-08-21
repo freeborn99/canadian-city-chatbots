@@ -28,92 +28,39 @@ function tryParseTransit(raw: string, tenantId: string): TransitItinerary | null
 }
 
 /**
- * Safely normalize markdown spacing WITHOUT breaking tables or code blocks.
- * Splits content into protected blocks (tables, code) vs prose, only modifying prose.
+ * Clean markdown spacing to ensure readable typography without text bunching or broken tables.
  */
 function normalizeMarkdown(content: string): string {
   if (!content) return '';
 
-  const normalized = content.replace(/\r\n/g, '\n');
-
-  // Split the content preserving code blocks and table blocks
-  // We identify tables as consecutive lines that contain pipes |
-  const lines = normalized.split('\n');
-  const result: string[] = [];
-  let inCodeBlock = false;
-  let inTable = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-
-    // Track code block boundaries
-    if (trimmed.startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      result.push(line);
-      continue;
-    }
-
-    // Don't modify anything inside code blocks
-    if (inCodeBlock) {
-      result.push(line);
-      continue;
-    }
-
-    // Detect table rows (lines with | characters that aren't just standalone |)
-    const isTableRow = /\|.*\|/.test(trimmed);
-    const isTableSeparator = /^\|?[\s\-:|]+\|/.test(trimmed);
-
-    if (isTableRow || isTableSeparator) {
-      // If we just entered the table, add a blank line before for remark-gfm
-      if (!inTable && result.length > 0 && result[result.length - 1].trim() !== '') {
-        result.push('');
-      }
-      inTable = true;
-      result.push(line);
-      continue;
-    }
-
-    // If we just left a table, add a blank line after
-    if (inTable && !isTableRow && !isTableSeparator) {
-      inTable = false;
-      if (result.length > 0 && result[result.length - 1].trim() !== '') {
-        result.push('');
-      }
-    }
-
-    // For normal prose lines, apply spacing fixes
-    let processed = line;
-
-    // Ensure headers have preceding blank line
-    if (/^#{1,4}\s/.test(trimmed) && result.length > 0 && result[result.length - 1].trim() !== '') {
-      result.push('');
-    }
-
-    result.push(processed);
-  }
-
-  return result.join('\n');
+  return content
+    .replace(/\r\n/g, '\n')
+    // Ensure major section headings have clean top breathing room
+    .replace(/\n(#{1,4}\s)/g, '\n\n$1')
+    // Ensure lists and bullet points have proper separation
+    .replace(/([:!?.])\s*(-\s+(?:[🍸🍽️🎟️🎭🏒🏛️🏨🌲🐾📍⚡💡•]|\[|\*\*))/gu, '$1\n\n$2')
+    // Ensure card blockquotes have distinct margins
+    .replace(/\n(>\s*📌)/g, '\n\n$1');
 }
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, tenantId = 'yyc' }) => {
   const formattedContent = React.useMemo(() => normalizeMarkdown(content), [content]);
 
   return (
-    <div className="prose prose-invert prose-slate max-w-full overflow-hidden text-xs sm:text-sm md:text-base leading-relaxed break-words space-y-2 sm:space-y-2.5">
+    <div className="prose prose-invert prose-slate max-w-full overflow-hidden text-xs sm:text-sm md:text-base leading-relaxed break-words space-y-3">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          p: ({ children }) => <p className="mb-2 last:mb-0 text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base">{children}</p>,
+          p: ({ children }) => <p className="mb-3 last:mb-0 text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base">{children}</p>,
           strong: ({ children }) => <strong className="font-bold text-white tracking-wide">{children}</strong>,
           em: ({ children }) => <em className="text-slate-300 italic">{children}</em>,
-          ul: ({ children }) => <ul className="my-1.5 sm:my-2.5 ml-3 sm:ml-4 list-disc space-y-1 sm:space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ul>,
-          ol: ({ children }) => <ol className="my-1.5 sm:my-2.5 ml-3 sm:ml-4 list-decimal space-y-1 sm:space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ol>,
-          li: ({ children }) => <li className="pl-0.5 sm:pl-1 leading-relaxed">{children}</li>,
-          h1: ({ children }) => <h1 className="text-lg sm:text-xl font-extrabold mt-3.5 mb-2 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
-          h2: ({ children }) => <h2 className="text-base sm:text-lg font-bold mt-3 mb-1.5 text-cyan-300">{children}</h2>,
-          h3: ({ children }) => <h3 className="text-sm sm:text-base md:text-lg font-bold mt-2.5 sm:mt-3 mb-1 text-white flex items-center gap-2">{children}</h3>,
-          h4: ({ children }) => <h4 className="text-xs sm:text-sm font-bold mt-2 mb-1 text-slate-200">{children}</h4>,
+          ul: ({ children }) => <ul className="my-2.5 ml-4 list-disc space-y-2 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ul>,
+          ol: ({ children }) => <ol className="my-2.5 ml-4 list-decimal space-y-2 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ol>,
+          li: ({ children }) => <li className="pl-1 leading-relaxed">{children}</li>,
+          h1: ({ children }) => <h1 className="text-lg sm:text-xl font-extrabold mt-4 mb-2 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
+          h2: ({ children }) => <h2 className="text-base sm:text-lg font-bold mt-3.5 mb-2 text-cyan-300">{children}</h2>,
+          h3: ({ children }) => <h3 className="text-sm sm:text-base md:text-lg font-bold mt-3 mb-1.5 text-white flex items-center gap-2">{children}</h3>,
+          h4: ({ children }) => <h4 className="text-xs sm:text-sm font-bold mt-2.5 mb-1 text-slate-200">{children}</h4>,
           hr: () => (
             <div className="my-4 sm:my-5 flex items-center gap-3">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
@@ -122,8 +69,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             </div>
           ),
           blockquote: ({ children }) => (
-            <div className="my-2.5 sm:my-3.5 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-850/90 to-slate-900/95 border border-slate-700/80 hover:border-cyan-500/40 shadow-md sm:shadow-xl space-y-1.5 sm:space-y-2 relative overflow-hidden backdrop-blur-md transition-all">
-              <div className="text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base not-italic space-y-1.5 sm:space-y-2">{children}</div>
+            <div className="my-3 p-3.5 sm:p-4.5 rounded-xl sm:rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-850/90 to-slate-900/95 border border-slate-700/80 hover:border-cyan-500/40 shadow-lg space-y-2 relative overflow-hidden backdrop-blur-md transition-all">
+              <div className="text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base not-italic space-y-2">{children}</div>
             </div>
           ),
           img: ({ src, alt }) => (

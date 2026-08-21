@@ -59,8 +59,8 @@ export async function POST(req: Request) {
     }
 
     // Validate persona
-    const validPersonas = ['insider', 'events', 'foodie', 'family', 'news'] as const;
-    const safePersona = validPersonas.includes(persona as any) ? (persona === 'news' ? 'events' : persona) : 'insider';
+    const validPersonas = ['insider', 'news', 'events', 'foodie', 'family'] as const;
+    const safePersona = validPersonas.includes(persona as any) ? persona : 'insider';
 
     // Truncate message history to last 8 messages to prevent unbounded token costs and stay comfortably within free tier limits
     const truncatedMessages = messages.slice(-8);
@@ -246,10 +246,11 @@ export async function POST(req: Request) {
 
     // 3. Persona Tuning
     const personaGuides = {
-      insider: 'Voice: Friendly, witty, hyper-local insider who knows the hidden gems, late-night shortcuts, club guestlists, and true local culture. Include markdown links for all places.',
-      events: `Voice: Ultimate Live Entertainment & Box Office Concierge for ${city.name}. Highlight premier concerts, Broadway/theatre shows, comedy clubs, sports matches, and major festivals from the 🎟️ LIVE SHOWS & CONCERTS feed with direct venue ticket booking links.`,
-      foodie: 'Voice: Acclaimed culinary & nightlife enthusiast focusing on craft cocktails, trending clubs, speakeasies, chef stories, and immediate table reservations.',
-      family: 'Voice: Warm, helpful family guide highlighting budget-friendly activities, stroller/kid accessibility, and safe public parks.',
+      insider: `Voice: Friendly, witty, hyper-local insider for ${city.name}. Reveal authentic hidden gems, speakeasy secret entrances, scenic lookouts, shortcuts, and neighborhood spots that only locals know. Format each spot with a bold title, neighborhood, and insider tip. Always write in clean single-column lists with generous spacing. Never use markdown tables or pipe (|) columns.`,
+      news: `Voice: Executive Civic & Business News Briefing for ${city.name}. Provide a curated briefing of top civic, development, and regional stories with 1-line takeaways, local impact, and direct article links. Format each story as a clean single-column card with bold headline. Never use markdown tables.`,
+      events: `Voice: Ultimate Live Entertainment & Box Office Concierge for ${city.name}. Highlight premier concerts, Broadway/theatre shows, comedy clubs, sports matches, and major festivals from the 🎟️ LIVE SHOWS & CONCERTS feed with direct venue ticket booking links. Format as a clean vertical single-column list with line breaks. Never use tables.`,
+      foodie: `Voice: Acclaimed culinary & nightlife enthusiast for ${city.name}. Highlight trending cocktail speakeasies, top dining spots, chef highlights, and reservation links with clean vertical spacing. Never use tables.`,
+      family: `Voice: Warm, helpful family guide for ${city.name}. Feature free weekend activities, kid-friendly parks, interactive museums, and stroller-friendly nature walks with generous line breaks. Never use tables.`,
     };
 
     const surroundingAreaList = city.surroundingRegions?.join(', ') || city.metroArea || city.name;
@@ -483,18 +484,20 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
         if (!streamSuccess) {
           modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
+          const isInsider = safePersona === 'insider' || /\b(insider|hidden gem|gems|shortcut|shortcuts|secret|secrets|local tip|tips|local favorite|favorites|underrated)\b/i.test(q);
+          const isNews = safePersona === 'news' || /\b(news|headline|headlines|briefing|briefings|executive|exclusive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
+          const isEvents = safePersona === 'events' || /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|gig|comedy)\b/i.test(q);
+          const isFood = safePersona === 'foodie' || /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table|cocktail|cocktails|speakeasy|speakeasies|nightlife|club|clubs|bar|bars)\b/i.test(q);
+          const isFamily = safePersona === 'family' || /\b(family|kid|kids|child|children|weekend|toddler|stroller|free event|play)\b/i.test(q);
           const isTransit = /\b(train|trains|ctrain|subway|metro|bus|buses|transit|station|stations|schedule|schedules|route|routes|commute|lrt|skytrain|rem|ferry|line|lines|fare|fares|chinook|chinnok|tuscan|somerset|brentwood|stampede|crowfoot|saddletowne|dalhousie|sunnyside|erlton|heritage|southland|anderson|canyon meadows|fish creek|shawnessy|bridlewood|lion’s park|saith|banff trail|university|whitehorn|rundle|marlborough|franklin|barlow|max)\b/i.test(q);
           const isLandmarkOrArea = /\b(calgary tower|cn tower|tower|towers|stephen ave|stephen avenue|17th ave|17th avenue|kensington|inglewood|east village|mission|bridgeland|chinook|eau claire|prince's island|saddledome|rogers place|scotiabank arena|bell centre|granville|yaletown|gastown|stanley park|byward|parliament|the forks|old montreal|vieux-montr|waterfront|peggy's cove|signal hill|inner harbour|downtown|what is happening|what's happening|right now|happening around|things to do|going on|attraction|attractions|landmark|landmarks)\b/i.test(q);
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
-          const isNightlife = /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
+          const isNightlife = isFood || /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
           const isAnimal = /\b(animal|dog|cat|pet|bite|aggressive|loose)\b/.test(q);
           const isParkingOrCivic = /\b(parking|ticket|permit|bylaw|311|tax|garbage|recycling|snow)\b/.test(q);
-          const isEvents = /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|gig)\b/.test(q);
-          const isFood = /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table)\b/.test(q);
           const isSports = /\b(sport|sports|game|games|score|scores|match|nhl|cfl|hockey|flames|leafs|canucks|oilers)\b/.test(q);
           const isStay = /\b(hotel|hotels|stay|stays|motel|resort|lodge)\b/.test(q);
-          const isOutdoors = /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain|bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway|rotary|nose hill|fish creek|glenmore|bow river|outdoor|outdoors)\b/i.test(q);
-          const isNews = safePersona === 'news' || /\b(news|headline|headlines|briefing|briefings|executive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
+          const isOutdoors = isFamily || /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain|bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway|rotary|nose hill|fish creek|glenmore|bow river|outdoor|outdoors)\b/i.test(q);
 
           let fallbackText = '';
 
@@ -740,9 +743,25 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- How do I contest a parking ticket in ${city.name}?\n` +
               `- Check residential parking permit rules\n` +
               `- View upcoming city council agenda`;
+          } else if (isInsider) {
+            fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
+              `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
+              (cityHub.nightlife?.length > 0 ? 
+                `🍸 **Hidden Speakeasies & Cocktail Secrets**:\n` +
+                cityHub.nightlife.slice(0, 2).map(n => `> 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n> • **Vibe**: ${n.vibe}\n> • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n> • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.restaurants?.length > 0 ? 
+                `🍽️ **Underrated Neighborhood Eateries**:\n` +
+                cityHub.restaurants.slice(0, 2).map(r => `> 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n> • **Must-Order**: *${r.signatureDish}*\n> • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.outdoors?.length > 0 ? 
+                `🌲 **Secret Scenic Lookouts & Quiet Trails**:\n` +
+                cityHub.outdoors.slice(0, 2).map(o => `> 📍 **${o.name}** (${o.neighborhood})\n> • **Highlights**: ${o.features.join(', ')}\n> • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
+              `💡 **Quick Next Steps:**\n` +
+              `- What are the best hidden rooftop patios in ${city.name}?\n` +
+              `- Show me scenic river and skyline walk shortcuts\n` +
+              `- Find late-night underground food spots`;
           } else if (isNews && cityHub.news?.length > 0) {
             const stories = cityHub.news.slice(0, 4);
-            fallbackText = `### 📰 Executive Briefing • ${city.name}\n\n` +
+            fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
               stories.map((n) => 
                 `> 📌 **[${n.title}](${n.url})**\n` +
                 `> 🏷️ \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
@@ -757,12 +776,24 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- Check current transit service alerts\n` +
               `- Explore business highlights in ${city.name}`;
           } else if (isEvents && cityHub.shows?.length > 0) {
-            fallbackText = `Here are the top live entertainment events and shows in **${city.name}**: 🎟️\n\n` +
-              cityHub.shows.map(s => `🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n- **Dates**: ${s.dates} • ${s.ticketPriceRange}\n- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) (${s.availabilityStatus})\n`).join('\n') +
+            fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
+              `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
+              cityHub.shows.map(s => 
+                `> 🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n` +
+                `> • **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
+                `> • **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
+                `> • **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
+              ).join('\n') +
               `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
           } else if (isFood && cityHub.restaurants?.length > 0) {
-            fallbackText = `Here are top trending dining spots in **${city.name}** with open tables tonight: 🍽️\n\n` +
-              cityHub.restaurants.map(r => `🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n- **Available Tables**: ${r.availableTimes.join(', ')}\n- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') +
+            fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
+              `Here are top trending dining spots in **${city.name}** with open tables tonight:\n\n` +
+              cityHub.restaurants.map(r => 
+                `> 🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
+                `> • **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
+                `> • **Available Tables**: ${r.availableTimes.join(', ')}\n` +
+                `> • **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
+              ).join('\n') +
               `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
           } else if (isSports && cityHub.sports?.length > 0) {
             fallbackText = `Here is the live sports action for **${city.name}**: 🏒\n\n` +

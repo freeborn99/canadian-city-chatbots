@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, Ticket, Utensils, Users, Loader2 } from 'lucide-react';
+import { Compass, Newspaper, Ticket, Utensils, Users, Loader2 } from 'lucide-react';
 import { CityTenant } from '@/lib/tenants';
 
-export type AIPersona = 'insider' | 'events' | 'foodie' | 'family';
+export type AIPersona = 'insider' | 'news' | 'events' | 'foodie' | 'family';
 
 export interface PersonaDefinition {
   id: AIPersona;
@@ -19,29 +19,36 @@ export const PERSONA_DEFINITIONS: PersonaDefinition[] = [
     id: 'insider',
     label: 'Local Insider',
     icon: Compass,
-    desc: 'Hidden gems & local tips',
-    activationPrompt: 'Switch to Local Insider mode — give me the hidden gems, local shortcuts, and insider tips that only a true local would know.',
+    desc: 'Hidden gems & local secrets',
+    activationPrompt: 'Give me top local insider secrets, hidden cocktail spots, scenic shortcuts, and true local favorites in town.',
+  },
+  {
+    id: 'news',
+    label: 'Exclusive News',
+    icon: Newspaper,
+    desc: 'Live headlines & civic briefings',
+    activationPrompt: 'Provide the Exclusive News & Executive Briefing for today with top stories, key takeaways, and local impact.',
   },
   {
     id: 'events',
     label: 'Events & Shows',
     icon: Ticket,
-    desc: 'Concerts, theatre & tickets',
-    activationPrompt: 'Switch to Events & Shows mode — what are the top concerts, theatre productions, comedy shows, and major live events happening in town right now with ticket booking links?',
+    desc: 'Concerts, theatre & box office',
+    activationPrompt: 'Show me top concerts, live theatre productions, comedy shows, and major festivals happening in town right now with ticket booking links.',
   },
   {
     id: 'foodie',
     label: 'Nightlife & Dining',
     icon: Utensils,
     desc: 'Clubs, speakeasies & resos',
-    activationPrompt: 'Switch to Nightlife & Dining mode — show me the top nightclubs, cocktail speakeasies, table reservations, and late-night spots tonight.',
+    activationPrompt: 'Show me trending nightclubs, cocktail speakeasies, table reservations, and late-night spots tonight.',
   },
   {
     id: 'family',
     label: 'Family & Weekend',
     icon: Users,
     desc: 'Free events & kid spots',
-    activationPrompt: 'Switch to Family & Weekend mode — show me family-friendly activities, free events, kid-friendly parks, and weekend plans.',
+    activationPrompt: 'Show me top family-friendly activities, weekend festivals, scenic parks, and kid-friendly spots in town.',
   },
 ];
 
