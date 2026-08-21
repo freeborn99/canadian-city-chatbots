@@ -526,55 +526,70 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           } else if (safePersona === 'events') {
             fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
               `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
-              cityHub.shows.map(s => 
-                `#### 🎭 [${s.title}](${s.ticketUrl}) (${s.category})\n` +
-                `- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
-                `- **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
-                `- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
-              ).join('\n') +
-              `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
+              (cityHub.shows || []).map(s => 
+                `#### 🎭 [${s.title}](${s.ticketUrl})\n` +
+                `- **Category & Venue**: \`${s.category}\` • **${s.venue}** (${s.neighborhood})\n` +
+                `- **Dates & Showtimes**: ${s.dates} (${s.ticketPriceRange})\n` +
+                `- **Box Office Status**: ${s.availabilityStatus}\n` +
+                `- **Official Tickets**: [Get Tickets on ${s.ticketPlatform} →](${s.ticketUrl})`
+              ).join('\n\n') +
+              `\n\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
           } else if (safePersona === 'foodie') {
             fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
               `Here are top trending dining spots and cocktail lounges in **${city.name}** with open tables tonight:\n\n` +
               (cityHub.restaurants || []).slice(0, 3).map(r => 
-                `#### 🍷 [${r.name}](${r.reservationUrl}) (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
-                `- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
-                `- **Available Tables**: ${r.availableTimes.join(', ')}\n` +
-                `- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
-              ).join('\n') +
+                `#### 🍷 [${r.name}](${r.reservationUrl})\n` +
+                `- **Cuisine & Rating**: ${r.cuisine} • \`${r.priceLevel}\` • ⭐${r.rating} (${r.neighborhood})\n` +
+                `- **Must-Order Signature**: *${r.signatureDish}*\n` +
+                `- **Available Tables Tonight**: ${r.availableTimes.join(', ')}\n` +
+                `- **Table Reservation**: [Reserve on ${r.bookingPlatform} →](${r.reservationUrl})`
+              ).join('\n\n') +
               (cityHub.nightlife?.length > 0 ? 
-                `\n#### 🍸 Trending Nightclubs & Speakeasies\n` +
-                cityHub.nightlife.slice(0, 2).map(n => `- 🪩 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood} • ${n.category}): ${n.vibe} — [Reserve VIP / Guestlist](${n.guestlistUrl})\n`).join('') : '') +
-              `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
+                `\n\n#### 🪩 [${cityHub.nightlife[0].name}](${cityHub.nightlife[0].guestlistUrl})\n` +
+                `- **Category & Scene**: \`${cityHub.nightlife[0].category}\` • ${cityHub.nightlife[0].neighborhood}\n` +
+                `- **Atmosphere & Music**: ${cityHub.nightlife[0].vibe}\n` +
+                `- **Hours & Entry**: ${cityHub.nightlife[0].hours} • ${cityHub.nightlife[0].coverOrVip}\n` +
+                `- **VIP & Guestlist**: [Reserve VIP / Entry →](${cityHub.nightlife[0].guestlistUrl})` : '') +
+              `\n\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
           } else if (safePersona === 'family') {
             fallbackText = `### 👨‍👩‍👧‍👦 **Family & Weekend Adventures • ${city.name}**\n\n` +
               `Here are top family-friendly activities, kid-approved spots, and weekend outings in **${city.name}**:\n\n` +
-              (cityHub.outdoors?.length > 0 ? 
-                `#### 🌲 Scenic Parks & Outdoor Playgrounds\n` +
-                cityHub.outdoors.slice(0, 3).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Family Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
+              (cityHub.outdoors || []).slice(0, 2).map(o => 
+                `#### 🌲 [${o.name}](https://${city.domain})\n` +
+                `- **Category & Area**: \`${o.category}\` • ${o.neighborhood}\n` +
+                `- **Park Highlights**: ${o.features.join(', ')}\n` +
+                `- **Family Advice**: Best visited ${o.bestTime} (Parking: ${o.parkingTips})\n` +
+                `- **Park Details**: [View ${o.name} Visitor Info →](https://${city.domain})`
+              ).join('\n\n') +
               (cityHub.shows?.length > 0 ? 
-                `#### 🎭 Family Shows & Live Entertainment\n` +
-                cityHub.shows.slice(0, 2).map(s => `- 🎟️ **[${s.title}](${s.ticketUrl})** at ${s.venue} (${s.dates}) — [Get Family Tickets](${s.ticketUrl})\n`).join('\n') + '\n' : '') +
-              (cityHub.restaurants?.length > 0 ? 
-                `#### 🍕 Kid-Friendly Dining & Sweet Treats\n` +
-                cityHub.restaurants.slice(0, 2).map(r => `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Favorites**: *${r.signatureDish}* — [Book Table](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
-              `💡 **Family Next Steps:**\n` +
+                `\n\n#### 🎪 [${cityHub.shows[0].title}](${cityHub.shows[0].ticketUrl})\n` +
+                `- **Category & Venue**: \`${cityHub.shows[0].category}\` • ${cityHub.shows[0].venue}\n` +
+                `- **Showtimes & Dates**: ${cityHub.shows[0].dates} (${cityHub.shows[0].ticketPriceRange})\n` +
+                `- **Family Tickets**: [Get Tickets on ${cityHub.shows[0].ticketPlatform} →](${cityHub.shows[0].ticketUrl})` : '') +
+              `\n\n💡 **Family Next Steps:**\n` +
               `- Find free indoor play centres and science discovery spots\n` +
               `- Check weekend family festival schedules in ${city.name}\n` +
               `- View stroller-accessible park and trail routes`;
           } else if (safePersona === 'insider') {
             fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
               `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
-              (cityHub.nightlife?.length > 0 ? 
-                `#### 🍸 Hidden Speakeasies & Cocktail Secrets\n` +
-                cityHub.nightlife.slice(0, 2).map(n => `- 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n  • **Vibe**: ${n.vibe}\n  • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n  • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.nightlife || []).slice(0, 1).map(n => 
+                `#### 🍸 [${n.name}](${n.guestlistUrl})\n` +
+                `- **Secret Spot & Scene**: Hidden speakeasy in ${n.neighborhood} • ${n.vibe}\n` +
+                `- **Insider Knowledge**: ${n.hours} — ${n.coverOrVip}\n` +
+                `- **VIP Access**: [Get on Guestlist / Reserve VIP →](${n.guestlistUrl})`
+              ).join('\n\n') +
               (cityHub.restaurants?.length > 0 ? 
-                `#### 🍽️ Underrated Neighborhood Eateries\n` +
-                cityHub.restaurants.slice(0, 2).map(r => `- 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Must-Order**: *${r.signatureDish}*\n  • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
+                `\n\n#### 🍽️ [${cityHub.restaurants[0].name}](${cityHub.restaurants[0].reservationUrl})\n` +
+                `- **Local Neighborhood Gem**: ${cityHub.restaurants[0].neighborhood} • ⭐${cityHub.restaurants[0].rating} (${cityHub.restaurants[0].cuisine})\n` +
+                `- **Must-Order Dish**: *${cityHub.restaurants[0].signatureDish}*\n` +
+                `- **Table Booking**: [Reserve Table on ${cityHub.restaurants[0].bookingPlatform} →](${cityHub.restaurants[0].reservationUrl})` : '') +
               (cityHub.outdoors?.length > 0 ? 
-                `#### 🌲 Secret Scenic Lookouts & Quiet Trails\n` +
-                cityHub.outdoors.slice(0, 2).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
-              `💡 **Quick Next Steps:**\n` +
+                `\n\n#### 🌲 [${cityHub.outdoors[0].name}](https://${city.domain})\n` +
+                `- **Scenic Lookout & Nature**: ${cityHub.outdoors[0].neighborhood} • ${cityHub.outdoors[0].features.join(', ')}\n` +
+                `- **Local Tip**: Best time: ${cityHub.outdoors[0].bestTime} (Parking: ${cityHub.outdoors[0].parkingTips})\n` +
+                `- **Trail Details**: [Explore Trail & Lookout →](https://${city.domain})` : '') +
+              `\n\n💡 **Quick Next Steps:**\n` +
               `- What are the best hidden rooftop patios in ${city.name}?\n` +
               `- Show me scenic river and skyline walk shortcuts\n` +
               `- Find late-night underground food spots`;

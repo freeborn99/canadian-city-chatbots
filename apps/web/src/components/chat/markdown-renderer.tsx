@@ -37,6 +37,8 @@ function normalizeMarkdown(content: string): string {
     .replace(/\r\n/g, '\n')
     // Ensure major section headings have clean top breathing room
     .replace(/\n(#{1,4}\s)/g, '\n\n$1')
+    // Convert any stray unicode bullets at start of lines to standard markdown list items
+    .replace(/\n\s*•\s+/g, '\n- ')
     // Ensure lists and bullet points have proper separation
     .replace(/([:!?.])\s*(-\s+(?:[🍸🍽️🎟️🎭🏒🏛️🏨🌲🐾📍⚡💡•]|\[|\*\*))/gu, '$1\n\n$2')
     // Ensure card blockquotes have distinct margins
@@ -54,13 +56,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
           p: ({ children }) => <p className="mb-3 last:mb-0 text-slate-200 leading-relaxed text-xs sm:text-sm md:text-base">{children}</p>,
           strong: ({ children }) => <strong className="font-bold text-white tracking-wide">{children}</strong>,
           em: ({ children }) => <em className="text-slate-300 italic">{children}</em>,
-          ul: ({ children }) => <ul className="my-2.5 ml-4 list-disc space-y-2 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ul>,
-          ol: ({ children }) => <ol className="my-2.5 ml-4 list-decimal space-y-2 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ol>,
+          ul: ({ children }) => <ul className="my-2 ml-4 list-disc space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ul>,
+          ol: ({ children }) => <ol className="my-2 ml-4 list-decimal space-y-1.5 text-slate-200 text-xs sm:text-sm md:text-base">{children}</ol>,
           li: ({ children }) => <li className="pl-1 leading-relaxed">{children}</li>,
           h1: ({ children }) => <h1 className="text-lg sm:text-xl font-extrabold mt-4 mb-2 text-white border-b border-slate-800 pb-1.5">{children}</h1>,
           h2: ({ children }) => <h2 className="text-base sm:text-lg font-bold mt-3.5 mb-2 text-cyan-300">{children}</h2>,
-          h3: ({ children }) => <h3 className="text-sm sm:text-base md:text-lg font-bold mt-3 mb-1.5 text-white flex items-center gap-2">{children}</h3>,
-          h4: ({ children }) => <h4 className="text-xs sm:text-sm font-bold mt-2.5 mb-1 text-slate-200">{children}</h4>,
+          h3: ({ children }) => <h3 className="text-sm sm:text-base md:text-lg font-bold mt-3 mb-2 text-white flex items-center gap-2">{children}</h3>,
+          h4: ({ children }) => <h4 className="text-sm sm:text-base font-bold mt-4 mb-2 text-white flex items-center gap-2 border-b border-slate-800/80 pb-1.5">{children}</h4>,
           hr: () => (
             <div className="my-4 sm:my-5 flex items-center gap-3">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
