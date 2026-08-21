@@ -170,8 +170,8 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
         <main className="flex-1 min-h-0 flex flex-col h-full overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 shadow-2xl relative w-full">
           
           {/* Chat Stream or Empty State Starter Prompts */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 flex flex-col">
-            {messages.length === 0 ? (
+          {messages.length === 0 ? (
+            <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 md:p-8 flex flex-col">
               <div className="h-full flex flex-col items-center justify-center max-w-3xl mx-auto pb-10 w-full">
                 <div className="text-center mb-8">
                   <h1 className="text-4xl md:text-5xl font-extrabold mb-3 flex items-center justify-center gap-3">
@@ -187,15 +187,17 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
                   />
                 </div>
               </div>
-            ) : (
+            </div>
+          ) : (
+            <div className="flex-1 min-h-0 flex flex-col overflow-hidden relative">
               <ChatMessages
                 messages={messages}
                 isLoading={isLoading}
                 tenant={tenant}
                 onSendFollowup={handleSelectStarterPrompt}
               />
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Persona Mood Switcher & Pinned Bottom Glass Input Bar */}
           <div className="flex-shrink-0 z-20 bg-slate-950/80 backdrop-blur-md border-t border-slate-800/50">

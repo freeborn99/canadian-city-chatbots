@@ -28,9 +28,17 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   const [activeFeedback, setActiveFeedback] = useState<{ userPrompt: string; aiResponse: string } | null>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
+    const scrollToBottom = () => {
+      if (containerRef.current) {
+        containerRef.current.scrollTo({
+          top: containerRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    };
+    scrollToBottom();
+    const timer = setTimeout(scrollToBottom, 60);
+    return () => clearTimeout(timer);
   }, [messages, isLoading]);
 
   const handleCopy = (id: string, text: string) => {
