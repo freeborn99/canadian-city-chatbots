@@ -321,9 +321,10 @@ You MUST understand the user's specific intent and answer DIRECTLY:
    - Use the 🏨 BOUTIQUE HOTELS & STAYS FEED with direct booking links.
 
 ==================================================
-🔗 MANDATORY HYPERLINKING DIRECTIVE:
+🔗 MANDATORY HYPERLINKING & DEEP-LINK DIRECTIVE:
 ==================================================
-- In the main response body, every single entity (club, event, venue, ticket, restaurant, hotel, civic service) MUST be a clickable markdown hyperlink: [Entity Name / Action](URL).
+- In the main response body, every single entity (club, event, venue, ticket, restaurant, hotel, news article, civic service) MUST be a clickable markdown hyperlink: [Entity Name / Action](URL).
+- CRITICAL DEEP LINK RULE: NEVER link to generic root domains or homepages (e.g. do NOT use https://thestar.com, https://ticketmaster.ca, https://viator.com). ALWAYS provide specific deep links: direct article search queries (https://www.google.com/search?q=...), specific ticket search queries, or exact venue reservation URLs from the directory below.
 - Keep responses scannable, punchy, well-formatted with bold headers and bullet points.
 - At the end of every response, output 3 interactive follow-up suggestions (you can include direct action links [Text](URL) or follow-up question prompts):
 💡 **Quick Next Steps:**

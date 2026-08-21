@@ -166,7 +166,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Green Line LRT Construction Accelerates with Downtown Cavern Contracts',
         source: 'Calgary Herald',
         category: 'Civic',
-        url: 'https://calgaryherald.com',
+        url: 'https://www.google.com/search?q=Green%20Line%20LRT%20Construction%20Accelerates%20with%20Downtown%20Cavern%20Contracts%20Calgary%20Herald',
         timeAgo: '45 mins ago',
         summary: 'City Council finalizes major underground tunneling agreements for 7th Ave and Beltline connections.',
         expandedDetails: {
@@ -186,7 +186,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Alberta Energy Sector Reaches Milestone in Pathways Carbon Capture Infrastructure',
         source: 'Financial Post / Calgary Energy Desk',
         category: 'Energy',
-        url: 'https://financialpost.com/commodities/energy',
+        url: 'https://www.google.com/search?q=Alberta%20Energy%20Sector%20Reaches%20Milestone%20in%20Pathways%20Carbon%20Capture%20Infrastructure%20Financial%20Post%20%2F%20Calgary%20Energy%20Desk',
         timeAgo: '2 hours ago',
         summary: 'Major pipeline trunkline agreements approved to transport sequestered carbon to cold lake storage reservoirs.',
         expandedDetails: {
@@ -204,7 +204,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Downtown Office-to-Residential Conversion Program Surpasses 1.5M Square Feet',
         source: 'Daily Hive Calgary',
         category: 'Development',
-        url: 'https://dailyhive.com/calgary',
+        url: 'https://www.google.com/search?q=Downtown%20Office-to-Residential%20Conversion%20Program%20Surpasses%201.5M%20Square%20Feet%20Daily%20Hive%20Calgary',
         timeAgo: '3 hours ago',
         summary: 'Over 13 vacant corporate office towers successfully transformed into 2,400+ modern residential rental suites.',
         expandedDetails: {
@@ -222,7 +222,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Calgary Tech Ecosystem Attracts $450M in Clean-Tech and AI Venture Funding',
         source: 'BetaKit',
         category: 'Technology',
-        url: 'https://betakit.com',
+        url: 'https://www.google.com/search?q=Calgary%20Tech%20Ecosystem%20Attracts%20%24450M%20in%20Clean-Tech%20and%20AI%20Venture%20Funding%20BetaKit',
         timeAgo: '5 hours ago',
         summary: 'Venture capital investments surge in Calgary clean-tech, industrial IoT, and energy software scale-ups.',
         expandedDetails: {
@@ -240,7 +240,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: '17th Avenue Southwest Patio Program Returns for Extended Season',
         source: 'Avenue Calgary',
         category: 'Culture',
-        url: 'https://www.avenuecalgary.com',
+        url: 'https://www.google.com/search?q=17th%20Avenue%20Southwest%20Patio%20Program%20Returns%20for%20Extended%20Season%20Avenue%20Calgary',
         timeAgo: '6 hours ago',
         summary: 'Over 40 restaurants and craft bars along 17th Ave and Inglewood expand outdoor dining boardwalks.',
         expandedDetails: {
@@ -475,7 +475,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM (Matinees 2:00 PM)',
         ticketPriceRange: '$45 - $135',
-        ticketUrl: 'https://www.theatrecalgary.com',
+        ticketUrl: 'https://www.google.com/search?q=Theatre%20Calgary%3A%20The%20Great%20Gatsby%20Arts%20Commons%20(Max%20Bell%20Theatre)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -488,7 +488,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$38 - $110',
-        ticketUrl: 'https://calgaryphil.com',
+        ticketUrl: 'https://www.google.com/search?q=Calgary%20Philharmonic%20Orchestra%3A%20Beethoven%20Symphony%20No.%209%20Jack%20Singer%20Concert%20Hall%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -501,7 +501,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$85 - $295',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Saddledome%20Live%3A%20Dua%20Lipa%20-%20Radical%20Optimism%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Limited VIP',
         badgeColor: 'purple'
@@ -514,7 +514,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$65 - $180',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Jubilee%20Auditorium%3A%20Wicked%20Broadway%20National%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -527,7 +527,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Friday & Saturday • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://loosemoose.com',
+        ticketUrl: 'https://www.google.com/search?q=Loose%20Moose%20Theatre%3A%20Improv%20Comedy%20Championship%20Loose%20Moose%20Theatre%20tickets',
         ticketPlatform: 'Showpass',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -584,7 +584,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4100,
         priceFrom: '$145 / person',
-        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Banff%2C%20Lake%20Louise%20%26%20Moraine%20Lake%20All-Day%20Alpine%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Guaranteed Moraine Lake & Lake Louise entry', 'Banff Town landmark stops', 'Scenic Bow Valley Parkway drive'],
         badge: 'Canada #1 Best Seller'
@@ -598,7 +598,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 1350,
         priceFrom: '$115 / person',
-        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Drumheller%20Dinosaur%20Badlands%20%26%20Royal%20Tyrrell%20Museum%20Excursion',
         bookingPlatform: 'Viator',
         highlights: ['Royal Tyrrell Museum fossil galleries', 'Horsethief Canyon lookout', 'Historic Hoodoos walking loop'],
         badge: 'Alberta Badlands Classic'
@@ -612,7 +612,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 920,
         priceFrom: '$79 / person',
-        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Calgary%20Downtown%20Food%20%26%20Craft%20Brewery%20Crawl',
         bookingPlatform: 'Viator',
         highlights: ['4 chef-tasting stops in Inglewood & Beltline', 'Craft beer flights & cocktail pairings', 'Behind-the-scenes distillery tour'],
         badge: 'Culinary Insider Favorite'
@@ -626,7 +626,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 5.0,
         reviewCount: 1850,
         priceFrom: '$240 / person',
-        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Canadian%20Rockies%20Helicopter%20Glacier%20Flight%20from%20Kananaskis',
         bookingPlatform: 'Viator',
         highlights: ['Fly over Mount Assiniboine & continental divide', 'Aerial view of turquoise glacier lakes', 'Pilot audio narration'],
         badge: 'Bucket List Experience'
@@ -654,7 +654,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 5200,
         priceFrom: '$68 / person',
-        bookingUrl: 'https://www.viator.com/Calgary/d817-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Banff%20Gondola%20Summit%20Experience%20%26%20Sulphur%20Mountain%20Boardwalk',
         bookingPlatform: 'Viator',
         highlights: ['360° Canadian Rockies panoramic summit views', 'Above-the-clouds rooftop observation deck & Sky Bistro', 'Self-guided Sulphur Mountain boardwalk trail'],
         badge: 'Must-See Rockies Icon'
@@ -773,7 +773,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Ontario Line Subway Construction Reaches Queen & Yonge Station Milestone',
         source: 'Toronto Star',
         category: 'Civic',
-        url: 'https://www.thestar.com',
+        url: 'https://www.google.com/search?q=Ontario%20Line%20Subway%20Construction%20Reaches%20Queen%20%26%20Yonge%20Station%20Milestone%20Toronto%20Star',
         timeAgo: '30 mins ago',
         summary: 'Underground cavern excavation links the future Ontario Line with TTC Line 1 interchange.',
         expandedDetails: {
@@ -791,7 +791,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Bay Street Fintech Corridors See Surge in Green Tech and AI Listings',
         source: 'Globe and Mail / Report on Business',
         category: 'Finance',
-        url: 'https://www.theglobeandmail.com/business',
+        url: 'https://www.google.com/search?q=Bay%20Street%20Fintech%20Corridors%20See%20Surge%20in%20Green%20Tech%20and%20AI%20Listings%20Globe%20and%20Mail%20%2F%20Report%20on%20Business',
         timeAgo: '2 hours ago',
         summary: 'Toronto Stock Exchange welcomes 14 new technology listings and AI venture fund raises.',
         expandedDetails: {
@@ -809,7 +809,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'MaRS Discovery District Launches Autonomous Systems & Healthcare AI Accelerator',
         source: 'BetaKit Toronto',
         category: 'Technology',
-        url: 'https://betakit.com',
+        url: 'https://www.google.com/search?q=MaRS%20Discovery%20District%20Launches%20Autonomous%20Systems%20%26%20Healthcare%20AI%20Accelerator%20BetaKit%20Toronto',
         timeAgo: '4 hours ago',
         summary: 'Partnership with University of Toronto and Vector Institute injects $60M into medical diagnostics AI.',
         expandedDetails: {
@@ -827,7 +827,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Toronto City Council Approves Waterfront Light Rail Transit Expansion',
         source: 'City of Toronto Newsroom',
         category: 'Government',
-        url: 'https://www.toronto.ca',
+        url: 'https://www.google.com/search?q=Toronto%20City%20Council%20Approves%20Waterfront%20Light%20Rail%20Transit%20Expansion%20City%20of%20Toronto%20Newsroom',
         timeAgo: '6 hours ago',
         summary: 'New dedicated light rail tracks will connect Union Station directly to East Bayfront and Port Lands.',
         expandedDetails: {
@@ -1062,7 +1062,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$69 - $235',
-        ticketUrl: 'https://www.mirvish.com',
+        ticketUrl: 'https://www.google.com/search?q=Mirvish%3A%20The%20Lion%20King%20Broadway%20Spectacular%20Princess%20of%20Wales%20Theatre%20tickets',
         ticketPlatform: 'Mirvish',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -1075,7 +1075,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Thursday & Saturday • 8:00 PM',
         ticketPriceRange: '$45 - $145',
-        ticketUrl: 'https://www.tso.ca',
+        ticketUrl: 'https://www.google.com/search?q=Toronto%20Symphony%20Orchestra%3A%20Mahler%20Symphony%20No.%205%20Roy%20Thomson%20Hall%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1088,7 +1088,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$110 - $420',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Scotiabank%20Arena%20Live%3A%20Billie%20Eilish%20-%20Hit%20Me%20Hard%20and%20Soft%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -1101,7 +1101,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$75 - $250',
-        ticketUrl: 'https://www.mirvish.com',
+        ticketUrl: 'https://www.google.com/search?q=Mirvish%3A%20Hamilton%20Broadway%20Musical%20Royal%20Alexandra%20Theatre%20tickets',
         ticketPlatform: 'Mirvish',
         availabilityStatus: 'Limited VIP',
         badgeColor: 'purple'
@@ -1114,7 +1114,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Tue - Sun • 7:30 PM & 10:00 PM',
         ticketPriceRange: '$35 - $65',
-        ticketUrl: 'https://www.secondcity.com/toronto',
+        ticketUrl: 'https://www.google.com/search?q=The%20Second%20City%3A%20Improv%20Mainstage%20Show%20The%20Second%20City%20Toronto%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -1171,7 +1171,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 6500,
         priceFrom: '$99 / person',
-        bookingUrl: 'https://www.viator.com/Toronto/d623-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Niagara%20Falls%20Luxury%20Day%20Tour%20with%20Hornblower%20Boat%20Cruise%20from%20Toronto',
         bookingPlatform: 'Viator',
         highlights: ['VIP skip-the-line Hornblower Niagara boat cruise', 'Niagara-on-the-Lake historic town stop', 'Maple syrup & winery tasting'],
         badge: 'Ontario #1 Must-Do'
@@ -1185,7 +1185,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 3800,
         priceFrom: '$195 / person',
-        bookingUrl: 'https://www.viator.com/Toronto/d623-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=CN%20Tower%20EdgeWalk%20%26%20Toronto%20Harbor%20360%20Cruise',
         bookingPlatform: 'Viator',
         highlights: ['Hands-free walk around 116-storey tower ledge', 'Observation deck access included', 'Lake Ontario skyline cruise ticket'],
         badge: 'Extreme Adrenaline Hit'
@@ -1199,7 +1199,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2100,
         priceFrom: '$79 / person',
-        bookingUrl: 'https://www.viator.com/Toronto/d623-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Kensington%20Market%20%26%20Chinatown%20Cultural%20Food%20Walking%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['6 multi-cultural food tastings (dumplings, empanadas, churros, cheese)', 'Vintage market lane history', 'Local culinary guide'],
         badge: 'Toronto Cultural Essential'
@@ -1213,7 +1213,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 1400,
         priceFrom: '$49 / person',
-        bookingUrl: 'https://www.viator.com/Toronto/d623-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Distillery%20Historic%20District%20%26%20Segway%20History%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Glide through 1832 Victorian industrial cobblestones', 'Gooderham & Worts whiskey history', 'Chocolate tasting stop'],
         badge: 'Top Rated Urban Tour'
@@ -1332,7 +1332,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Broadway Subway Millennium Line Extension Tunnel Breakthrough Achieved',
         source: 'Vancouver Sun',
         category: 'Civic',
-        url: 'https://vancouversun.com',
+        url: 'https://www.google.com/search?q=Broadway%20Subway%20Millennium%20Line%20Extension%20Tunnel%20Breakthrough%20Achieved%20Vancouver%20Sun',
         timeAgo: '45 mins ago',
         summary: 'Twin tunnel boring machines complete 5.7 km underground run reaching Arbutus Station.',
         expandedDetails: {
@@ -1350,7 +1350,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Port of Vancouver Breaks Ground on Green Hydrogen Bunkering Facility',
         source: 'Business in Vancouver',
         category: 'Maritime',
-        url: 'https://biv.com',
+        url: 'https://www.google.com/search?q=Port%20of%20Vancouver%20Breaks%20Ground%20on%20Green%20Hydrogen%20Bunkering%20Facility%20Business%20in%20Vancouver',
         timeAgo: '3 hours ago',
         summary: 'Canada’s largest port accelerates clean marine fuel corridors for trans-Pacific container vessels.',
         expandedDetails: {
@@ -1368,7 +1368,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Vancouver Creative Tech & Gaming Studios Announce AI Innovation Hubs',
         source: 'Daily Hive Vancouver',
         category: 'Technology',
-        url: 'https://dailyhive.com/vancouver',
+        url: 'https://www.google.com/search?q=Vancouver%20Creative%20Tech%20%26%20Gaming%20Studios%20Announce%20AI%20Innovation%20Hubs%20Daily%20Hive%20Vancouver',
         timeAgo: '5 hours ago',
         summary: 'Gastown and Mount Pleasant visual effects studios expand sovereign AI rendering infrastructure.',
         expandedDetails: {
@@ -1593,7 +1593,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$65 - $220',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Queen%20Elizabeth%20Theatre%3A%20Wicked%20Broadway%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -1606,7 +1606,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 8:00 PM',
         ticketPriceRange: '$35 - $125',
-        ticketUrl: 'https://www.vancouversymphony.ca',
+        ticketUrl: 'https://www.google.com/search?q=Vancouver%20Symphony%20Orchestra%3A%20Tchaikovsky%20Violin%20Concerto%20The%20Orpheum%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1619,7 +1619,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 7:30 PM',
         ticketPriceRange: '$95 - $350',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Rogers%20Arena%20Live%3A%20Coldplay%20-%20Music%20of%20the%20Spheres%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -1632,7 +1632,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$39 - $98',
-        ticketUrl: 'https://artsclub.com',
+        ticketUrl: 'https://www.google.com/search?q=Arts%20Club%20Theatre%3A%20Million%20Dollar%20Quartet%20Stanley%20Industrial%20Alliance%20Stage%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1645,7 +1645,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Friday & Saturday • 7:30 PM & 9:30 PM',
         ticketPriceRange: '$22 - $32',
-        ticketUrl: 'https://thecomedydepartment.com',
+        ticketUrl: 'https://www.google.com/search?q=The%20Comedy%20Department%3A%20Pro%20Improv%20%26%20Standup%20Granville%20Island%20Comedy%20Bar%20tickets',
         ticketPlatform: 'Eventbrite',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -1702,7 +1702,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 5200,
         priceFrom: '$149 / person',
-        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Whistler%20%26%20Sea-to-Sky%20Gondola%20Excursion%20from%20Vancouver',
         bookingPlatform: 'Viator',
         highlights: ['Sea-to-Sky Gondola ride over Howe Sound', 'Shannon Falls waterfall walk', 'Whistler Village alpine exploration'],
         badge: 'BC #1 Best Seller'
@@ -1716,7 +1716,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 8900,
         priceFrom: '$69 / person',
-        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Capilano%20Suspension%20Bridge%20%26%20Treetops%20Adventure',
         bookingPlatform: 'Viator',
         highlights: ['Walk 230 ft above Capilano River canyon', 'Cliffwalk granite precipice walk', 'Free downtown shuttle transfer'],
         badge: 'Vancouver Icon'
@@ -1730,7 +1730,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 3100,
         priceFrom: '$165 / person',
-        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Vancouver%20Wild%20Orca%20%26%20Whale%20Watching%20Zodiac%20Safari',
         bookingPlatform: 'Viator',
         highlights: ['Spot killer whales, humpbacks & sea lions', 'Salish Sea marine biologist guide', 'Comfortable high-speed catamaran'],
         badge: 'Marine Wildlife Must-Do'
@@ -1744,7 +1744,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2200,
         priceFrom: '$145 / person',
-        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Vancouver%20Harbour%20Panorama%20Seaplane%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Water takeoff from Coal Harbour', 'Aerial views of Stanley Park & Lions Gate Bridge', 'North Shore mountain flyover'],
         badge: 'Iconic West Coast Flight'
@@ -1772,7 +1772,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 6800,
         priceFrom: '$75 / person',
-        bookingUrl: 'https://www.viator.com/Vancouver/d616-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Grouse%20Mountain%20Skyride%20%26%20Mountaintop%20Alpine%20Adventure',
         bookingPlatform: 'Viator',
         highlights: ['Scenic North Shore Skyride gondola ascent', 'Grizzly bear refuge & lumberjack show in summer; Night skiing in winter', 'The Observatory mountaintop dining overlooking Vancouver'],
         badge: 'The Peak of Vancouver'
@@ -1891,7 +1891,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'REM Light Rail Phase 2 Airport & West Island Tracks Approach Commissioning',
         source: 'La Presse / Montreal Gazette',
         category: 'Civic',
-        url: 'https://www.lapresse.ca',
+        url: 'https://www.google.com/search?q=REM%20Light%20Rail%20Phase%202%20Airport%20%26%20West%20Island%20Tracks%20Approach%20Commissioning%20La%20Presse%20%2F%20Montreal%20Gazette',
         timeAgo: '40 mins ago',
         summary: 'Automated electric train tests commence between Central Station and Montreal-Trudeau Airport (YUL).',
         expandedDetails: {
@@ -1909,7 +1909,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Greater Montreal Aerospace Cluster Finalizes Next-Gen SAF Jet Engine Tests',
         source: 'Les Affaires',
         category: 'Aerospace',
-        url: 'https://www.lesaffaires.com',
+        url: 'https://www.google.com/search?q=Greater%20Montreal%20Aerospace%20Cluster%20Finalizes%20Next-Gen%20SAF%20Jet%20Engine%20Tests%20Les%20Affaires',
         timeAgo: '2 hours ago',
         summary: 'Bombardier, Pratt & Whitney Canada, and CAE achieve 100% sustainable aviation fuel milestone.',
         expandedDetails: {
@@ -1927,7 +1927,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'MILA AI Institute Announces $50M Sovereign Computing Infrastructure Grant',
         source: 'BetaKit Montreal',
         category: 'Technology',
-        url: 'https://betakit.com',
+        url: 'https://www.google.com/search?q=MILA%20AI%20Institute%20Announces%20%2450M%20Sovereign%20Computing%20Infrastructure%20Grant%20BetaKit%20Montreal',
         timeAgo: '4 hours ago',
         summary: 'World-renowned AI research institute founded by Yoshua Bengio expands sovereign supercomputing clusters.',
         expandedDetails: {
@@ -2152,7 +2152,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Wednesday & Saturday • 7:30 PM',
         ticketPriceRange: '$42 - $140',
-        ticketUrl: 'https://www.osm.ca',
+        ticketUrl: 'https://www.google.com/search?q=Orchestre%20Symphonique%20de%20Montr%C3%A9al%3A%20Ravel%20Bol%C3%A9ro%20%26%20Debussy%20Maison%20Symphonique%20(Place%20des%20Arts)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2165,7 +2165,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 8:00 PM & 4:00 PM',
         ticketPriceRange: '$65 - $195',
-        ticketUrl: 'https://www.cirquedusoleil.com',
+        ticketUrl: 'https://www.google.com/search?q=Cirque%20du%20Soleil%3A%20KURIOS%20-%20Cabinet%20of%20Curiosities%20Under%20the%20Big%20Top%20(Old%20Port%20of%20Montreal)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -2178,7 +2178,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 7:30 PM',
         ticketPriceRange: '$90 - $380',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Bell%20Centre%20Live%3A%20Kendrick%20Lamar%20%26%20SZA%20Arena%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -2191,7 +2191,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$55 - $130',
-        ticketUrl: 'https://theatrestdenis.com',
+        ticketUrl: 'https://www.google.com/search?q=Th%C3%A9%C3%A2tre%20Saint-Denis%3A%20Mamma%20Mia!%20Com%C3%A9die%20Musicale%20en%20Fran%C3%A7ais%20Th%C3%A9%C3%A2tre%20St-Denis%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2204,7 +2204,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Thu - Sat • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $28',
-        ticketUrl: 'https://comedynest.com',
+        ticketUrl: 'https://www.google.com/search?q=The%20Comedy%20Nest%3A%20Pro%20Standup%20Showcase%20The%20Comedy%20Nest%20(Forum%20Montreal)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -2261,7 +2261,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4800,
         priceFrom: '$119 / person',
-        bookingUrl: 'https://www.viator.com/Montreal/d625-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Quebec%20City%20%26%20Montmorency%20Falls%20All-Day%20Excursion%20from%20Montreal',
         bookingPlatform: 'Viator',
         highlights: ['Château Frontenac & Old Quebec UNESCO walk', 'Montmorency Falls waterfall cable car', 'Scenic St. Lawrence river valley coach'],
         badge: 'Quebec #1 Best Seller'
@@ -2275,7 +2275,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 3600,
         priceFrom: '$32 / person',
-        bookingUrl: 'https://www.viator.com/Montreal/d625-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Old%20Montreal%20Historic%20350-Year%20Walking%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Notre-Dame Basilica exterior & Place d’Armes', 'Hidden cobblestone lanes & courtyards', 'Expert certified historian guide'],
         badge: 'Old Port Classic'
@@ -2289,7 +2289,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2900,
         priceFrom: '$75 / person',
-        bookingUrl: 'https://www.viator.com/Montreal/d625-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Mile%20End%20Iconic%20Culinary%20%26%20Bagel%20Crawl',
         bookingPlatform: 'Viator',
         highlights: ['Hot St-Viateur & Fairmount wood-fired bagels', 'Gourmet gnocchi at Drogheria Fine', 'Artisan charcuterie & micro-brew pairing'],
         badge: 'Foodie Must-Do'
@@ -2303,7 +2303,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 1750,
         priceFrom: '$105 / person',
-        bookingUrl: 'https://www.viator.com/Montreal/d625-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Laurentian%20Mountains%20%26%20Mont-Tremblant%20Day%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Mont-Tremblant colorful pedestrian alpine village', 'Saint-Sauveur lake stop', 'Scenic cable gondola ticket option'],
         badge: 'Alpine Nature Escape'
@@ -2422,7 +2422,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Valley Line West LRT Track Laying Advances Across 149th Street Corridor',
         source: 'Edmonton Journal',
         category: 'Civic',
-        url: 'https://edmontonjournal.com',
+        url: 'https://www.google.com/search?q=Valley%20Line%20West%20LRT%20Track%20Laying%20Advances%20Across%20149th%20Street%20Corridor%20Edmonton%20Journal',
         timeAgo: '45 mins ago',
         summary: 'Construction crews begin installing low-floor electric tracks connecting Downtown to West Edmonton Mall.',
         expandedDetails: {
@@ -2440,7 +2440,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Alberta Industrial Heartland $2.4B Clean Hydrogen Energy Complex Enters Final Phase',
         source: 'Edmonton Global / Energy Desk',
         category: 'Energy',
-        url: 'https://edmontonglobal.ca',
+        url: 'https://www.google.com/search?q=Alberta%20Industrial%20Heartland%20%242.4B%20Clean%20Hydrogen%20Energy%20Complex%20Enters%20Final%20Phase%20Edmonton%20Global%20%2F%20Energy%20Desk',
         timeAgo: '2 hours ago',
         summary: 'World-scale net-zero hydrogen facility to supply clean industrial power across Western Canada.',
         expandedDetails: {
@@ -2458,7 +2458,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'ICE District Commercial Towers and Fan Park Reach 94% Tenancy',
         source: 'Daily Hive Edmonton',
         category: 'Development',
-        url: 'https://dailyhive.com/edmonton',
+        url: 'https://www.google.com/search?q=ICE%20District%20Commercial%20Towers%20and%20Fan%20Park%20Reach%2094%25%20Tenancy%20Daily%20Hive%20Edmonton',
         timeAgo: '4 hours ago',
         summary: 'Canada’s largest mixed-use sports and entertainment district expands public event plazas and restaurant patios.',
         expandedDetails: {
@@ -2669,7 +2669,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM (Matinees 1:30 PM)',
         ticketPriceRange: '$40 - $125',
-        ticketUrl: 'https://citadeltheatre.com',
+        ticketUrl: 'https://www.google.com/search?q=Citadel%20Theatre%3A%20Little%20Shop%20of%20Horrors%20Musical%20Citadel%20Theatre%20(Shoctor%20Stage)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2682,7 +2682,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$35 - $105',
-        ticketUrl: 'https://www.winspearcentre.com',
+        ticketUrl: 'https://www.google.com/search?q=Edmonton%20Symphony%20Orchestra%3A%20Holst%20The%20Planets%20Winspear%20Centre%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -2695,7 +2695,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$85 - $295',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Rogers%20Place%20Live%3A%20Zach%20Bryan%20-%20The%20Quittin%20Time%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -2708,7 +2708,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Fri - Sun • 7:00 PM & 12:00 PM Brunch',
         ticketPriceRange: '$25 - $45',
-        ticketUrl: 'https://spotlightcabaret.ca',
+        ticketUrl: 'https://www.google.com/search?q=Spotlight%20Cabaret%3A%20Drag%20Brunch%20%26%20Burlesque%20Comedy%20Spotlight%20Cabaret%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -2765,7 +2765,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2800,
         priceFrom: '$89 / person',
-        bookingUrl: 'https://www.viator.com/Edmonton/d28470-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Elk%20Island%20National%20Park%20Wild%20Bison%20Safari%20%26%20Dark%20Sky%20Preserve%20Excursion',
         bookingPlatform: 'Viator',
         highlights: ['Spot wild plains & woods bison herds', 'Astin Peak & Astotin Lake boardwalk', 'Starry dark sky preserve narration'],
         badge: 'Alberta Wildlife Classic'
@@ -2779,7 +2779,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 1950,
         priceFrom: '$65 / person',
-        bookingUrl: 'https://www.viator.com/Edmonton/d28470-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Edmonton%20River%20Valley%20Segway%20Adventure%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Glide through Louise McKinney Riverfront Park', 'Historic low-level bridge crossing', 'Beginner training included'],
         badge: 'Top Rated Outdoor Adventure'
@@ -2793,7 +2793,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 1100,
         priceFrom: '$75 / person',
-        bookingUrl: 'https://www.viator.com/Edmonton/d28470-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Old%20Strathcona%20Heritage%20%26%20Foodie%20Walking%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['5 local culinary tastings at Strathcona markets & cafes', 'Historic brick architecture stories', 'Local craft beer pairing'],
         badge: 'Whyte Ave Culinary Hit'
@@ -2807,7 +2807,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 920,
         priceFrom: '$59 / person',
-        bookingUrl: 'https://www.viator.com/Edmonton/d28470-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Ukrainian%20Cultural%20Heritage%20Village%20Historic%20Day%20Trip',
         bookingPlatform: 'Viator',
         highlights: ['35 authentically restored pioneer buildings', 'Costumed historical interpreters', 'Traditional pyrohy & sausage lunch option'],
         badge: 'Living History Experience'
@@ -2905,7 +2905,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'O-Train East Extension Line 1 Nearing Passenger Readiness Testing',
         source: 'Ottawa Citizen',
         category: 'Civic',
-        url: 'https://ottawacitizen.com',
+        url: 'https://www.google.com/search?q=O-Train%20East%20Extension%20Line%201%20Nearing%20Passenger%20Readiness%20Testing%20Ottawa%20Citizen',
         timeAgo: '45 mins ago',
         summary: 'OC Transpo begins simulated service across 5 new light rail stations reaching Trim Road.',
         expandedDetails: {
@@ -2923,7 +2923,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Parliament Hill Centre Block Rehabilitation Reaches Structural Milestone',
         source: 'CBC News Ottawa',
         category: 'Government',
-        url: 'https://www.cbc.ca/news/canada/ottawa',
+        url: 'https://www.google.com/search?q=Parliament%20Hill%20Centre%20Block%20Rehabilitation%20Reaches%20Structural%20Milestone%20CBC%20News%20Ottawa',
         timeAgo: '3 hours ago',
         summary: 'Historic stone heritage preservation and underground Parliament Welcome Centre excavation completed.',
         expandedDetails: {
@@ -2941,7 +2941,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Kanata North Technology Park Advances 6G Telecommunications & Defense AI',
         source: 'Ottawa Business Journal',
         category: 'Technology',
-        url: 'https://obj.ca',
+        url: 'https://www.google.com/search?q=Kanata%20North%20Technology%20Park%20Advances%206G%20Telecommunications%20%26%20Defense%20AI%20Ottawa%20Business%20Journal',
         timeAgo: '5 hours ago',
         summary: 'Canada’s largest tech park attracts $180M in federal defense AI and photonics research grants.',
         expandedDetails: {
@@ -3127,7 +3127,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Thursday & Saturday • 8:00 PM',
         ticketPriceRange: '$35 - $115',
-        ticketUrl: 'https://nac-cna.ca',
+        ticketUrl: 'https://www.google.com/search?q=National%20Arts%20Centre%3A%20NAC%20Orchestra%20-%20Beethoven%20%26%20Brahms%20Southam%20Hall%20(National%20Arts%20Centre)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3140,7 +3140,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$32 - $85',
-        ticketUrl: 'https://nac-cna.ca',
+        ticketUrl: 'https://www.google.com/search?q=NAC%20Indigenous%20Theatre%3A%20Tales%20from%20Turtle%20Island%20Babs%20Asper%20Theatre%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3153,7 +3153,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 7:30 PM',
         ticketPriceRange: '$90 - $340',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Canadian%20Tire%20Centre%20Live%3A%20Pearl%20Jam%20World%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -3166,7 +3166,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Thu - Sun • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://absolutecomedy.ca/ottawa',
+        ticketUrl: 'https://www.google.com/search?q=Absolute%20Comedy%3A%20Standup%20Headliner%20Weekend%20Absolute%20Comedy%20Ottawa%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -3223,7 +3223,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 3100,
         priceFrom: '$89 / person',
-        bookingUrl: 'https://www.viator.com/Ottawa/d624-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Gatineau%20Park%20%26%20Chelsea%20Nordik%20Spa%20Day%20Excursion%20from%20Ottawa',
         bookingPlatform: 'Viator',
         highlights: ['Pink Lake scenic lookout', 'Nordic outdoor thermal baths stop', 'Champlain Lookout panoramic view over Ottawa Valley'],
         badge: 'Capital Region Must-Do'
@@ -3237,7 +3237,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 2600,
         priceFrom: '$36 / person',
-        bookingUrl: 'https://www.viator.com/Ottawa/d624-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Ottawa%20River%20Electric%20Boat%20Cruise%20%26%20Parliament%20Panorama',
         bookingPlatform: 'Viator',
         highlights: ['100% electric zero-emission vessel', 'Views of Parliament Hill, Rideau Falls, and Supreme Court', 'Bilingual live narration'],
         badge: 'Waterfront Essential'
@@ -3251,7 +3251,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 1850,
         priceFrom: '$69 / person',
-        bookingUrl: 'https://www.viator.com/Ottawa/d624-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=ByWard%20Market%20Culinary%20%26%20Historical%20Tasting%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Iconic BeaverTails pastry tasting', 'Quebec artisan cheeses & maple delights', 'Historic market square stories'],
         badge: 'ByWard Foodie Favorite'
@@ -3265,7 +3265,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2200,
         priceFrom: '$125 / person',
-        bookingUrl: 'https://www.viator.com/Ottawa/d624-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=1000%20Islands%20Gananoque%20Day%20Excursion%20%26%20Castle%20Cruise%20from%20Ottawa',
         bookingPlatform: 'Viator',
         highlights: ['St. Lawrence River island cruise', 'Views of historic Boldt Castle & Millionaire’s Row', 'Luxury coach transport'],
         badge: 'Ontario Scenic Gem'
@@ -3363,7 +3363,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'CentrePort Canada Rail-Direct Inland Port Breaks Ground on Global Logistics Expansion',
         source: 'Winnipeg Free Press',
         category: 'Logistics',
-        url: 'https://www.winnipegfreepress.com',
+        url: 'https://www.google.com/search?q=CentrePort%20Canada%20Rail-Direct%20Inland%20Port%20Breaks%20Ground%20on%20Global%20Logistics%20Expansion%20Winnipeg%20Free%20Press',
         timeAgo: '45 mins ago',
         summary: 'North America’s largest trimodal inland port expands direct rail switching and cargo distribution.',
         expandedDetails: {
@@ -3381,7 +3381,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'The Forks Waterfront Renewal Expands Indigenous Market and Public Spaces',
         source: 'CBC News Manitoba',
         category: 'Civic',
-        url: 'https://www.cbc.ca/news/canada/manitoba',
+        url: 'https://www.google.com/search?q=The%20Forks%20Waterfront%20Renewal%20Expands%20Indigenous%20Market%20and%20Public%20Spaces%20CBC%20News%20Manitoba',
         timeAgo: '3 hours ago',
         summary: 'New pedestrian bridges and Indigenous cultural gathering pavilions unveiled along the Red and Assiniboine rivers.',
         expandedDetails: {
@@ -3553,7 +3553,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$35 - $110',
-        ticketUrl: 'https://royalmtc.ca',
+        ticketUrl: 'https://www.google.com/search?q=Royal%20Manitoba%20Theatre%20Centre%3A%20The%20Sound%20of%20Music%20Royal%20MTC%20(John%20Hirsch%20Mainstage)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3566,7 +3566,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$30 - $95',
-        ticketUrl: 'https://wso.ca',
+        ticketUrl: 'https://www.google.com/search?q=Winnipeg%20Symphony%20Orchestra%3A%20Tchaikovsky%201812%20Overture%20Centennial%20Concert%20Hall%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -3579,7 +3579,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 7:30 PM',
         ticketPriceRange: '$75 - $280',
-        ticketUrl: 'https://www.ticketmaster.ca',
+        ticketUrl: 'https://www.ticketmaster.ca/search?q=Canada%20Life%20Centre%20Live%3A%20Shania%20Twain%20-%20Queen%20of%20Me%20Tour',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Almost Sold Out',
         badgeColor: 'rose'
@@ -3592,7 +3592,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Wed - Sat • 7:45 PM & 10:15 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://rumorscomedyclub.com',
+        ticketUrl: 'https://www.google.com/search?q=Rumor%E2%80%99s%20Comedy%20Club%3A%20Pro%20Standup%20Weekend%20Rumor%E2%80%99s%20Restaurant%20%26%20Comedy%20Club%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -3636,7 +3636,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4200,
         priceFrom: '$26 / person',
-        bookingUrl: 'https://www.viator.com/searchResults/all?text=Winnipeg',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Journey%20to%20Churchill%3A%20Polar%20Bear%20%26%20Arctic%20Safari%20at%20Assiniboine%20Park',
         bookingPlatform: 'Viator',
         highlights: ['Underwater glass viewing tunnels with swimming polar bears', 'Arctic fox & snowy owl habitats', 'Interactive climate dome'],
         badge: 'Manitoba #1 Attraction'
@@ -3650,7 +3650,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 1600,
         priceFrom: '$29 / person',
-        bookingUrl: 'https://www.viator.com/searchResults/all?text=Winnipeg',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=The%20Forks%20%26%20Historic%20Exchange%20District%20Architectural%20Walking%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['North America’s largest intact collection of early 1900s Chicago-style terra cotta buildings', 'Bankers row history', 'Local artisan coffee stop'],
         badge: 'Architectural Gem'
@@ -3727,7 +3727,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Halifax Ferry Fleet Modernization Adds Mill Cove Electric Fast Ferries',
         source: 'The Chronicle Herald',
         category: 'Civic',
-        url: 'https://www.thechronicleherald.ca',
+        url: 'https://www.google.com/search?q=Halifax%20Ferry%20Fleet%20Modernization%20Adds%20Mill%20Cove%20Electric%20Fast%20Ferries%20The%20Chronicle%20Herald',
         timeAgo: '45 mins ago',
         summary: 'Halifax Transit awards build contracts for 5 zero-emission catamaran ferries connecting Bedford Basin directly to Downtown.',
         expandedDetails: {
@@ -3745,7 +3745,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Irving Shipbuilding Cuts Steel on Next-Gen Canadian Surface Combatant',
         source: 'Atlantic Business Magazine',
         category: 'Maritime',
-        url: 'https://atlanticbusinessmagazine.net',
+        url: 'https://www.google.com/search?q=Irving%20Shipbuilding%20Cuts%20Steel%20on%20Next-Gen%20Canadian%20Surface%20Combatant%20Atlantic%20Business%20Magazine',
         timeAgo: '3 hours ago',
         summary: 'National Shipbuilding Strategy reaches milestone in constructing the Royal Canadian Navy River-class destroyers.',
         expandedDetails: {
@@ -3763,7 +3763,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Canada’s Ocean Supercluster Injects $35M into Marine AI & Ocean Tech',
         source: 'Entrevestor',
         category: 'Technology',
-        url: 'https://entrevestor.com',
+        url: 'https://www.google.com/search?q=Canada%E2%80%99s%20Ocean%20Supercluster%20Injects%20%2435M%20into%20Marine%20AI%20%26%20Ocean%20Tech%20Entrevestor',
         timeAgo: '5 hours ago',
         summary: 'Halifax-headquartered ocean cluster backs autonomous subsea robotics and environmental sensor startups.',
         expandedDetails: {
@@ -3925,7 +3925,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$40 - $115',
-        ticketUrl: 'https://www.neptunetheatre.com',
+        ticketUrl: 'https://www.google.com/search?q=Neptune%20Theatre%3A%20Mamma%20Mia!%20Fountain%20Hall%20(Neptune%20Theatre)%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3938,7 +3938,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$35 - $95',
-        ticketUrl: 'https://symphonynovascotia.ca',
+        ticketUrl: 'https://www.google.com/search?q=Symphony%20Nova%20Scotia%3A%20Celtic%20%26%20Maritime%20Spectacular%20Rebecca%20Cohn%20Auditorium%20tickets',
         ticketPlatform: 'Ticket Atlantic',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3951,7 +3951,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$55 - $165',
-        ticketUrl: 'https://www.ticketatlantic.com',
+        ticketUrl: 'https://www.google.com/search?q=Scotiabank%20Centre%20Live%3A%20Arkells%20-%20Big%20Feelings%20Tour%20Scotiabank%20Centre%20tickets',
         ticketPlatform: 'Ticket Atlantic',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -3995,7 +3995,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4500,
         priceFrom: '$59 / person',
-        bookingUrl: 'https://www.viator.com/Halifax/d4416-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Peggy%E2%80%99s%20Cove%20Lighthouse%20%26%20Coastal%20Fishing%20Village%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Iconic Peggy’s Point Lighthouse', 'Granite rock coastline exploration', 'Fresh lobster roll tasting option'],
         badge: 'East Coast Must-Do'
@@ -4009,7 +4009,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2900,
         priceFrom: '$95 / person',
-        bookingUrl: 'https://www.viator.com/Halifax/d4416-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Lunenburg%20UNESCO%20Historic%20Town%20%26%20Mahone%20Bay%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['UNESCO World Heritage town of Lunenburg', 'Bluenose II schooner wharf', 'Mahone Bay 3 churches photo stop'],
         badge: 'UNESCO Heritage Excursion'
@@ -4023,7 +4023,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.8,
         reviewCount: 2100,
         priceFrom: '$42 / person',
-        bookingUrl: 'https://www.viator.com/Halifax/d4416-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Halifax%20Harbour%20Tall%20Ship%20Silva%20Sailing%20Cruise',
         bookingPlatform: 'Viator',
         highlights: ['Sail aboard historic 130-foot tall ship', 'Panoramic views of Georges Island & naval dockyards', 'Onboard maritime pub & live music'],
         badge: 'Top Harbour Cruise'
@@ -4109,7 +4109,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Crystal Pool Modern Replacement & Multi-Sport Complex Enters Construction Phase',
         source: 'Times Colonist',
         category: 'Civic',
-        url: 'https://www.timescolonist.com',
+        url: 'https://www.google.com/search?q=Crystal%20Pool%20Modern%20Replacement%20%26%20Multi-Sport%20Complex%20Enters%20Construction%20Phase%20Times%20Colonist',
         timeAgo: '40 mins ago',
         summary: 'City Council awards tenders for $168M state-of-the-art zero-carbon aquatic facility.',
         expandedDetails: {
@@ -4127,7 +4127,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Victoria Clean Marine Cluster Tests All-Electric Harbour Ferries',
         source: 'Douglas Magazine / Business Desk',
         category: 'Maritime',
-        url: 'https://douglasmagazine.com',
+        url: 'https://www.google.com/search?q=Victoria%20Clean%20Marine%20Cluster%20Tests%20All-Electric%20Harbour%20Ferries%20Douglas%20Magazine%20%2F%20Business%20Desk',
         timeAgo: '3 hours ago',
         summary: 'Victoria Harbour Ferry fleet trials zero-emission quiet electric propulsion for Inner Harbour crossings.',
         expandedDetails: {
@@ -4265,7 +4265,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Saturday & Sunday • 8:00 PM & 2:30 PM',
         ticketPriceRange: '$32 - $98',
-        ticketUrl: 'https://www.rmts.bc.ca',
+        ticketUrl: 'https://www.google.com/search?q=Royal%20Theatre%3A%20Victoria%20Symphony%20-%20Mozart%20%26%20Dvo%C5%99%C3%A1k%20Royal%20Theatre%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4278,7 +4278,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$28 - $65',
-        ticketUrl: 'https://www.belfry.bc.ca',
+        ticketUrl: 'https://www.google.com/search?q=Belfry%20Theatre%3A%20Canadian%20Premier%20Play%20The%20Belfry%20Theatre%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4322,7 +4322,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 5900,
         priceFrom: '$75 / person',
-        bookingUrl: 'https://www.viator.com/Victoria/d617-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=The%20Butchart%20Gardens%20%26%20Scenic%20Floatplane%20Day%20Excursion',
         bookingPlatform: 'Viator',
         highlights: ['Sunken Garden & Ross Fountain', 'Japanese Garden & Rose Garden', 'Direct express shuttle from Inner Harbour'],
         badge: 'World-Renowned Botanical Garden'
@@ -4336,7 +4336,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 3800,
         priceFrom: '$165 / person',
-        bookingUrl: 'https://www.viator.com/Victoria/d617-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Victoria%20Wild%20Orca%20%26%20Humpback%20Whale%20Watching%20Zodiac%20Safari',
         bookingPlatform: 'Viator',
         highlights: ['Salish Sea killer whales & humpback encounters', 'Marine biologist guided narration', 'Eco-certified carbon neutral tour'],
         badge: 'Canada #1 Whale Safari'
@@ -4364,7 +4364,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4400,
         priceFrom: '$36 / person',
-        bookingUrl: 'https://www.viator.com/Victoria/d617-ttd',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Malahat%20SkyWalk%20%26%20Salish%20Sea%20Coastal%20Mountain%20Lookout',
         bookingPlatform: 'Viator',
         highlights: ['Walk 250 meters above sea level on spiral wooden tower', '360° views of Mount Baker, Finlayson Arm & coastal fjords', '20-meter spiral adventure slide descent'],
         badge: 'Top Island Attraction'
@@ -4429,7 +4429,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Team Gushue Highway Extension Finalizes Overpass Construction',
         source: 'The Telegram',
         category: 'Civic',
-        url: 'https://www.thetelegram.com',
+        url: 'https://www.google.com/search?q=Team%20Gushue%20Highway%20Extension%20Finalizes%20Overpass%20Construction%20The%20Telegram',
         timeAgo: '45 mins ago',
         summary: 'Major arterial highway linking Kenmount Road to the Pitts Memorial Drive transit corridor prepares for paving.',
         expandedDetails: {
@@ -4447,7 +4447,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         title: 'Newfoundland Offshore Wind & Green Hydrogen Project Secures Environmental Clearance',
         source: 'CBC News Newfoundland',
         category: 'Energy',
-        url: 'https://www.cbc.ca/news/canada/newfoundland-labrador',
+        url: 'https://www.google.com/search?q=Newfoundland%20Offshore%20Wind%20%26%20Green%20Hydrogen%20Project%20Secures%20Environmental%20Clearance%20CBC%20News%20Newfoundland',
         timeAgo: '3 hours ago',
         summary: 'World-scale clean energy export project in Placentia Bay moves to commercial engineering development.',
         expandedDetails: {
@@ -4585,7 +4585,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$45 - $120',
-        ticketUrl: 'https://artsandculturecentre.com',
+        ticketUrl: 'https://www.google.com/search?q=Arts%20and%20Culture%20Centre%3A%20Come%20From%20Away%20Newfoundland%20Production%20St.%20John%E2%80%99s%20Arts%20and%20Culture%20Centre%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -4598,7 +4598,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sat • 6:30 PM (Dinner Included)',
         ticketPriceRange: '$65 - $95',
-        ticketUrl: 'https://spiritofnewfoundland.com',
+        ticketUrl: 'https://www.google.com/search?q=Spirit%20of%20Newfoundland%3A%20Dinner%20%26%20Musical%20Comedy%20Theatre%20Masonic%20Temple%20tickets',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4642,7 +4642,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 4100,
         priceFrom: '$85 / person',
-        bookingUrl: 'https://www.viator.com/searchResults/all?text=St.+John%27s+Newfoundland',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Witless%20Bay%20Ecological%20Reserve%3A%20Puffin%20%26%20Whale%20Watching%20Boat%20Safari',
         bookingPlatform: 'Viator',
         highlights: ['Over 500,000 Atlantic puffins nesting on islands', 'Humpback whale breaching encounters', 'Iceberg sightings in season'],
         badge: 'Newfoundland #1 Wildlife Safari'
@@ -4656,7 +4656,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         rating: 4.9,
         reviewCount: 2600,
         priceFrom: '$65 / person',
-        bookingUrl: 'https://www.viator.com/searchResults/all?text=St.+John%27s+Newfoundland',
+        bookingUrl: 'https://www.viator.com/searchResults/all?text=Cape%20Spear%20Easternmost%20Point%20%26%20St.%20John%E2%80%99s%20Historic%20City%20Tour',
         bookingPlatform: 'Viator',
         highlights: ['Stand on the most easterly point in North America', 'Historic Cape Spear 1836 Lighthouse', 'Jellybean row Victorian houses tour'],
         badge: 'Iconic North American Landmark'
