@@ -162,95 +162,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Calgary',
     news: [
       {
-        id: 'yyc-n1',
-        title: 'Green Line LRT Construction Accelerates with Downtown Cavern Contracts',
-        source: 'Calgary Herald',
+        id: 'yyc-news-0',
+        title: "Alberta health cards now have expiration dates. Here’s what you need to know",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Green%20Line%20LRT%20Construction%20Accelerates%20with%20Downtown%20Cavern%20Contracts%20Calgary%20Herald',
-        timeAgo: '45 mins ago',
-        summary: 'City Council finalizes major underground tunneling agreements for 7th Ave and Beltline connections.',
-        expandedDetails: {
-          keyTakeaways: [
-            'Construction contracts finalized for initial Phase 1 underground tunneling beneath the downtown rail corridor.',
-            'New underground stations planned at 4th Street SE and Centre Street with multi-modal CTrain transfers.',
-            'Expected completion timeline projected for late 2028 with enhanced electric low-floor trains.'
-          ],
-          localImpact: 'Expect temporary traffic detours along 11th Avenue SW and 2nd Street SE. Transit riders will experience zero service cuts to current Red/Blue line service.',
-          timeline: 'Tunneling commences Q2 2027 • Station structural work underway through 2028.',
-          relatedActionUrl: 'https://www.calgary.ca/greenline.html',
-          relatedActionText: 'View Green Line Detour Map'
-        }
-      },
-      {
-        id: 'yyc-n2',
-        title: 'Alberta Energy Sector Reaches Milestone in Pathways Carbon Capture Infrastructure',
-        source: 'Financial Post / Calgary Energy Desk',
-        category: 'Energy',
-        url: 'https://www.google.com/search?q=Alberta%20Energy%20Sector%20Reaches%20Milestone%20in%20Pathways%20Carbon%20Capture%20Infrastructure%20Financial%20Post%20%2F%20Calgary%20Energy%20Desk',
+        url: 'https://www.cbc.ca/news/canada/calgary/alberta-health-cards-expiry-9.7314841',
         timeAgo: '2 hours ago',
-        summary: 'Major pipeline trunkline agreements approved to transport sequestered carbon to cold lake storage reservoirs.',
+        summary: "The province’s new three-in-one IDs mean Alberta health cards are not just transitioning from paper to plastic — they now come with an expiry date.",
         expandedDetails: {
-          keyTakeaways: [
-            'Trunkline engineering permits cleared for the $16.5B CCUS network.',
-            'Expected to reduce regional upstream oil sands emissions by 22 megatonnes annually by 2030.',
-            'Substantial engineering and procurement contracts awarded to Alberta-based contractors.'
-          ],
-          localImpact: 'Boosts high-tech engineering and construction employment across Calgary corporate offices and northern field operations.',
-          timeline: 'Phase 1 operations target 2027 commissioning.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 2 hours ago'
         }
       },
       {
-        id: 'yyc-n3',
-        title: 'Downtown Office-to-Residential Conversion Program Surpasses 1.5M Square Feet',
-        source: 'Daily Hive Calgary',
-        category: 'Development',
-        url: 'https://www.google.com/search?q=Downtown%20Office-to-Residential%20Conversion%20Program%20Surpasses%201.5M%20Square%20Feet%20Daily%20Hive%20Calgary',
+        id: 'yyc-news-1',
+        title: "A president, open-carry gun laws, elected judges: Group floats vision for an independent Alberta",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/calgary/alberta-prosperity-project-discussion-paper-9.7314444',
+        timeAgo: '6 mins ago',
+        summary: "A prominent separatist group in the province has released a discussion paper floating a vision for an independent Alberta — including a president, open-carry gun laws, a maximum 10-per cent income tax and a Supreme Court",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 6 mins ago'
+        }
+      },
+      {
+        id: 'yyc-news-2',
+        title: "Conservationists call for more federal enforcement of Species at Risk Act violations in Alberta",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/calgary/fisheries-and-oceans-canada-investigations-species-at-risk-9.7310439',
         timeAgo: '3 hours ago',
-        summary: 'Over 13 vacant corporate office towers successfully transformed into 2,400+ modern residential rental suites.',
+        summary: "Some groups want to see improved enforcement to protect at-risk species in Alberta, after an investigation by Fisheries and Oceans Canada was halted due to a lack of resources.",
         expandedDetails: {
-          keyTakeaways: [
-            'Calgary Downtown Development Incentive program adds thousands of new residents to the downtown core.',
-            'New ground-floor retail, grocery stores, and micro-breweries opening along 5th and 6th Avenues SW.',
-            'Program recognized globally as a benchmark for municipal urban renewal.'
-          ],
-          localImpact: 'Brings vibrant evening and weekend pedestrian activity to formerly commercial-only corporate corridors.',
-          timeline: 'Additional 5 buildings slated for 2026/2027 delivery.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
         }
       },
       {
-        id: 'yyc-n4',
-        title: 'Calgary Tech Ecosystem Attracts $450M in Clean-Tech and AI Venture Funding',
-        source: 'BetaKit',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=Calgary%20Tech%20Ecosystem%20Attracts%20%24450M%20in%20Clean-Tech%20and%20AI%20Venture%20Funding%20BetaKit',
-        timeAgo: '5 hours ago',
-        summary: 'Venture capital investments surge in Calgary clean-tech, industrial IoT, and energy software scale-ups.',
+        id: 'yyc-news-3',
+        title: "Alberta minister faces more fury at second town hall on AI data centres",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/edmonton/alta-ai-town-hall-redwater-9.7315335',
+        timeAgo: '31 mins ago',
+        summary: "Alberta's technology minister faced yet another firing line of fury at the government's second town hall hearing from residents over its plan for artificial intelligence data centres.",
         expandedDetails: {
-          keyTakeaways: [
-            'Calgary ranks in the top 3 North American mid-sized tech talent markets.',
-            'Platform Calgary hub hosts over 120 active software and hardware startups.',
-            'Strong venture inflow from Silicon Valley and Toronto funds into Western Canadian AI scale-ups.'
-          ],
-          localImpact: 'Creates hundreds of senior software engineering and product management roles in downtown innovation hubs.',
-          timeline: 'Active hiring across Q3 and Q4 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 31 mins ago'
         }
       },
       {
-        id: 'yyc-n5',
-        title: '17th Avenue Southwest Patio Program Returns for Extended Season',
-        source: 'Avenue Calgary',
-        category: 'Culture',
-        url: 'https://www.google.com/search?q=17th%20Avenue%20Southwest%20Patio%20Program%20Returns%20for%20Extended%20Season%20Avenue%20Calgary',
-        timeAgo: '6 hours ago',
-        summary: 'Over 40 restaurants and craft bars along 17th Ave and Inglewood expand outdoor dining boardwalks.',
+        id: 'yyc-news-4',
+        title: "'I thought I would always have him': Children of murder victim speak at killer's sentencing hearing",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/calgary/donald-lyons-paulos-berhe-murder-sentencing-hearing-9.7314507',
+        timeAgo: '19 hours ago',
+        summary: "Paulos Berhe wiped away tears as his victim’s 13-year-old child delivered a powerful victim impact statement in court on Thursday at his sentencing hearing.",
         expandedDetails: {
-          keyTakeaways: [
-            'Expanded patio permits granted to 40+ local Beltline and 17th Ave establishments.',
-            'Sidewalk boardwalk extensions provide barrier-free pedestrian accessibility alongside outdoor dining.',
-            'Acoustic live music permitted on patios until 10:00 PM on weekends.'
-          ],
-          localImpact: 'Pedestrian foot traffic along the Red Mile corridor increases significantly with designated pick-up/drop-off zones for rideshares.',
-          timeline: 'Patios operating daily through late October weather permitting.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 19 hours ago'
         }
       }
     ],
@@ -769,75 +747,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Toronto',
     news: [
       {
-        id: 'yyz-n1',
-        title: 'Ontario Line Subway Construction Reaches Queen & Yonge Station Milestone',
-        source: 'Toronto Star',
+        id: 'yyz-news-0',
+        title: "Port Hope residents resist proposed nuclear plant due to town's radioactive past",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Ontario%20Line%20Subway%20Construction%20Reaches%20Queen%20%26%20Yonge%20Station%20Milestone%20Toronto%20Star',
-        timeAgo: '30 mins ago',
-        summary: 'Underground cavern excavation links the future Ontario Line with TTC Line 1 interchange.',
+        url: 'https://www.cbc.ca/news/canada/toronto/port-hope-nuclear-power-plant-resident-concerns-9.7315339',
+        timeAgo: '1 hours ago',
+        summary: "A generation of Port Hope residents, old enough to have lived through the community's fraught history with the nuclear industry, were shocked by news of a proposed power plant in their town.  The town's mayor and Ontario",
         expandedDetails: {
-          keyTakeaways: [
-            'Tunnel boring machines complete critical lower concourse drilling beneath Queen Street.',
-            'Direct underground transfers to Line 1 will handle 388,000 daily passenger trips once open.',
-            'Automated driverless trains scheduled for delivery next year.'
-          ],
-          localImpact: 'Queen Street pedestrian walkway remains open between Yonge and Bay with active wayfinding.',
-          timeline: 'Structural platform work scheduled through 2028.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
         }
       },
       {
-        id: 'yyz-n2',
-        title: 'Bay Street Fintech Corridors See Surge in Green Tech and AI Listings',
-        source: 'Globe and Mail / Report on Business',
-        category: 'Finance',
-        url: 'https://www.google.com/search?q=Bay%20Street%20Fintech%20Corridors%20See%20Surge%20in%20Green%20Tech%20and%20AI%20Listings%20Globe%20and%20Mail%20%2F%20Report%20on%20Business',
-        timeAgo: '2 hours ago',
-        summary: 'Toronto Stock Exchange welcomes 14 new technology listings and AI venture fund raises.',
+        id: 'yyz-news-1',
+        title: "Another Toronto street festival is being lost to funding shortfalls",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/toronto/yorkville-murals-festival-shuts-down-9.7313033',
+        timeAgo: '7 hours ago',
+        summary: "The co-founder of the Yorkville Murals festival says they were denied city grants awarded in previous years. More applications are leading to more competition for funding, according to a City of Toronto spokesperson.",
         expandedDetails: {
-          keyTakeaways: [
-            'Toronto holds second-largest financial and banking hub status in North America.',
-            'Over $1.2B in venture funding deployed into Toronto-Waterloo corridor AI startups this quarter.',
-            'Major institutional pension funds expand private market green infrastructure investments.'
-          ],
-          localImpact: 'Accelerates commercial office leasing demand in the Financial District and South Core.',
-          timeline: 'Q3 economic data releases upcoming.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
         }
       },
       {
-        id: 'yyz-n3',
-        title: 'MaRS Discovery District Launches Autonomous Systems & Healthcare AI Accelerator',
-        source: 'BetaKit Toronto',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=MaRS%20Discovery%20District%20Launches%20Autonomous%20Systems%20%26%20Healthcare%20AI%20Accelerator%20BetaKit%20Toronto',
+        id: 'yyz-news-2',
+        title: "2 children, woman in hospital after being struck by driver in Barrie: police",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/toronto/barrie-police-2-children-woman-hit-by-car-9.7315315',
+        timeAgo: '1 hours ago',
+        summary: "Two children and a woman are in hospital after they were struck by a motorist while crossing the street in Barrie, Ont on Friday morning, police said.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
+        }
+      },
+      {
+        id: 'yyz-news-3',
+        title: "Deadline to register as candidate for Ontario's municipal elections closes Friday afternoon",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/toronto/ontario-election-nomination-deadline-9.7315183',
         timeAgo: '4 hours ago',
-        summary: 'Partnership with University of Toronto and Vector Institute injects $60M into medical diagnostics AI.',
+        summary: "A clearer picture of the choices Ontarians will face at the ballot box is set to emerge this afternoon as nominations for the fall municipal elections come to a close.",
         expandedDetails: {
-          keyTakeaways: [
-            '50 clinical trials in generative AI oncology diagnostics set to launch across University Health Network (UHN).',
-            'Incubator space expands in the Discovery District along College & University.',
-            'Attracts international talent under the Global Skills visa strategy.'
-          ],
-          localImpact: 'Strengthens Toronto’s position as a global leader in ethical AI and biotech healthcare commercialization.',
-          timeline: 'Cohort begins operations next month.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 4 hours ago'
         }
       },
       {
-        id: 'yyz-n4',
-        title: 'Toronto City Council Approves Waterfront Light Rail Transit Expansion',
-        source: 'City of Toronto Newsroom',
-        category: 'Government',
-        url: 'https://www.google.com/search?q=Toronto%20City%20Council%20Approves%20Waterfront%20Light%20Rail%20Transit%20Expansion%20City%20of%20Toronto%20Newsroom',
-        timeAgo: '6 hours ago',
-        summary: 'New dedicated light rail tracks will connect Union Station directly to East Bayfront and Port Lands.',
+        id: 'yyz-news-4',
+        title: "Midnight deadline looms as Canada seeks deal to avoid Trump's steep new tariffs",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/world/livestory/midnight-deadline-trump-tariffs-trade-deal-leblanc-greer-9.7310605',
+        timeAgo: '1 day ago',
+        summary: "Midnight deadline looms as Canada seeks deal to avoid Trump's steep new tariffs. Read full details on CBC News.",
         expandedDetails: {
-          keyTakeaways: [
-            'Fully funded $2.1B transit project to service the naturalized Don River mouth development.',
-            'Underground transit tunnel from Union Station loop under Bay Street.',
-            'New surface stations at Sugar Beach, Queens Quay East, and Villiers Island.'
-          ],
-          localImpact: 'Provides zero-emission rapid transit for 45,000 new residents and tech workers in the Port Lands.',
-          timeline: 'Utility relocation starts Q4 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 day ago'
         }
       }
     ],
@@ -1328,57 +1304,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Vancouver',
     news: [
       {
-        id: 'yvr-n1',
-        title: 'Broadway Subway Millennium Line Extension Tunnel Breakthrough Achieved',
-        source: 'Vancouver Sun',
+        id: 'yvr-news-0',
+        title: "Following fire, Summerland orchards race to save fruit from spoilage",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Broadway%20Subway%20Millennium%20Line%20Extension%20Tunnel%20Breakthrough%20Achieved%20Vancouver%20Sun',
-        timeAgo: '45 mins ago',
-        summary: 'Twin tunnel boring machines complete 5.7 km underground run reaching Arbutus Station.',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/summerland-orchards-spoiled-harvests-9.7315116',
+        timeAgo: '1 hours ago',
+        summary: "While Deep Brar’s property is physically undamaged by the flames, his business, Brarstar Orchards, has still incurred a significant cost — much of his fruit was left to rot on the trees during the evacuation.",
         expandedDetails: {
-          keyTakeaways: [
-            'All underground tunneling between VCC-Clark and Arbutus successfully finished.',
-            'Crews transition to station track laying and electrical power substation fit-outs.',
-            'Direct SkyTrain connection will move 160,000 riders daily along the health & tech corridor.'
-          ],
-          localImpact: 'Surface construction decks along Broadway dismantled with full road restoration.',
-          timeline: 'Testing and commissioning starts 2027.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
         }
       },
       {
-        id: 'yvr-n2',
-        title: 'Port of Vancouver Breaks Ground on Green Hydrogen Bunkering Facility',
-        source: 'Business in Vancouver',
-        category: 'Maritime',
-        url: 'https://www.google.com/search?q=Port%20of%20Vancouver%20Breaks%20Ground%20on%20Green%20Hydrogen%20Bunkering%20Facility%20Business%20in%20Vancouver',
+        id: 'yvr-news-1',
+        title: "New fibre route planned for Highway 37 after northern B.C. telecom outages",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/new-fibre-route-northern-bc-9.7314535',
+        timeAgo: '2 hours ago',
+        summary: "CityWest is planning a new underground fibre route along Highway 37 after three major telecommunications outages in northern B.C. in the past four months highlighted vulnerabilities in the region's network.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 2 hours ago'
+        }
+      },
+      {
+        id: 'yvr-news-2',
+        title: "42% drop in Vancouver housing starts prompts worry from development advocate",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/vancouver-housing-starts-drop-9.7315071',
         timeAgo: '3 hours ago',
-        summary: 'Canada’s largest port accelerates clean marine fuel corridors for trans-Pacific container vessels.',
+        summary: "Housing starts in Vancouver are down 42 per cent compared with last July — a signal, according to a development advocate, that it's become too costly to build new homes.",
         expandedDetails: {
-          keyTakeaways: [
-            '$220M multi-modal green hydrogen and shore power infrastructure project begins construction.',
-            'Eliminates maritime diesel idling at Burrard Inlet container berths.',
-            'Positions BC as the leading green shipping hub on the Pacific coast.'
-          ],
-          localImpact: 'Reduces regional air emissions while creating specialized clean tech engineering careers.',
-          timeline: 'Phase 1 operational by 2027.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
         }
       },
       {
-        id: 'yvr-n3',
-        title: 'Vancouver Creative Tech & Gaming Studios Announce AI Innovation Hubs',
-        source: 'Daily Hive Vancouver',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=Vancouver%20Creative%20Tech%20%26%20Gaming%20Studios%20Announce%20AI%20Innovation%20Hubs%20Daily%20Hive%20Vancouver',
-        timeAgo: '5 hours ago',
-        summary: 'Gastown and Mount Pleasant visual effects studios expand sovereign AI rendering infrastructure.',
+        id: 'yvr-news-3',
+        title: "What will unite tennis and pickleball players? A whole lot more courts",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/radio/sunday/tennis-versus-pickleball-beef-9.7311572',
+        timeAgo: '7 hours ago',
+        summary: "Across the country, tennis and pickleball players compete for time on too few courts. Here's what planners and sports policy experts say it would take to address the root of the problem — not enough recreational faciliti",
         expandedDetails: {
-          keyTakeaways: [
-            'BC digital media sector generates over $4.2B in annual export GDP.',
-            'Major VFX studios launch generative machine-learning post-production pipelines.',
-            'Collaborative talent incubator with UBC and Simon Fraser University computing science.'
-          ],
-          localImpact: 'Expands high-paying digital entertainment and tech software opportunities.',
-          timeline: 'Active tech hiring underway.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
+        }
+      },
+      {
+        id: 'yvr-news-4',
+        title: "1 dead after plane makes emergency landing on Prince George road, crashes into vehicle",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/prince-george-plane-on-highway-9.7314771',
+        timeAgo: '16 hours ago',
+        summary: "Prince George RCMP have confirmed that a person has died after a plane made an emergency landing Thursday on Foothills Boulevard, about 1.5 kilometres north of North Nechako Road.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 16 hours ago'
         }
       }
     ],
@@ -1887,57 +1879,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Montreal',
     news: [
       {
-        id: 'yul-n1',
-        title: 'REM Light Rail Phase 2 Airport & West Island Tracks Approach Commissioning',
-        source: 'La Presse / Montreal Gazette',
+        id: 'yul-news-0',
+        title: "Montreal police officers will get body cameras, mayor says",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=REM%20Light%20Rail%20Phase%202%20Airport%20%26%20West%20Island%20Tracks%20Approach%20Commissioning%20La%20Presse%20%2F%20Montreal%20Gazette',
-        timeAgo: '40 mins ago',
-        summary: 'Automated electric train tests commence between Central Station and Montreal-Trudeau Airport (YUL).',
-        expandedDetails: {
-          keyTakeaways: [
-            'Direct 20-minute rapid transit from Downtown Central Station to YUL Airport terminals.',
-            'Connects West Island communities through 14 modern elevated stations.',
-            'Operates 20 hours a day with trains every 3 minutes at peak times.'
-          ],
-          localImpact: 'Significantly cuts Highway 20 and Highway 40 airport vehicular congestion.',
-          timeline: 'Full passenger service launch in 2027.'
-        }
-      },
-      {
-        id: 'yul-n2',
-        title: 'Greater Montreal Aerospace Cluster Finalizes Next-Gen SAF Jet Engine Tests',
-        source: 'Les Affaires',
-        category: 'Aerospace',
-        url: 'https://www.google.com/search?q=Greater%20Montreal%20Aerospace%20Cluster%20Finalizes%20Next-Gen%20SAF%20Jet%20Engine%20Tests%20Les%20Affaires',
-        timeAgo: '2 hours ago',
-        summary: 'Bombardier, Pratt & Whitney Canada, and CAE achieve 100% sustainable aviation fuel milestone.',
-        expandedDetails: {
-          keyTakeaways: [
-            'Montreal maintains rank as the world’s #3 international aerospace capital.',
-            'Over $450M in federal and provincial green aerospace R&D investments.',
-            'New flight simulator and avionics software training facilities opened in Mirabel and Dorval.'
-          ],
-          localImpact: 'Creates 1,800 specialized aerospace engineering and avionics careers across the region.',
-          timeline: 'Commercial certification expected next year.'
-        }
-      },
-      {
-        id: 'yul-n3',
-        title: 'MILA AI Institute Announces $50M Sovereign Computing Infrastructure Grant',
-        source: 'BetaKit Montreal',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=MILA%20AI%20Institute%20Announces%20%2450M%20Sovereign%20Computing%20Infrastructure%20Grant%20BetaKit%20Montreal',
+        url: 'https://www.cbc.ca/news/canada/montreal/spvm-montreal-body-cams-9.7315052',
         timeAgo: '4 hours ago',
-        summary: 'World-renowned AI research institute founded by Yoshua Bengio expands sovereign supercomputing clusters.',
+        summary: "Montreal Mayor Soraya Martinez Ferrada says she wants to soon equip all police officers with body cameras.",
         expandedDetails: {
-          keyTakeaways: [
-            'Attracts over 1,200 international machine learning researchers to the Mile-Ex AI district.',
-            'New partnerships with McGill, Université de Montréal, and global health biotech firms.',
-            'Focus on ethical AI safety, drug discovery, and climate modeling.'
-          ],
-          localImpact: 'Solidifies Montreal as one of the world’s foremost deep learning research clusters.',
-          timeline: 'Cluster expansion online Q4 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 4 hours ago'
+        }
+      },
+      {
+        id: 'yul-news-1',
+        title: "Police watchdog investigating deadly Laval gym crash after all, reverses initial decision",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/montreal/fatal-incident-laval-quebec-gym-bei-9.7315340',
+        timeAgo: '1 hours ago',
+        summary: "Quebec’s police watchdog has opened an investigation into a police intervention leading up to a fatal, high-speed crash in Laval earlier this month, after initially deciding that the case did not meet its criteria.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
+        }
+      },
+      {
+        id: 'yul-news-2',
+        title: "Quebec autistic student denied disability-based French exemption, removed from college",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/montreal/quebec-autistic-student-denied-french-exemption-9.7314902',
+        timeAgo: '7 hours ago',
+        summary: "Quebec's Charter of the French language grants children with serious learning issues a waiver allowing them to be educated in English. But education specialists say the process is too difficult and rejection rates are hi",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
+        }
+      },
+      {
+        id: 'yul-news-3',
+        title: "CFL-leading Alouettes take down Redblacks",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/ottawa/ottawa-redblacks-cfl-losing-streak-montreal-alouettes-9.7315222',
+        timeAgo: '3 hours ago',
+        summary: "The Ottawa Redblacks extended their winless streak with a 16th straight loss in an ugly 46-16 beatdown to the league-leading Montreal Alouettes on Thursday.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
+        }
+      },
+      {
+        id: 'yul-news-4',
+        title: "Quebec farmers want you to buy their berries",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/player/play/9.7312283',
+        timeAgo: '7 hours ago',
+        summary: "More strawberries and raspberries are being shipped to Quebec because Americans are eating less of them. Josiane Cormier, president of Quebec's strawberry and raspberry growers' association, tells Quebec AM guest host Pe",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
         }
       }
     ],
@@ -2418,57 +2426,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Edmonton',
     news: [
       {
-        id: 'yeg-n1',
-        title: 'Valley Line West LRT Track Laying Advances Across 149th Street Corridor',
-        source: 'Edmonton Journal',
+        id: 'yeg-news-0',
+        title: "Alberta minister faces more fury at second town hall on AI data centres",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Valley%20Line%20West%20LRT%20Track%20Laying%20Advances%20Across%20149th%20Street%20Corridor%20Edmonton%20Journal',
-        timeAgo: '45 mins ago',
-        summary: 'Construction crews begin installing low-floor electric tracks connecting Downtown to West Edmonton Mall.',
+        url: 'https://www.cbc.ca/news/canada/edmonton/alta-ai-town-hall-redwater-9.7315335',
+        timeAgo: '31 mins ago',
+        summary: "Alberta's technology minister faced yet another firing line of fury at the government's second town hall hearing from residents over its plan for artificial intelligence data centres.",
         expandedDetails: {
-          keyTakeaways: [
-            '14 km expansion will link Downtown Jasper Ave with West Edmonton Mall and Lewis Farms.',
-            'New elevated guideway stations nearing structural completion over Anthony Henday Drive.',
-            'Zero service impact to operating Valley Line Southeast route.'
-          ],
-          localImpact: 'Connects Edmontonians to major healthcare, post-secondary, and retail centers in under 30 minutes.',
-          timeline: 'Track installation continues through 2027.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 31 mins ago'
         }
       },
       {
-        id: 'yeg-n2',
-        title: 'Alberta Industrial Heartland $2.4B Clean Hydrogen Energy Complex Enters Final Phase',
-        source: 'Edmonton Global / Energy Desk',
-        category: 'Energy',
-        url: 'https://www.google.com/search?q=Alberta%20Industrial%20Heartland%20%242.4B%20Clean%20Hydrogen%20Energy%20Complex%20Enters%20Final%20Phase%20Edmonton%20Global%20%2F%20Energy%20Desk',
+        id: 'yeg-news-1',
+        title: "'The gift comes from the horse': How this growing Indigenous sport is staying grounded in tradition",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/edmonton/indigenous-sport-relay-racing-9.7315114',
+        timeAgo: '44 mins ago',
+        summary: "It’s a sport that involves flying down a dirt track on the bare back of a thoroughbred horse - and it’s gaining ground across the province – and the country. But organizers and racers say it’s much more than high-speed h",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 44 mins ago'
+        }
+      },
+      {
+        id: 'yeg-news-2',
+        title: "Alberta health cards now have expiration dates. Here’s what you need to know",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/calgary/alberta-health-cards-expiry-9.7314841',
         timeAgo: '2 hours ago',
-        summary: 'World-scale net-zero hydrogen facility to supply clean industrial power across Western Canada.',
+        summary: "The province’s new three-in-one IDs mean Alberta health cards are not just transitioning from paper to plastic — they now come with an expiry date.",
         expandedDetails: {
-          keyTakeaways: [
-            'Produces ultra-low carbon blue and green hydrogen from regional feedstock.',
-            'Captures and permanently sequesters over 95% of associated CO2 emissions in deep geological formations.',
-            'Attracts international clean-tech supply chain partners to the Edmonton metro area.'
-          ],
-          localImpact: 'Drives high-tech engineering, industrial operations, and procurement jobs in Strathcona County and Edmonton.',
-          timeline: 'Full commercial commissioning in 2027.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 2 hours ago'
         }
       },
       {
-        id: 'yeg-n3',
-        title: 'ICE District Commercial Towers and Fan Park Reach 94% Tenancy',
-        source: 'Daily Hive Edmonton',
-        category: 'Development',
-        url: 'https://www.google.com/search?q=ICE%20District%20Commercial%20Towers%20and%20Fan%20Park%20Reach%2094%25%20Tenancy%20Daily%20Hive%20Edmonton',
-        timeAgo: '4 hours ago',
-        summary: 'Canada’s largest mixed-use sports and entertainment district expands public event plazas and restaurant patios.',
+        id: 'yeg-news-3',
+        title: "Conservationists call for more federal enforcement of Species at Risk Act violations in Alberta",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/calgary/fisheries-and-oceans-canada-investigations-species-at-risk-9.7310439',
+        timeAgo: '3 hours ago',
+        summary: "Some groups want to see improved enforcement to protect at-risk species in Alberta, after an investigation by Fisheries and Oceans Canada was halted due to a lack of resources.",
         expandedDetails: {
-          keyTakeaways: [
-            'ICE District Fan Park hosts over 120 annual public concerts, watch parties, and community festivals.',
-            'New tech engineering offices and national corporate headquarters open in Stantec Tower.',
-            'Underground pedway connection provides heated climate-controlled access to Rogers Place.'
-          ],
-          localImpact: 'Revitalizes downtown core street activation on Oilers game days and major concert nights.',
-          timeline: 'Ongoing events schedule active.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
+        }
+      },
+      {
+        id: 'yeg-news-4',
+        title: "Former Alexander First Nation chief sexually harassed employee over 9-year period: human rights tribunal",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/edmonton/former-first-nation-chief-harassment-tribunal-9.7314859',
+        timeAgo: '14 hours ago',
+        summary: "The Canadian Human Rights Tribunal has found a former Alexander First Nation chief sexually harassed an employee over a nine-year period.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 14 hours ago'
         }
       }
     ],
@@ -2901,57 +2925,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Ottawa',
     news: [
       {
-        id: 'yow-n1',
-        title: 'O-Train East Extension Line 1 Nearing Passenger Readiness Testing',
-        source: 'Ottawa Citizen',
+        id: 'yow-news-0',
+        title: "Ottawa union fears province trying to 'strip power' from local boards ahead of school year",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=O-Train%20East%20Extension%20Line%201%20Nearing%20Passenger%20Readiness%20Testing%20Ottawa%20Citizen',
-        timeAgo: '45 mins ago',
-        summary: 'OC Transpo begins simulated service across 5 new light rail stations reaching Trim Road.',
+        url: 'https://www.cbc.ca/news/canada/ottawa/etfo-union-lesage-fears-province-stripping-bargaining-power-ahead-of-school-year-9.7315050',
+        timeAgo: '1 hours ago',
+        summary: "The head of the union representing elementary teachers at Ottawa's English public school board says the city's \"unicorn\" status is being put at risk by the province's current bargaining strategy.",
         expandedDetails: {
-          keyTakeaways: [
-            '12.5 km extension connects Blair Station to Orléans and Trim Road.',
-            'Direct connection to downtown Parliament Hill and Tunney’s Pasture.',
-            'Fully climate-controlled covered platforms with heated waiting shelters.'
-          ],
-          localImpact: 'Cuts east-end commuter highway traffic by an estimated 18,000 cars daily.',
-          timeline: 'Public passenger opening Q1 2027.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
         }
       },
       {
-        id: 'yow-n2',
-        title: 'Parliament Hill Centre Block Rehabilitation Reaches Structural Milestone',
-        source: 'CBC News Ottawa',
-        category: 'Government',
-        url: 'https://www.google.com/search?q=Parliament%20Hill%20Centre%20Block%20Rehabilitation%20Reaches%20Structural%20Milestone%20CBC%20News%20Ottawa',
+        id: 'yow-news-1',
+        title: "Clock's ticking to find challengers to take on 4 Ottawa city councillors",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/ottawa/clock-s-ticking-to-find-challengers-to-take-on-4-ottawa-city-councillors-9.7314470',
+        timeAgo: '4 hours ago',
+        summary: "Clock's ticking to find challengers to take on 4 Ottawa city councillors. Read full details on CBC News.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 4 hours ago'
+        }
+      },
+      {
+        id: 'yow-news-2',
+        title: "Midnight deadline looms as Canada seeks deal to avoid Trump's steep new tariffs",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/world/livestory/midnight-deadline-trump-tariffs-trade-deal-leblanc-greer-9.7310605',
+        timeAgo: '8 days ago',
+        summary: "Midnight deadline looms as Canada seeks deal to avoid Trump's steep new tariffs. Read full details on CBC News.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 8 days ago'
+        }
+      },
+      {
+        id: 'yow-news-3',
+        title: "Redblacks falls to CFL-leading Alouettes, extend losing streak to 16",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/ottawa/ottawa-redblacks-cfl-losing-streak-montreal-alouettes-9.7315222',
         timeAgo: '3 hours ago',
-        summary: 'Historic stone heritage preservation and underground Parliament Welcome Centre excavation completed.',
+        summary: "The Ottawa Redblacks extended their winless streak with a 16th straight loss in an ugly 46-16 beatdown to the league-leading Montreal Alouettes on Thursday.",
         expandedDetails: {
-          keyTakeaways: [
-            'Major seismic reinforcement and green energy geothermal heating conversion under the Great Lawn.',
-            'Peace Tower clock mechanism and Memorial Chamber stone restoration ongoing.',
-            'Massive construction project employs thousands of heritage stonemasons and trades.'
-          ],
-          localImpact: 'Parliamentary Precinct public guided tours operating smoothly in West Block and Senate building.',
-          timeline: 'Phased completion ongoing.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
         }
       },
       {
-        id: 'yow-n3',
-        title: 'Kanata North Technology Park Advances 6G Telecommunications & Defense AI',
-        source: 'Ottawa Business Journal',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=Kanata%20North%20Technology%20Park%20Advances%206G%20Telecommunications%20%26%20Defense%20AI%20Ottawa%20Business%20Journal',
-        timeAgo: '5 hours ago',
-        summary: 'Canada’s largest tech park attracts $180M in federal defense AI and photonics research grants.',
+        id: 'yow-news-4',
+        title: "1 killed in motorcycle crash near Renfrew",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/ottawa/motorcycle-collision-renfrew-9.7315078',
+        timeAgo: '12 hours ago',
+        summary: "One person has died following a motorcycle collision near Renfrew, Ont., Thursday night, according to local paramedics.",
         expandedDetails: {
-          keyTakeaways: [
-            'Over 540 tech companies and 33,000 software engineers based in Kanata North.',
-            'Focus on autonomous connected vehicle testing and quantum encrypted satellite telecoms.',
-            'Partnerships with Carleton University and University of Ottawa engineering labs.'
-          ],
-          localImpact: 'Reinforces Ottawa’s standing as a premier global telecommunications and defense tech capital.',
-          timeline: 'Active tech scaling across 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 12 hours ago'
         }
       }
     ],
@@ -3359,39 +3399,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Winnipeg',
     news: [
       {
-        id: 'ywg-n1',
-        title: 'CentrePort Canada Rail-Direct Inland Port Breaks Ground on Global Logistics Expansion',
-        source: 'Winnipeg Free Press',
-        category: 'Logistics',
-        url: 'https://www.google.com/search?q=CentrePort%20Canada%20Rail-Direct%20Inland%20Port%20Breaks%20Ground%20on%20Global%20Logistics%20Expansion%20Winnipeg%20Free%20Press',
-        timeAgo: '45 mins ago',
-        summary: 'North America’s largest trimodal inland port expands direct rail switching and cargo distribution.',
+        id: 'ywg-news-0',
+        title: "Tories want to turn shuttered Manitoba facility for people with disabilities into addictions recovery centre",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/manitoba/developmental-centre-addictions-recovery-centre-9.7314790',
+        timeAgo: '5 hours ago',
+        summary: "The Opposition Progressive Conservatives believe a former facility for people with intellectual disabilities should have a new life supporting Manitobans struggling with opioid addictions.",
         expandedDetails: {
-          keyTakeaways: [
-            '20,000-acre development integrates CPKC and CN transcontinental rail with Winnipeg Airport.',
-            'Attracts major agri-food, precision manufacturing, and international cold chain exporters.',
-            'Direct heavy-truck trade corridor to US Midwest interstate networks.'
-          ],
-          localImpact: 'Drives long-term supply chain and manufacturing employment across Manitoba.',
-          timeline: 'Phase 2 rail leads operational next year.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 5 hours ago'
         }
       },
       {
-        id: 'ywg-n2',
-        title: 'The Forks Waterfront Renewal Expands Indigenous Market and Public Spaces',
-        source: 'CBC News Manitoba',
+        id: 'ywg-news-1',
+        title: "Manitobans frustrated by lack of cell service in Waskada area",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=The%20Forks%20Waterfront%20Renewal%20Expands%20Indigenous%20Market%20and%20Public%20Spaces%20CBC%20News%20Manitoba',
-        timeAgo: '3 hours ago',
-        summary: 'New pedestrian bridges and Indigenous cultural gathering pavilions unveiled along the Red and Assiniboine rivers.',
+        url: 'https://www.cbc.ca/news/canada/manitoba/waskada-poor-cell-service-frustration-9.7314846',
+        timeAgo: '5 hours ago',
+        summary: "People who live in the Waskada, Man., area say they're frustrated with the lack of cellphone service. A senior with a fractured hip had to crawl to safety last year because he couldn't call for help.",
         expandedDetails: {
-          keyTakeaways: [
-            'Revitalizes 6,000-year-old historic gathering site at the junction of two rivers.',
-            'Year-round artisan food market, outdoor craft brewery patio, and boat launches.',
-            'Winter skating trail infrastructure enhanced with warming huts by international architects.'
-          ],
-          localImpact: 'Provides a world-class gathering hub for 4 million annual visitors and local families.',
-          timeline: 'Public pavilions open now.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 5 hours ago'
+        }
+      },
+      {
+        id: 'ywg-news-2',
+        title: "Shrinking sea ice makes year-round shipping possible on Hudson Bay: Manitoba premier's office",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/manitoba/manitoba-kinew-port-churchill-study-9.7314788',
+        timeAgo: '11 hours ago',
+        summary: "Year-round shipping is possible on Hudson Bay without the use of the most expensive icebreakers, a spokesperson for Premier Wab Kinew says.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 11 hours ago'
+        }
+      },
+      {
+        id: 'ywg-news-3',
+        title: "Accepting 25% tariff rate for steel a win for Trump, Manitoba businesses say",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/manitoba/steel-tariffs-trade-deal-trump-9.7314917',
+        timeAgo: '15 hours ago',
+        summary: "A Manitoba steel distributor says he's shrugging his shoulders amid reports lower tariffs for the industry will be part of a looming U.S.-Canada trade deal.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 15 hours ago'
+        }
+      },
+      {
+        id: 'ywg-news-4',
+        title: "What will unite tennis and pickleball players? A whole lot more courts",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/radio/sunday/tennis-versus-pickleball-beef-9.7311572',
+        timeAgo: '7 hours ago',
+        summary: "Across the country, tennis and pickleball players compete for time on too few courts. Here's what planners and sports policy experts say it would take to address the root of the problem — not enough recreational faciliti",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
         }
       }
     ],
@@ -3723,57 +3797,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Halifax',
     news: [
       {
-        id: 'yhz-n1',
-        title: 'Halifax Ferry Fleet Modernization Adds Mill Cove Electric Fast Ferries',
-        source: 'The Chronicle Herald',
+        id: 'yhz-news-0',
+        title: "‘It's all about self-determination’: Glooscap First Nation opens Annapolis Valley market",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Halifax%20Ferry%20Fleet%20Modernization%20Adds%20Mill%20Cove%20Electric%20Fast%20Ferries%20The%20Chronicle%20Herald',
-        timeAgo: '45 mins ago',
-        summary: 'Halifax Transit awards build contracts for 5 zero-emission catamaran ferries connecting Bedford Basin directly to Downtown.',
+        url: 'https://www.cbc.ca/news/canada/nova-scotia/glooscap-new-market-9.7314287',
+        timeAgo: '6 hours ago',
+        summary: "A First Nation in Nova Scotia's Annapolis Valley has opened a new market that provides its fishermen and vendors with a place to sell their products back to the community.",
         expandedDetails: {
-          keyTakeaways: [
-            'High-speed electric ferries will carry commuters from Bedford to Halifax Waterfront in 18 minutes.',
-            'Net-zero shore charging infrastructure at both terminal docks.',
-            'Complements operating Alderney and Woodside harbour ferry services.'
-          ],
-          localImpact: 'Eliminates thousands of daily rush hour cars along the Bedford Highway corridor.',
-          timeline: 'Vessel delivery commences late 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 6 hours ago'
         }
       },
       {
-        id: 'yhz-n2',
-        title: 'Irving Shipbuilding Cuts Steel on Next-Gen Canadian Surface Combatant',
-        source: 'Atlantic Business Magazine',
-        category: 'Maritime',
-        url: 'https://www.google.com/search?q=Irving%20Shipbuilding%20Cuts%20Steel%20on%20Next-Gen%20Canadian%20Surface%20Combatant%20Atlantic%20Business%20Magazine',
-        timeAgo: '3 hours ago',
-        summary: 'National Shipbuilding Strategy reaches milestone in constructing the Royal Canadian Navy River-class destroyers.',
+        id: 'yhz-news-1',
+        title: "N.S. Independent MLA Elizabeth Smith-McCrossin takes up federal issues, but will she run?",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/nova-scotia/independent-mla-elizabeth-smith-mccrossin-tackles-federal-issues-9.7314006',
+        timeAgo: '6 hours ago',
+        summary: "For Cumberland North MLA Elizabeth Smith-McCrossin, the return of bulls to the cow pasture at the federal Nappan Research Farm is a big win. The Independent MLA has caught the eye of federal Conservatives on the issue bu",
         expandedDetails: {
-          keyTakeaways: [
-            'Halifax Shipyard builds 15 advanced multi-mission naval warships.',
-            'Generates over 10,000 direct and indirect marine tech careers in Atlantic Canada.',
-            'Positions Halifax as a premier NATO naval defense and shipbuilding hub.'
-          ],
-          localImpact: 'Drives specialized engineering procurement and regional industrial apprenticeships.',
-          timeline: 'Construction active across shipyard facilities.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 6 hours ago'
         }
       },
       {
-        id: 'yhz-n3',
-        title: 'Canada’s Ocean Supercluster Injects $35M into Marine AI & Ocean Tech',
-        source: 'Entrevestor',
-        category: 'Technology',
-        url: 'https://www.google.com/search?q=Canada%E2%80%99s%20Ocean%20Supercluster%20Injects%20%2435M%20into%20Marine%20AI%20%26%20Ocean%20Tech%20Entrevestor',
-        timeAgo: '5 hours ago',
-        summary: 'Halifax-headquartered ocean cluster backs autonomous subsea robotics and environmental sensor startups.',
+        id: 'yhz-news-2',
+        title: "Looking For A Place To Happen: N.S. venues host anniversary screening of Tragically Hip’s last concert",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/nova-scotia/nova-scotia-venues-tragically-hip-final-concert-broadcast-9.7312883',
+        timeAgo: '6 hours ago',
+        summary: "On Saturday, venues across the country will be re-airing the CBC broadcast, The Tragically Hip: A National Celebration, which features the last performance in their hometown of Kingston, Ont., on Aug. 20, 2016.",
         expandedDetails: {
-          keyTakeaways: [
-            'COVE (Centre for Ocean Ventures & Entrepreneurship) hosts over 70 ocean tech startups in Dartmouth.',
-            'Commercialization of sonar AI, autonomous underwater vehicles (AUVs), and tidal turbine sensors.',
-            'Global export partnerships with European and US maritime leaders.'
-          ],
-          localImpact: 'Expands high-wage ocean engineering and machine learning roles.',
-          timeline: 'New funding rounds active.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 6 hours ago'
+        }
+      },
+      {
+        id: 'yhz-news-3',
+        title: "Halifax municipality to charge flat rate for false alarms in buildings",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/nova-scotia/false-security-alarm-fee-changes-halifax-9.7314678',
+        timeAgo: '18 hours ago',
+        summary: "Starting Sept. 1, Halifax property owners and tenants will pay a flat rate every time first responders attend a false alarm. The change replaces an escalating fee system that charged progressively higher fines for repeat",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 18 hours ago'
+        }
+      },
+      {
+        id: 'yhz-news-4',
+        title: "Man's body found at Halifax recycling facility",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/nova-scotia/body-recycling-facility-bayers-lake-halifax-police-9.7210877',
+        timeAgo: '19 hours ago',
+        summary: "Police say the body arrived at the facility in a truck that collected recycling materials.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 19 hours ago'
         }
       }
     ],
@@ -4105,39 +4195,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'Victoria',
     news: [
       {
-        id: 'yyj-n1',
-        title: 'Crystal Pool Modern Replacement & Multi-Sport Complex Enters Construction Phase',
-        source: 'Times Colonist',
+        id: 'yyj-news-0',
+        title: "Following fire, Summerland orchards race to save fruit from spoilage",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Crystal%20Pool%20Modern%20Replacement%20%26%20Multi-Sport%20Complex%20Enters%20Construction%20Phase%20Times%20Colonist',
-        timeAgo: '40 mins ago',
-        summary: 'City Council awards tenders for $168M state-of-the-art zero-carbon aquatic facility.',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/summerland-orchards-spoiled-harvests-9.7315116',
+        timeAgo: '1 hours ago',
+        summary: "While Deep Brar’s property is physically undamaged by the flames, his business, Brarstar Orchards, has still incurred a significant cost — much of his fruit was left to rot on the trees during the evacuation.",
         expandedDetails: {
-          keyTakeaways: [
-            '50-metre competition pool, wellness hot pools, therapy spaces, and fitness gym.',
-            'Geothermal heat exchange system will achieve net-zero carbon operations.',
-            'Expands green space in Central Park with new playgrounds and cycling paths.'
-          ],
-          localImpact: 'Provides a modern community wellness hub for generations of Island families.',
-          timeline: 'Groundbreaking this autumn with 2028 opening target.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
         }
       },
       {
-        id: 'yyj-n2',
-        title: 'Victoria Clean Marine Cluster Tests All-Electric Harbour Ferries',
-        source: 'Douglas Magazine / Business Desk',
-        category: 'Maritime',
-        url: 'https://www.google.com/search?q=Victoria%20Clean%20Marine%20Cluster%20Tests%20All-Electric%20Harbour%20Ferries%20Douglas%20Magazine%20%2F%20Business%20Desk',
-        timeAgo: '3 hours ago',
-        summary: 'Victoria Harbour Ferry fleet trials zero-emission quiet electric propulsion for Inner Harbour crossings.',
+        id: 'yyj-news-1',
+        title: "New fibre route planned for Highway 37 after northern B.C. telecom outages",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/new-fibre-route-northern-bc-9.7314535',
+        timeAgo: '2 hours ago',
+        summary: "CityWest is planning a new underground fibre route along Highway 37 after three major telecommunications outages in northern B.C. in the past four months highlighted vulnerabilities in the region's network.",
         expandedDetails: {
-          keyTakeaways: [
-            'Quiet electric motors eliminate underwater noise to protect local Salish Sea marine life.',
-            'Solar-assisted fast-charging dock installed at Fisherman’s Wharf.',
-            'Positions Victoria as a model for sustainable urban eco-tourism.'
-          ],
-          localImpact: 'Reduces noise and emissions across the bustling Inner Harbour waterway.',
-          timeline: 'Full fleet rollout planned for next season.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 2 hours ago'
+        }
+      },
+      {
+        id: 'yyj-news-2',
+        title: "42% drop in Vancouver housing starts prompts worry from development advocate",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/vancouver-housing-starts-drop-9.7315071',
+        timeAgo: '3 hours ago',
+        summary: "Housing starts in Vancouver are down 42 per cent compared with last July — a signal, according to a development advocate, that it's become too costly to build new homes.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 3 hours ago'
+        }
+      },
+      {
+        id: 'yyj-news-3',
+        title: "What will unite tennis and pickleball players? A whole lot more courts",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/radio/sunday/tennis-versus-pickleball-beef-9.7311572',
+        timeAgo: '7 hours ago',
+        summary: "Across the country, tennis and pickleball players compete for time on too few courts. Here's what planners and sports policy experts say it would take to address the root of the problem — not enough recreational faciliti",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
+        }
+      },
+      {
+        id: 'yyj-news-4',
+        title: "1 dead after plane makes emergency landing on Prince George road, crashes into vehicle",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/british-columbia/prince-george-plane-on-highway-9.7314771',
+        timeAgo: '16 hours ago',
+        summary: "Prince George RCMP have confirmed that a person has died after a plane made an emergency landing Thursday on Foothills Boulevard, about 1.5 kilometres north of North Nechako Road.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 16 hours ago'
         }
       }
     ],
@@ -4425,39 +4549,73 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
     cityName: 'St. John’s',
     news: [
       {
-        id: 'yyt-n1',
-        title: 'Team Gushue Highway Extension Finalizes Overpass Construction',
-        source: 'The Telegram',
+        id: 'yyt-news-0',
+        title: "80-year-old woman killed in T.C.H. crash near Flat Bay, RCMP says",
+        source: 'CBC News',
         category: 'Civic',
-        url: 'https://www.google.com/search?q=Team%20Gushue%20Highway%20Extension%20Finalizes%20Overpass%20Construction%20The%20Telegram',
-        timeAgo: '45 mins ago',
-        summary: 'Major arterial highway linking Kenmount Road to the Pitts Memorial Drive transit corridor prepares for paving.',
+        url: 'https://www.cbc.ca/news/canada/newfoundland-labrador/flat-bay-fatal-crash-9.7315300',
+        timeAgo: '1 hours ago',
+        summary: "An 80-year-old woman died in a two-vehicle crash on the Trans-Canada Highway near the western Newfoundland community of Flat Bay on Thursday, police say.",
         expandedDetails: {
-          keyTakeaways: [
-            'Completes long-awaited central arterial connector across the metro region.',
-            'Direct access to St. John’s harbour port terminals and southern shore communities.',
-            'Significantly cuts commercial truck traffic through residential neighbourhoods.'
-          ],
-          localImpact: 'Eases morning commuter congestion across Topsail Road and Kenmount Road.',
-          timeline: 'Full opening scheduled for late 2026.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 1 hours ago'
         }
       },
       {
-        id: 'yyt-n2',
-        title: 'Newfoundland Offshore Wind & Green Hydrogen Project Secures Environmental Clearance',
-        source: 'CBC News Newfoundland',
-        category: 'Energy',
-        url: 'https://www.google.com/search?q=Newfoundland%20Offshore%20Wind%20%26%20Green%20Hydrogen%20Project%20Secures%20Environmental%20Clearance%20CBC%20News%20Newfoundland',
-        timeAgo: '3 hours ago',
-        summary: 'World-scale clean energy export project in Placentia Bay moves to commercial engineering development.',
+        id: 'yyt-news-1',
+        title: "N.L. Hydro not 'wheeling' more power through Quebec under new Churchill MOU",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/newfoundland-labrador/nl-hydro-quebec-more-power-9.7314728',
+        timeAgo: '7 hours ago',
+        summary: "One of the details drawing attention in the new Churchill River power MOU is that it does not give Newfoundland and Labrador Hydro the ability to directly sell more power to customers in the northeast United States or On",
         expandedDetails: {
-          keyTakeaways: [
-            'Harnesses premier North Atlantic offshore wind power to produce zero-emission green ammonia.',
-            'Direct clean fuel export agreements with European industrial ports.',
-            'Creates thousands of specialized clean tech and maritime construction roles in the province.'
-          ],
-          localImpact: 'Positions Newfoundland & Labrador as a global leader in Atlantic clean energy export.',
-          timeline: 'Engineering procurement underway.'
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
+        }
+      },
+      {
+        id: 'yyt-news-2',
+        title: "When a final deal on Churchill Falls is reached, your power bill will go down with it. Here's how",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/player/play/9.7314413',
+        timeAgo: '7 hours ago',
+        summary: "Electricity bills in Newfoundland and Labrador could be going down if the new Churchill Falls deal with Quebec goes through. Premier Tony Wakeham announced the Churchill River Electricity Rebate on Monday, which the prov",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 7 hours ago'
+        }
+      },
+      {
+        id: 'yyt-news-3',
+        title: "Clarenville festival brings fibre crafters together",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/player/play/9.7315197',
+        timeAgo: '2 hours ago',
+        summary: "Crafts and artistry are on full display in Clarenville this weekend for the second Clarenville Regional Fibre Festival. It’s a four-day event to teach and explore knitting, crochet, weaving, spinning, felting — to name j",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 2 hours ago'
+        }
+      },
+      {
+        id: 'yyt-news-4',
+        title: "Trio of additional Tony Humby trials pushed back to next year",
+        source: 'CBC News',
+        category: 'Civic',
+        url: 'https://www.cbc.ca/news/canada/newfoundland-labrador/tony-humby-child-trafficking-charges-trial-delayed-9.7314352',
+        timeAgo: '20 hours ago',
+        summary: "Tony Humby was scheduled for three separate trials from September to November. Those dates have now been pushed back to next April, as his main trial on dozens of alleged sexual offences drags on.",
+        expandedDetails: {
+          keyTakeaways: ["Latest breaking local coverage reported by CBC News.","Ongoing civic development and regional interest for local residents.","Direct reporting available at the canonical source."],
+          localImpact: "Important news development affecting residents and visitors in the local metropolitan area.",
+          timeline: 'Live coverage updated 20 hours ago'
         }
       }
     ],
