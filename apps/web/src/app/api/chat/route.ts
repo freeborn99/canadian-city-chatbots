@@ -398,33 +398,9 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
       async start(controller) {
         let streamSuccess = false;
         let streamedResponse = '';
-        let modelUsed = 'gemini-2.5-flash';
+        let modelUsed = 'openai/gpt-oss-120b';
 
-        // Tier 1: Google Gemini 2.5 Flash (Ultra-Fast, Real-Time Deep Intelligence)
-        if (!streamSuccess && googleKey) {
-          try {
-            const google = createGoogleGenerativeAI({ apiKey: googleKey });
-            const result = streamText({
-              model: google('gemini-2.5-flash'),
-              system: systemPrompt,
-              messages: truncatedMessages,
-              temperature: 0.3,
-              maxTokens: 2500,
-            });
-
-            for await (const chunk of result.textStream) {
-              controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
-              streamedResponse += chunk;
-              streamSuccess = true;
-            }
-            modelUsed = 'gemini-2.5-flash';
-          } catch (t1Err) {
-            console.warn('[Tier 1 Gemini 2.5 Flash Rate Limit / Error, Falling to Tier 2]:', t1Err);
-          }
-          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
-        }
-
-        // Tier 2: Groq OpenAI GPT-OSS 120B (High-Throughput Reasoning Failover)
+        // Tier 1: Groq OpenAI GPT-OSS 120B (Ultra-Fast 120B Reasoning Engine)
         if (!streamSuccess && groqKey) {
           try {
             const groq = createGroq({ apiKey: groqKey });
@@ -442,18 +418,18 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamSuccess = true;
             }
             modelUsed = 'openai/gpt-oss-120b';
-          } catch (t2Err) {
-            console.warn('[Tier 2 Groq 120B Error, Falling to Tier 3]:', t2Err);
+          } catch (t1Err) {
+            console.warn('[Tier 1 Groq 120B Rate Limit / Error, Falling to Tier 2]:', t1Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
-        // Tier 3: Google Gemini 2.0 Flash (Secondary Google Engine Failover)
-        if (!streamSuccess && googleKey) {
+        // Tier 2: Groq Compound Reasoning Engine
+        if (!streamSuccess && groqKey) {
           try {
-            const google = createGoogleGenerativeAI({ apiKey: googleKey });
+            const groq = createGroq({ apiKey: groqKey });
             const result = streamText({
-              model: google('gemini-2.0-flash'),
+              model: groq('groq/compound'),
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
@@ -465,14 +441,14 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamedResponse += chunk;
               streamSuccess = true;
             }
-            modelUsed = 'gemini-2.0-flash';
-          } catch (t3Err) {
-            console.warn('[Tier 3 Gemini 2.0 Flash Error, Falling to Tier 4]:', t3Err);
+            modelUsed = 'groq/compound';
+          } catch (t2Err) {
+            console.warn('[Tier 2 Groq Compound Error, Falling to Tier 3]:', t2Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
 
-        // Tier 4: Groq Qwen 3.6 27B
+        // Tier 3: Groq Qwen 3.6 27B
         if (!streamSuccess && groqKey) {
           try {
             const groq = createGroq({ apiKey: groqKey });
@@ -490,8 +466,32 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               streamSuccess = true;
             }
             modelUsed = 'qwen/qwen3.6-27b';
+          } catch (t3Err) {
+            console.warn('[Tier 3 Groq Qwen Error, Falling to Tier 4]:', t3Err);
+          }
+          if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
+        }
+
+        // Tier 4: Google Gemini 2.5 Flash
+        if (!streamSuccess && googleKey) {
+          try {
+            const google = createGoogleGenerativeAI({ apiKey: googleKey });
+            const result = streamText({
+              model: google('gemini-2.5-flash'),
+              system: systemPrompt,
+              messages: truncatedMessages,
+              temperature: 0.3,
+              maxTokens: 2500,
+            });
+
+            for await (const chunk of result.textStream) {
+              controller.enqueue(encoder.encode(`0:${JSON.stringify(chunk)}\n`));
+              streamedResponse += chunk;
+              streamSuccess = true;
+            }
+            modelUsed = 'gemini-2.5-flash';
           } catch (t4Err) {
-            console.warn('[Tier 4 Groq Qwen Error, Falling to Tier 5]:', t4Err);
+            console.warn('[Tier 4 Gemini Flash Error, Falling to Tier 5]:', t4Err);
           }
           if (streamSuccess && streamedResponse.trim().length < 20) streamSuccess = false;
         }
