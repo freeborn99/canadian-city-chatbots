@@ -214,7 +214,7 @@ export async function POST(req: Request) {
     const liveSportsFeed = (cityHub.sports || [])
       .map(
         (s) =>
-          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} — TV: ${s.tvBroadcast || 'Sportsnet / TSN'} — [${s.team} Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
+          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} — TV: ${s.tvBroadcast || 'Sportsnet / TSN'} — [${s.team} Tickets](https://www.ticketmaster.ca/search?q=${encodeURIComponent(s.team + ' tickets')})`
       )
       .join('\n');
 
@@ -958,7 +958,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
           } else if (isSports && cityHub.sports?.length > 0) {
             fallbackText = `Here is the live sports action for **${city.name}**: 🏒\n\n` +
-              cityHub.sports.map(s => `🏆 **${s.team} vs ${s.opponent}** (${s.league})\n- **Status**: ${s.status} ${s.score ? `(${s.score})` : `• Starts at ${s.gameTime}`}\n- **Home/Away**: ${s.isHome ? 'Home Arena' : 'Away'} • TV: ${s.tvBroadcast || 'Sportsnet / TSN'}\n- **Tickets**: [Get Match Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' tickets')})\n`).join('\n') +
+              cityHub.sports.map(s => `🏆 **${s.team} vs ${s.opponent}** (${s.league})\n- **Status**: ${s.status} ${s.score ? `(${s.score})` : `• Starts at ${s.gameTime}`}\n- **Home/Away**: ${s.isHome ? 'Home Arena' : 'Away'} • TV: ${s.tvBroadcast || 'Sportsnet / TSN'}\n- **Tickets**: [Get Match Tickets](https://www.ticketmaster.ca/search?q=${encodeURIComponent(s.team + ' tickets')})\n`).join('\n') +
               `\n💡 **Quick Next Steps:**\n- Find sports bars & nightlife near the arena\n- Check full team schedule\n- View city transit routes to the game`;
           } else if (isStay && cityHub.hotels?.length > 0) {
             fallbackText = `Here are top-rated boutique hotels and stays in **${city.name}**: 🏨\n\n` +

@@ -1038,7 +1038,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$69 - $235',
-        ticketUrl: 'https://www.google.com/search?q=Mirvish%3A%20The%20Lion%20King%20Broadway%20Spectacular%20Princess%20of%20Wales%20Theatre%20tickets',
+        ticketUrl: 'https://www.mirvish.com/shows/the-lion-king',
         ticketPlatform: 'Mirvish',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -1051,7 +1051,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Thursday & Saturday • 8:00 PM',
         ticketPriceRange: '$45 - $145',
-        ticketUrl: 'https://www.google.com/search?q=Toronto%20Symphony%20Orchestra%3A%20Mahler%20Symphony%20No.%205%20Roy%20Thomson%20Hall%20tickets',
+        ticketUrl: 'https://www.tso.ca/concerts-and-events',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1077,7 +1077,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$75 - $250',
-        ticketUrl: 'https://www.google.com/search?q=Mirvish%3A%20Hamilton%20Broadway%20Musical%20Royal%20Alexandra%20Theatre%20tickets',
+        ticketUrl: 'https://www.mirvish.com/shows/hamilton',
         ticketPlatform: 'Mirvish',
         availabilityStatus: 'Limited VIP',
         badgeColor: 'purple'
@@ -1090,7 +1090,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Tue - Sun • 7:30 PM & 10:00 PM',
         ticketPriceRange: '$35 - $65',
-        ticketUrl: 'https://www.google.com/search?q=The%20Second%20City%3A%20Improv%20Mainstage%20Show%20The%20Second%20City%20Toronto%20tickets',
+        ticketUrl: 'https://www.secondcity.com/shows/toronto',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -1598,7 +1598,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 8:00 PM',
         ticketPriceRange: '$35 - $125',
-        ticketUrl: 'https://www.google.com/search?q=Vancouver%20Symphony%20Orchestra%3A%20Tchaikovsky%20Violin%20Concerto%20The%20Orpheum%20tickets',
+        ticketUrl: 'https://www.vancouversymphony.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1624,7 +1624,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$39 - $98',
-        ticketUrl: 'https://www.google.com/search?q=Arts%20Club%20Theatre%3A%20Million%20Dollar%20Quartet%20Stanley%20Industrial%20Alliance%20Stage%20tickets',
+        ticketUrl: 'https://artsclub.com/shows',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -1637,7 +1637,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Friday & Saturday • 7:30 PM & 9:30 PM',
         ticketPriceRange: '$22 - $32',
-        ticketUrl: 'https://www.google.com/search?q=The%20Comedy%20Department%3A%20Pro%20Improv%20%26%20Standup%20Granville%20Island%20Comedy%20Bar%20tickets',
+        ticketUrl: 'https://thecomedydepartment.com',
         ticketPlatform: 'Eventbrite',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -2160,7 +2160,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Wednesday & Saturday • 7:30 PM',
         ticketPriceRange: '$42 - $140',
-        ticketUrl: 'https://www.google.com/search?q=Orchestre%20Symphonique%20de%20Montr%C3%A9al%3A%20Ravel%20Bol%C3%A9ro%20%26%20Debussy%20Maison%20Symphonique%20(Place%20des%20Arts)%20tickets',
+        ticketUrl: 'https://www.osm.ca/en/concerts',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2173,7 +2173,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 8:00 PM & 4:00 PM',
         ticketPriceRange: '$65 - $195',
-        ticketUrl: 'https://www.google.com/search?q=Cirque%20du%20Soleil%3A%20KURIOS%20-%20Cabinet%20of%20Curiosities%20Under%20the%20Big%20Top%20(Old%20Port%20of%20Montreal)%20tickets',
+        ticketUrl: 'https://www.cirquedusoleil.com/kurios',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -2199,7 +2199,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$55 - $130',
-        ticketUrl: 'https://www.google.com/search?q=Th%C3%A9%C3%A2tre%20Saint-Denis%3A%20Mamma%20Mia!%20Com%C3%A9die%20Musicale%20en%20Fran%C3%A7ais%20Th%C3%A9%C3%A2tre%20St-Denis%20tickets',
+        ticketUrl: 'https://theatrestdenis.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2212,7 +2212,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Thu - Sat • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $28',
-        ticketUrl: 'https://www.google.com/search?q=The%20Comedy%20Nest%3A%20Pro%20Standup%20Showcase%20The%20Comedy%20Nest%20(Forum%20Montreal)%20tickets',
+        ticketUrl: 'https://comedynest.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -2693,7 +2693,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM (Matinees 1:30 PM)',
         ticketPriceRange: '$40 - $125',
-        ticketUrl: 'https://www.google.com/search?q=Citadel%20Theatre%3A%20Little%20Shop%20of%20Horrors%20Musical%20Citadel%20Theatre%20(Shoctor%20Stage)%20tickets',
+        ticketUrl: 'https://citadeltheatre.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -2706,7 +2706,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$35 - $105',
-        ticketUrl: 'https://www.google.com/search?q=Edmonton%20Symphony%20Orchestra%3A%20Holst%20The%20Planets%20Winspear%20Centre%20tickets',
+        ticketUrl: 'https://www.winspearcentre.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -2732,7 +2732,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Fri - Sun • 7:00 PM & 12:00 PM Brunch',
         ticketPriceRange: '$25 - $45',
-        ticketUrl: 'https://www.google.com/search?q=Spotlight%20Cabaret%3A%20Drag%20Brunch%20%26%20Burlesque%20Comedy%20Spotlight%20Cabaret%20tickets',
+        ticketUrl: 'https://spotlightcabaret.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -3167,7 +3167,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Thursday & Saturday • 8:00 PM',
         ticketPriceRange: '$35 - $115',
-        ticketUrl: 'https://www.google.com/search?q=National%20Arts%20Centre%3A%20NAC%20Orchestra%20-%20Beethoven%20%26%20Brahms%20Southam%20Hall%20(National%20Arts%20Centre)%20tickets',
+        ticketUrl: 'https://nac-cna.ca/en/orchestra',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3180,7 +3180,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$32 - $85',
-        ticketUrl: 'https://www.google.com/search?q=NAC%20Indigenous%20Theatre%3A%20Tales%20from%20Turtle%20Island%20Babs%20Asper%20Theatre%20tickets',
+        ticketUrl: 'https://nac-cna.ca/en/indigenoustheatre',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3206,7 +3206,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Thu - Sun • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://www.google.com/search?q=Absolute%20Comedy%3A%20Standup%20Headliner%20Weekend%20Absolute%20Comedy%20Ottawa%20tickets',
+        ticketUrl: 'https://www.absolutecomedy.ca/ottawa',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -3627,7 +3627,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$35 - $110',
-        ticketUrl: 'https://www.google.com/search?q=Royal%20Manitoba%20Theatre%20Centre%3A%20The%20Sound%20of%20Music%20Royal%20MTC%20(John%20Hirsch%20Mainstage)%20tickets',
+        ticketUrl: 'https://royalmtc.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -3640,7 +3640,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$30 - $95',
-        ticketUrl: 'https://www.google.com/search?q=Winnipeg%20Symphony%20Orchestra%3A%20Tchaikovsky%201812%20Overture%20Centennial%20Concert%20Hall%20tickets',
+        ticketUrl: 'https://wso.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -3666,7 +3666,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Wed - Sat • 7:45 PM & 10:15 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://www.google.com/search?q=Rumor%E2%80%99s%20Comedy%20Club%3A%20Pro%20Standup%20Weekend%20Rumor%E2%80%99s%20Restaurant%20%26%20Comedy%20Club%20tickets',
+        ticketUrl: 'https://www.rumorscomedyclub.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
@@ -4015,7 +4015,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$40 - $115',
-        ticketUrl: 'https://www.google.com/search?q=Neptune%20Theatre%3A%20Mamma%20Mia!%20Fountain%20Hall%20(Neptune%20Theatre)%20tickets',
+        ticketUrl: 'https://www.neptunetheatre.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4028,7 +4028,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$35 - $95',
-        ticketUrl: 'https://www.google.com/search?q=Symphony%20Nova%20Scotia%3A%20Celtic%20%26%20Maritime%20Spectacular%20Rebecca%20Cohn%20Auditorium%20tickets',
+        ticketUrl: 'https://symphonynovascotia.ca',
         ticketPlatform: 'Ticket Atlantic',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4041,7 +4041,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$55 - $165',
-        ticketUrl: 'https://www.google.com/search?q=Scotiabank%20Centre%20Live%3A%20Arkells%20-%20Big%20Feelings%20Tour%20Scotiabank%20Centre%20tickets',
+        ticketUrl: 'https://www.scotiabank-centre.com',
         ticketPlatform: 'Ticket Atlantic',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -4389,7 +4389,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Saturday & Sunday • 8:00 PM & 2:30 PM',
         ticketPriceRange: '$32 - $98',
-        ticketUrl: 'https://www.google.com/search?q=Royal%20Theatre%3A%20Victoria%20Symphony%20-%20Mozart%20%26%20Dvo%C5%99%C3%A1k%20Royal%20Theatre%20tickets',
+        ticketUrl: 'https://victoriasymphony.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4402,7 +4402,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM & 2:00 PM',
         ticketPriceRange: '$28 - $65',
-        ticketUrl: 'https://www.google.com/search?q=Belfry%20Theatre%3A%20Canadian%20Premier%20Play%20The%20Belfry%20Theatre%20tickets',
+        ticketUrl: 'https://www.belfry.bc.ca',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -4743,7 +4743,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$45 - $120',
-        ticketUrl: 'https://www.google.com/search?q=Arts%20and%20Culture%20Centre%3A%20Come%20From%20Away%20Newfoundland%20Production%20St.%20John%E2%80%99s%20Arts%20and%20Culture%20Centre%20tickets',
+        ticketUrl: 'https://artsandculturecentre.com/stjohns',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -4756,7 +4756,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sat • 6:30 PM (Dinner Included)',
         ticketPriceRange: '$65 - $95',
-        ticketUrl: 'https://www.google.com/search?q=Spirit%20of%20Newfoundland%3A%20Dinner%20%26%20Musical%20Comedy%20Theatre%20Masonic%20Temple%20tickets',
+        ticketUrl: 'https://spiritofnewfoundland.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
