@@ -57,25 +57,50 @@ export const ChatContainer: React.FC<ChatContainerProps> = ({ initialTenantId })
   );
 
   const handleSelectStarterPrompt = (promptText: string) => {
-    append({
-      role: 'user',
-      content: promptText,
-    });
+    append(
+      {
+        role: 'user',
+        content: promptText,
+      },
+      {
+        body: {
+          tenantId: activeTenantId,
+          persona: activePersona,
+        },
+      }
+    );
   };
 
-  // When a persona button is clicked, immediately send an activation message
+  // When a persona button is clicked, immediately send an activation message with that persona
   const handlePersonaActivation = (persona: string, activationPrompt: string) => {
-    append({
-      role: 'user',
-      content: activationPrompt,
-    });
+    setActivePersona(persona as AIPersona);
+    append(
+      {
+        role: 'user',
+        content: activationPrompt,
+      },
+      {
+        body: {
+          tenantId: activeTenantId,
+          persona: persona,
+        },
+      }
+    );
   };
 
   const handleSendSmartPrompt = (promptText: string) => {
-    append({
-      role: 'user',
-      content: promptText,
-    });
+    append(
+      {
+        role: 'user',
+        content: promptText,
+      },
+      {
+        body: {
+          tenantId: activeTenantId,
+          persona: activePersona,
+        },
+      }
+    );
   };
 
   const handleSwitchTenant = (newTenantId: string) => {

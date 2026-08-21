@@ -70,12 +70,12 @@ export const PersonaSwitcher: React.FC<PersonaSwitcherProps> = ({
   const [switchingTo, setSwitchingTo] = useState<AIPersona | null>(null);
 
   const handlePersonaClick = (persona: PersonaDefinition) => {
-    if (isLoading || persona.id === activePersona) return;
+    if (isLoading) return;
 
     setSwitchingTo(persona.id);
     onSelectPersona(persona.id);
 
-    // Trigger the activation prompt so the AI immediately acknowledges the mode switch
+    // Trigger the activation prompt so the AI immediately provides fresh intelligence for this persona
     if (onActivatePersona) {
       onActivatePersona(persona.id, persona.activationPrompt);
     }
