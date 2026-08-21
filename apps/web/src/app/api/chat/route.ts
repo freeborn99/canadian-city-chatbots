@@ -184,7 +184,7 @@ export async function POST(req: Request) {
       .slice(0, 4)
       .map(
         (s, i) =>
-          `[Event ${i + 1}]: **${s.title}** (${s.category}) at [${s.venue}](${s.ticketUrl}) | Dates: ${s.dates} | Price: ${s.ticketPriceRange} | [Get Tickets](${s.ticketUrl})`
+          `[Event ${i + 1}]: **${s.title}** (${s.category}) at [${s.venue}](${s.ticketUrl}) — Dates: ${s.dates} — Price: ${s.ticketPriceRange} — [Get Tickets](${s.ticketUrl})`
       )
       .join('\n');
 
@@ -200,7 +200,7 @@ export async function POST(req: Request) {
       .slice(0, 3)
       .map(
         (s) =>
-          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} | [${s.team} Box Office](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
+          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} — [${s.team} Box Office](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
       )
       .join('\n');
 
@@ -747,14 +747,14 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
               `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
               (cityHub.nightlife?.length > 0 ? 
-                `🍸 **Hidden Speakeasies & Cocktail Secrets**:\n` +
-                cityHub.nightlife.slice(0, 2).map(n => `> 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n> • **Vibe**: ${n.vibe}\n> • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n> • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
+                `#### 🍸 Hidden Speakeasies & Cocktail Secrets\n` +
+                cityHub.nightlife.slice(0, 2).map(n => `- 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n  • **Vibe**: ${n.vibe}\n  • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n  • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
               (cityHub.restaurants?.length > 0 ? 
-                `🍽️ **Underrated Neighborhood Eateries**:\n` +
-                cityHub.restaurants.slice(0, 2).map(r => `> 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n> • **Must-Order**: *${r.signatureDish}*\n> • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
+                `#### 🍽️ Underrated Neighborhood Eateries\n` +
+                cityHub.restaurants.slice(0, 2).map(r => `- 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Must-Order**: *${r.signatureDish}*\n  • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
               (cityHub.outdoors?.length > 0 ? 
-                `🌲 **Secret Scenic Lookouts & Quiet Trails**:\n` +
-                cityHub.outdoors.slice(0, 2).map(o => `> 📍 **${o.name}** (${o.neighborhood})\n> • **Highlights**: ${o.features.join(', ')}\n> • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
+                `#### 🌲 Secret Scenic Lookouts & Quiet Trails\n` +
+                cityHub.outdoors.slice(0, 2).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
               `💡 **Quick Next Steps:**\n` +
               `- What are the best hidden rooftop patios in ${city.name}?\n` +
               `- Show me scenic river and skyline walk shortcuts\n` +
@@ -763,13 +763,11 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             const stories = cityHub.news.slice(0, 4);
             fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
               stories.map((n) => 
-                `> 📌 **[${n.title}](${n.url})**\n` +
-                `> 🏷️ \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
-                `>\n` +
-                `> • **The Story**: ${n.summary}\n` +
-                `> • **Local Impact**: ${n.expandedDetails?.localImpact || `Key civic development for ${city.name} residents.`}\n` +
-                `>\n` +
-                `> 🔗 [Read Full Coverage on ${n.source || 'Official Source'} →](${n.url})`
+                `#### 📌 [${n.title}](${n.url})\n` +
+                `- **Category & Source**: \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
+                `- **The Story**: ${n.summary}\n` +
+                `- **Local Impact**: ${n.expandedDetails?.localImpact || `Key civic development for ${city.name} residents.`}\n` +
+                `- **Full Coverage**: [Read Story on ${n.source || 'Official Source'} →](${n.url})`
               ).join('\n\n') +
               `\n\n💡 **Executive Follow-Ups:**\n` +
               `- What are the upcoming ${city.name} City Council agenda items?\n` +
@@ -779,20 +777,20 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
               `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
               cityHub.shows.map(s => 
-                `> 🎭 **[${s.title}](${s.ticketUrl})** (${s.category})\n` +
-                `> • **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
-                `> • **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
-                `> • **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
+                `#### 🎭 [${s.title}](${s.ticketUrl}) (${s.category})\n` +
+                `- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
+                `- **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
+                `- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
               ).join('\n') +
               `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
           } else if (isFood && cityHub.restaurants?.length > 0) {
             fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
               `Here are top trending dining spots in **${city.name}** with open tables tonight:\n\n` +
               cityHub.restaurants.map(r => 
-                `> 🍷 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
-                `> • **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
-                `> • **Available Tables**: ${r.availableTimes.join(', ')}\n` +
-                `> • **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
+                `#### 🍷 [${r.name}](${r.reservationUrl}) (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
+                `- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
+                `- **Available Tables**: ${r.availableTimes.join(', ')}\n` +
+                `- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
               ).join('\n') +
               `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
           } else if (isSports && cityHub.sports?.length > 0) {

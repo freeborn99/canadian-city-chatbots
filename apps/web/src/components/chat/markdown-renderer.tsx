@@ -192,34 +192,34 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, ten
             );
           },
           table: ({ children }) => (
-            <div className="my-3 overflow-x-auto rounded-xl border border-slate-700/60 shadow-lg max-w-full">
-              <table className="w-full text-left text-xs sm:text-sm">
+            <div className="my-4 overflow-x-auto rounded-2xl border border-slate-700/80 bg-slate-900/90 shadow-xl max-w-full">
+              <table className="min-w-[500px] w-full text-left text-xs sm:text-sm">
                 {children}
               </table>
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-slate-800/90 text-cyan-300">
+            <thead className="bg-slate-800/95 text-cyan-300 border-b border-slate-700">
               {children}
             </thead>
           ),
           tbody: ({ children }) => (
-            <tbody className="divide-y divide-slate-800/60 bg-slate-900/60">
+            <tbody className="divide-y divide-slate-800/80 bg-slate-900/60">
               {children}
             </tbody>
           ),
           tr: ({ children }) => (
-            <tr className="even:bg-slate-800/20 hover:bg-slate-800/40 transition-colors">
+            <tr className="even:bg-slate-850/40 hover:bg-slate-800/50 transition-colors">
               {children}
             </tr>
           ),
           th: ({ children }) => (
-            <th className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-cyan-300 px-2.5 py-2 border-b border-slate-700/60">
+            <th className="text-[11px] uppercase tracking-wider font-bold text-cyan-300 px-3.5 py-2.5 min-w-[120px]">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-2.5 py-2 text-slate-200 text-xs sm:text-sm leading-snug break-words">
+            <td className="px-3.5 py-2.5 text-slate-200 text-xs sm:text-sm leading-relaxed whitespace-normal min-w-[120px]">
               {children}
             </td>
           ),
