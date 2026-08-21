@@ -1,7 +1,7 @@
 {
   "yyc": [
     {
-      "id": "scrape-1787343149481-863",
+      "id": "scrape-1787350277943-538",
       "title": "Newsroom City of Calgary",
       "source": "City of Calgary Newsroom",
       "category": "Civic",
@@ -23,7 +23,7 @@
   "yvr": [],
   "yul": [
     {
-      "id": "scrape-1787343200985-860",
+      "id": "scrape-1787350329392-30",
       "title": "News",
       "source": "Ville de Montreal News",
       "category": "Civic",
@@ -45,13 +45,13 @@
   "yow": [],
   "ywg": [
     {
-      "id": "scrape-1787343254036-775",
+      "id": "scrape-1787350382323-526",
       "title": "Newsroom",
       "source": "City of Winnipeg News",
       "category": "Civic",
       "url": "https://winnipeg.ca/news",
       "timeAgo": "Just now",
-      "summary": "Subscribe to receive the latest news and updates.\n\nMan charged with luring and sexual assault of four teenagers: R26-36462August 21, 2026Suspicious sk...",
+      "summary": "Subscribe to receive the latest news and updates.\n\nImprovement work starting Monday at Kilcona Park August 21, 2026Man charged with luring and sexual ...",
       "expandedDetails": {
         "keyTakeaways": [
           "Check the full article for details."
@@ -66,7 +66,7 @@
   "yhz": [],
   "yyj": [
     {
-      "id": "scrape-1787343288745-857",
+      "id": "scrape-1787350417292-929",
       "title": "News | City of Victoria",
       "source": "City of Victoria News",
       "category": "Civic",
