@@ -4,6 +4,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { getTenantById } from '@/lib/tenants';
 import { queryTenantContext } from '@/lib/upstash';
 import { getCityHubData } from '@/lib/city-data';
+import { ROOFTOP_PATIOS, SPEAKEASIES } from '@/lib/city-geo-data';
 import { recordQueryTelemetry } from '@/lib/telemetry';
 import { evaluateSemanticGuardrails } from '@/lib/guardrails';
 
@@ -171,9 +172,25 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Format Structured Regional Intelligence Categories (Token-Optimized)
+    // 2. Format Structured Regional Intelligence Categories (Rich & Comprehensive)
+    const cityRooftops = ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || [];
+    const citySpeakeasies = SPEAKEASIES[activeTenantId] || SPEAKEASIES.yyc || [];
+
+    const liveRooftopsFeed = cityRooftops
+      .map(
+        (r) =>
+          `- ☀️ **[${r.name}](${r.bookingUrl})** (${r.elevation} • ${r.neighborhood}): ${r.vibe}. View: *${r.viewHighlight}*. Signature: "${r.signatureDrinkOrDish}". (${r.heatedOrCovered}). [Book Table on ${r.bookingPlatform}](${r.bookingUrl})`
+      )
+      .join('\n');
+
+    const liveSpeakeasiesFeed = citySpeakeasies
+      .map(
+        (s) =>
+          `- 🍸 **[${s.name}](${s.guestlistUrl})** (${s.neighborhood}): Entrance: *${s.entranceSecret}*. Vibe: ${s.vibe}. Specialty: "${s.specialty}". Hours: ${s.hours}. [Guestlist / VIP](${s.guestlistUrl})`
+      )
+      .join('\n');
+
     const liveNewsFeed = (cityHub.news || [])
-      .slice(0, 5)
       .map(
         (n) =>
           `Headline: ${n.title}\nSource: ${n.source} (${n.timeAgo})\nCategory: ${n.category || 'Civic'}\nBriefing: ${n.summary}\nURL: ${n.url}`
@@ -181,76 +198,68 @@ export async function POST(req: Request) {
       .join('\n\n');
 
     const liveShowsFeed = (cityHub.shows || [])
-      .slice(0, 4)
       .map(
         (s, i) =>
-          `[Event ${i + 1}]: **${s.title}** (${s.category}) at [${s.venue}](${s.ticketUrl}) — Dates: ${s.dates} — Price: ${s.ticketPriceRange} — [Get Tickets](${s.ticketUrl})`
+          `[Event ${i + 1}]: **${s.title}** (${s.category}) at [${s.venue}](${s.ticketUrl}) — Dates: ${s.dates} — Price: ${s.ticketPriceRange} — Status: ${s.availabilityStatus} — [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl})`
       )
       .join('\n');
 
     const liveNightlifeFeed = (cityHub.nightlife || [])
-      .slice(0, 4)
       .map(
         (n) =>
-          `- 🍸 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood}): ${n.vibe}. Hours: ${n.hours}. [Guestlist / VIP](${n.guestlistUrl})`
+          `- 🪩 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood}): ${n.vibe}. Hours: ${n.hours}. Entry: ${n.coverOrVip}. [Guestlist / VIP](${n.guestlistUrl})`
       )
       .join('\n');
 
     const liveSportsFeed = (cityHub.sports || [])
-      .slice(0, 3)
       .map(
         (s) =>
-          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} — [${s.team} Box Office](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
+          `- 🏒 **${s.team} vs ${s.opponent}** (${s.league}): [${s.status}] ${s.score ? `Score: ${s.score}` : `Time: ${s.gameTime}`} — TV: ${s.tvBroadcast || 'Sportsnet / TSN'} — [${s.team} Tickets](https://www.google.com/search?q=${encodeURIComponent(s.team + ' schedule tickets')})`
       )
       .join('\n');
 
     const liveResoFeed = (cityHub.restaurants || [])
-      .slice(0, 4)
       .map(
         (r) =>
-          `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating}): Signature: "${r.signatureDish}". [Book ${r.name} on ${r.bookingPlatform}](${r.reservationUrl})`
+          `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating}): Signature: "${r.signatureDish}". Available: ${r.availableTimes.join(', ')}. [Book ${r.name} on ${r.bookingPlatform}](${r.reservationUrl})`
       )
       .join('\n');
 
     const liveHotelsFeed = (cityHub.hotels || [])
-      .slice(0, 3)
       .map(
         (h) =>
-          `- 🏨 **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight}): [Book on ${h.bookingPlatform}](${h.bookingUrl})`
+          `- 🏨 **[${h.name}](${h.bookingUrl})** (${h.neighborhood} • ⭐${h.rating} • ${h.pricePerNight}): ${h.description} [Book on ${h.bookingPlatform}](${h.bookingUrl})`
       )
       .join('\n');
 
     const liveToursFeed = (cityHub.experiences || [])
-      .slice(0, 3)
       .map(
         (e) =>
-          `- 🧭 **[${e.title}](${e.bookingUrl})** (${e.duration} • ${e.priceFrom}): [Book on ${e.bookingPlatform}](${e.bookingUrl})`
+          `- 🧭 **[${e.title}](${e.bookingUrl})** (${e.duration} • ${e.priceFrom}): ${e.highlights?.join(', ') || 'Guided local tour'}. [Book on ${e.bookingPlatform}](${e.bookingUrl})`
       )
       .join('\n');
 
     const liveOutdoorFeed = (cityHub.outdoors || [])
-      .slice(0, 3)
       .map(
         (o) =>
-          `- 🌲 **${o.name}** (${o.category} • ${o.neighborhood}): ${o.features.slice(0, 2).join(', ')} (Best Time: ${o.bestTime})`
+          `- 🌲 **${o.name}** (${o.category} • ${o.neighborhood}): Highlights: ${o.features.join(', ')} (Best Time: ${o.bestTime} • Parking: ${o.parkingTips})`
       )
       .join('\n');
 
     const liveCivicServices = (cityHub.civicServices || [])
-      .slice(0, 3)
       .map(
         (c) =>
           `- 🏛️ **[${c.title}](${c.actionUrl})** (${c.department}): ${c.description} -> [${c.actionText}](${c.actionUrl})`
       )
       .join('\n');
 
-    // 3. Persona Tuning
+    // 3. Persona Tuning (Wealth of Knowledge & In-Depth Curations)
     const personaGuides = {
-      insider: `Voice: Friendly, witty, hyper-local insider for ${city.name}. Reveal authentic hidden gems, speakeasy secret entrances, scenic lookouts, shortcuts, and neighborhood spots that only locals know. Format each spot with a bold title, neighborhood, and insider tip. Always write in clean single-column lists with generous spacing. Never use markdown tables or pipe (|) columns.`,
+      insider: `Voice: Ultimate Hyper-Local Insider, Cultural Explorer & City Secrets Concierge for ${city.name}. Provide rich, comprehensive intelligence (6–8+ curated recommendations with generous vertical spacing). Reveal legendary hidden gems, secret speakeasies & password doors, top panoramic rooftop patios & heated outdoor lounges, chef-owned neighborhood culinary secrets, and scenic sunset lookouts only locals know. Always organize with bold headers, neighborhood tags, insider secrets, and direct booking/map links. Never use tables.`,
       news: `Voice: Executive Civic & Business News Briefing for ${city.name}. Provide a curated briefing of top civic, development, and regional stories with 1-line takeaways, local impact, and direct article links. Format each story as a clean single-column card with bold headline. Never use markdown tables.`,
-      events: `Voice: Ultimate Live Entertainment & Box Office Concierge for ${city.name}. Highlight premier concerts, Broadway/theatre shows, comedy clubs, sports matches, and major festivals from the 🎟️ LIVE SHOWS & CONCERTS feed with direct venue ticket booking links. Format as a clean vertical single-column list with line breaks. Never use tables.`,
-      foodie: `Voice: Acclaimed culinary & nightlife enthusiast for ${city.name}. Highlight trending cocktail speakeasies, top dining spots, chef highlights, and reservation links with clean vertical spacing. Never use tables.`,
-      family: `Voice: Warm, helpful family guide for ${city.name}. Feature free weekend activities, kid-friendly parks, interactive museums, and stroller-friendly nature walks with generous line breaks. Never use tables.`,
+      events: `Voice: Master Box Office & Entertainment Concierge for ${city.name}. Provide an exhaustive live events & entertainment roster (5–8+ shows) spanning Broadway theatre tours, symphony concerts, headlining stadium tours, indie comedy clubs, and festivals from the 🎟️ LIVE SHOWS feed with direct venue ticket booking links. Format as a clean vertical single-column list with line breaks. Never use tables.`,
+      foodie: `Voice: Acclaimed Master Sommelier & Culinary Concierge for ${city.name}. Provide a lavish, comprehensive dining & cocktail guide (6–8+ curated venues). Feature Michelin-caliber dining rooms, trending rooftop patios, underground cocktail speakeasies, chef tasting counters, and late-night spots with direct reservation links, signature dishes, and atmosphere notes. Never use tables.`,
+      family: `Voice: Ultimate Family Adventure & Weekend Concierge for ${city.name}. Provide a rich, comprehensive family guide (6–8+ activities) covering free scenic parks, interactive science & nature centers, weekend family festivals, kid-approved dining spots, and stroller-friendly river walks with parking tips and age recommendations. Never use tables.`,
     };
 
     const surroundingAreaList = city.surroundingRegions?.join(', ') || city.metroArea || city.name;
@@ -343,7 +352,13 @@ You MUST understand the user's specific intent and answer DIRECTLY:
 🔴 VERIFIED LIVE ${city.name.toUpperCase()} INTELLIGENCE DIRECTORY
 ==================================================
 
-🍸 NIGHTLIFE, CLUBS & SPEAKEASIES:
+🍸 SECRET SPEAKEASIES & PASSWORD DOORS:
+${liveSpeakeasiesFeed || `(Explore ${nightlifeDistrictsList} for hidden speakeasies)`}
+
+☀️ PREMIER ROOFTOP PATIOS & SCENIC LOUNGES:
+${liveRooftopsFeed || `(Explore scenic skyline terraces in ${city.name})`}
+
+🪩 NIGHTCLUBS, BARS & DANCE HALLS:
 ${liveNightlifeFeed || `(Explore ${nightlifeDistrictsList} for top clubs & lounges in ${city.name})`}
 
 🎟️ LIVE SHOWS, CONCERTS & ENTERTAINMENT EVENTS:
@@ -394,7 +409,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 1400,
+              maxTokens: 2500,
             });
 
             for await (const chunk of result.textStream) {
@@ -418,7 +433,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 1400,
+              maxTokens: 2500,
             });
 
             for await (const chunk of result.textStream) {
@@ -442,7 +457,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 1400,
+              maxTokens: 2500,
             });
 
             for await (const chunk of result.textStream) {
@@ -466,7 +481,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               system: systemPrompt,
               messages: truncatedMessages,
               temperature: 0.3,
-              maxTokens: 1400,
+              maxTokens: 2500,
             });
 
             for await (const chunk of result.textStream) {
@@ -485,10 +500,12 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
         if (!streamSuccess) {
           modelUsed = 'synthesis_fallback';
           const q = lastUserMessage.toLowerCase();
-          const isInsider = safePersona === 'insider' || /\b(insider|hidden gem|gems|shortcut|shortcuts|secret|secrets|local tip|tips|local favorite|favorites|underrated)\b/i.test(q);
+          const isRooftopOrPatio = /\b(rooftop|rooftops|patio|patios|terrace|terraces|skyline view|outdoor dining|outdoor drinks|heated patio|open air|sunset patio)\b/i.test(q);
+          const isSpeakeasyOrHiddenGem = /\b(speakeasy|speakeasies|secret bar|hidden bar|password|underground bar|secret door|bookcase|hidden gem|hidden gems|secret spots)\b/i.test(q);
+          const isInsider = safePersona === 'insider' || isSpeakeasyOrHiddenGem || /\b(insider|hidden gem|gems|shortcut|shortcuts|secret|secrets|local tip|tips|local favorite|favorites|underrated)\b/i.test(q);
           const isNews = safePersona === 'news' || /\b(news|headline|headlines|briefing|briefings|executive|exclusive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|story|stories|article|articles|update|updates|press release)\b/i.test(q);
           const isEvents = safePersona === 'events' || /\b(event|events|show|shows|concert|concerts|theatre|theater|ticket|tickets|festival|gig|comedy)\b/i.test(q);
-          const isFood = safePersona === 'foodie' || /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table|cocktail|cocktails|speakeasy|speakeasies|nightlife|club|clubs|bar|bars)\b/i.test(q);
+          const isFood = safePersona === 'foodie' || isRooftopOrPatio || /\b(food|restaurant|restaurants|eat|dining|dinner|lunch|brunch|pizza|sushi|patio|table|cocktail|cocktails|speakeasy|speakeasies|nightlife|club|clubs|bar|bars)\b/i.test(q);
           const isFamily = safePersona === 'family' || /\b(family|kid|kids|child|children|weekend|toddler|stroller|free event|play)\b/i.test(q);
           const isTransit = /\b(train|trains|ctrain|subway|metro|bus|buses|transit|station|stations|schedule|schedules|route|routes|commute|lrt|skytrain|rem|ferry|line|lines|fare|fares|chinook|chinnok|tuscan|somerset|brentwood|stampede|crowfoot|saddletowne|dalhousie|sunnyside|erlton|heritage|southland|anderson|canyon meadows|fish creek|shawnessy|bridlewood|lion’s park|saith|banff trail|university|whitehorn|rundle|marlborough|franklin|barlow|max)\b/i.test(q);
           const isLandmarkOrArea = /\b(calgary tower|cn tower|tower|towers|stephen ave|stephen avenue|17th ave|17th avenue|kensington|inglewood|east village|mission|bridgeland|chinook|eau claire|prince's island|saddledome|rogers place|scotiabank arena|bell centre|granville|yaletown|gastown|stanley park|byward|parliament|the forks|old montreal|vieux-montr|waterfront|peggy's cove|signal hill|inner harbour|downtown|what is happening|what's happening|right now|happening around|things to do|going on|attraction|attractions|landmark|landmarks)\b/i.test(q);
@@ -506,11 +523,45 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
             fallbackText = `🍁 **Chat${city.id.toUpperCase()} is dedicated exclusively to ${city.name}, ${city.province} and the ${city.metroArea}.**\n\n` +
               `I can't assist with general coding, homework, or cities outside our Canadian region, but I would love to help you discover ${city.name}!\n\n` +
               `💡 **Explore ${city.name} Instead:**\n\n` +
-              `- What are the top nightclubs and cocktail lounges in ${city.name} tonight?\n\n` +
-              `- Recommend the best dinner spots with open reservations\n\n` +
+              `- What are the top rooftop cocktail lounges in ${city.name} tonight?\n\n` +
+              `- Recommend the best hidden speakeasies with secret entrances\n\n` +
               `- What major concerts and live shows are happening this weekend?`;
+          } else if (isRooftopOrPatio) {
+            const rooftops = ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || [];
+            fallbackText = `### ☀️ **Top Rooftop Patios & Heated Terraces • ${city.name}**\n\n` +
+              `Here are premier rooftop bars, scenic terraces, and heated outdoor patios across **${city.name}** with unforgettable views:\n\n` +
+              rooftops.map((r) =>
+                `#### 🍹 [${r.name}](${r.bookingUrl})\n` +
+                `- **Vantage & Location**: \`${r.elevation}\` • **${r.neighborhood}**\n` +
+                `- **Vibe & Atmosphere**: ${r.vibe}\n` +
+                `- **View Highlights**: 🌅 *${r.viewHighlight}*\n` +
+                `- **Must-Order Signature**: "${r.signatureDrinkOrDish}"\n` +
+                `- **Weather Comfort**: ${r.heatedOrCovered}\n` +
+                `- **Table Booking**: [Reserve on ${r.bookingPlatform} →](${r.bookingUrl})`
+              ).join('\n\n') +
+              `\n\n💡 **Quick Next Steps:**\n` +
+              `- Find dinner reservations near downtown\n` +
+              `- Discover hidden speakeasies for after the rooftop\n` +
+              `- Check live evening events and shows tonight`;
+          } else if (isSpeakeasyOrHiddenGem) {
+            const speakeasies = SPEAKEASIES[activeTenantId] || SPEAKEASIES.yyc || [];
+            fallbackText = `### 🍸 **Secret Speakeasies & Hidden Bars • ${city.name}**\n\n` +
+              `Here are legendary hidden bars, secret entrance lounges, and cocktail sanctuaries in **${city.name}**:\n\n` +
+              speakeasies.map((s) =>
+                `#### 🤫 [${s.name}](${s.guestlistUrl})\n` +
+                `- **Neighborhood**: **${s.neighborhood}**\n` +
+                `- **Secret Entrance**: 🗝️ *${s.entranceSecret}*\n` +
+                `- **Vibe & Atmosphere**: ${s.vibe}\n` +
+                `- **Specialty Elixirs**: "${s.specialty}"\n` +
+                `- **Operating Hours**: ${s.hours}\n` +
+                `- **VIP / Access**: [Reserve Table / Guestlist →](${s.guestlistUrl})`
+              ).join('\n\n') +
+              `\n\n💡 **Quick Next Steps:**\n` +
+              `- What are the top rooftop cocktail lounges in ${city.name}?\n` +
+              `- Find late-night underground dining spots\n` +
+              `- What live shows are playing tonight?`;
           } else if (safePersona === 'news') {
-            const stories = (cityHub.news || []).slice(0, 4);
+            const stories = (cityHub.news || []).slice(0, 5);
             fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
               stories.map((n) => 
                 `#### 📌 [${n.title}](${n.url})\n` +
@@ -535,60 +586,100 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               ).join('\n\n') +
               `\n\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
           } else if (safePersona === 'foodie') {
+            const restaurants = (cityHub.restaurants || []).slice(0, 4);
+            const rooftops = (ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || []).slice(0, 2);
+            const nightlife = (cityHub.nightlife || []).slice(0, 2);
+
             fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
-              `Here are top trending dining spots and cocktail lounges in **${city.name}** with open tables tonight:\n\n` +
-              (cityHub.restaurants || []).slice(0, 3).map(r => 
+              `Here are top trending dining spots, chef tasting tables, rooftop lounges, and cocktail sanctuaries in **${city.name}** with open tables tonight:\n\n` +
+              restaurants.map(r => 
                 `#### 🍷 [${r.name}](${r.reservationUrl})\n` +
                 `- **Cuisine & Rating**: ${r.cuisine} • \`${r.priceLevel}\` • ⭐${r.rating} (${r.neighborhood})\n` +
                 `- **Must-Order Signature**: *${r.signatureDish}*\n` +
                 `- **Available Tables Tonight**: ${r.availableTimes.join(', ')}\n` +
                 `- **Table Reservation**: [Reserve on ${r.bookingPlatform} →](${r.reservationUrl})`
+              ).join('\n\n') + '\n\n' +
+              rooftops.map(rf =>
+                `#### ☀️ Scenic Rooftop: [${rf.name}](${rf.bookingUrl})\n` +
+                `- **Vantage**: \`${rf.elevation}\` • ${rf.neighborhood}\n` +
+                `- **View & Atmosphere**: 🌅 *${rf.viewHighlight}* — ${rf.vibe}\n` +
+                `- **Signature Item**: "${rf.signatureDrinkOrDish}"\n` +
+                `- **Reservation**: [Book on ${rf.bookingPlatform} →](${rf.bookingUrl})`
+              ).join('\n\n') + '\n\n' +
+              nightlife.map(n =>
+                `#### 🪩 Late-Night Lounge: [${n.name}](${n.guestlistUrl})\n` +
+                `- **Category & Scene**: \`${n.category}\` • ${n.neighborhood}\n` +
+                `- **Atmosphere & Music**: ${n.vibe}\n` +
+                `- **Hours & Entry**: ${n.hours} • ${n.coverOrVip}\n` +
+                `- **VIP & Guestlist**: [Reserve VIP / Entry →](${n.guestlistUrl})`
               ).join('\n\n') +
-              (cityHub.nightlife?.length > 0 ? 
-                `\n\n#### 🪩 [${cityHub.nightlife[0].name}](${cityHub.nightlife[0].guestlistUrl})\n` +
-                `- **Category & Scene**: \`${cityHub.nightlife[0].category}\` • ${cityHub.nightlife[0].neighborhood}\n` +
-                `- **Atmosphere & Music**: ${cityHub.nightlife[0].vibe}\n` +
-                `- **Hours & Entry**: ${cityHub.nightlife[0].hours} • ${cityHub.nightlife[0].coverOrVip}\n` +
-                `- **VIP & Guestlist**: [Reserve VIP / Entry →](${cityHub.nightlife[0].guestlistUrl})` : '') +
               `\n\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
           } else if (safePersona === 'family') {
+            const outdoors = (cityHub.outdoors || []).slice(0, 3);
+            const shows = (cityHub.shows || []).slice(0, 2);
+            const familyRestos = (cityHub.restaurants || []).slice(0, 2);
+
             fallbackText = `### 👨‍👩‍👧‍👦 **Family & Weekend Adventures • ${city.name}**\n\n` +
-              `Here are top family-friendly activities, kid-approved spots, and weekend outings in **${city.name}**:\n\n` +
-              (cityHub.outdoors || []).slice(0, 2).map(o => 
+              `Here are top family-friendly activities, scenic parks, kid-approved spots, and weekend outings in **${city.name}**:\n\n` +
+              outdoors.map(o => 
                 `#### 🌲 [${o.name}](https://${city.domain})\n` +
                 `- **Category & Area**: \`${o.category}\` • ${o.neighborhood}\n` +
                 `- **Park Highlights**: ${o.features.join(', ')}\n` +
                 `- **Family Advice**: Best visited ${o.bestTime} (Parking: ${o.parkingTips})\n` +
                 `- **Park Details**: [View ${o.name} Visitor Info →](https://${city.domain})`
+              ).join('\n\n') + '\n\n' +
+              shows.map(s =>
+                `#### 🎪 Family Show: [${s.title}](${s.ticketUrl})\n` +
+                `- **Category & Venue**: \`${s.category}\` • **${s.venue}** (${s.neighborhood})\n` +
+                `- **Showtimes & Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
+                `- **Family Tickets**: [Get Tickets on ${s.ticketPlatform} →](${s.ticketUrl})`
+              ).join('\n\n') + '\n\n' +
+              familyRestos.map(r =>
+                `#### 🍕 Kid-Friendly Dining: [${r.name}](${r.reservationUrl})\n` +
+                `- **Neighborhood & Rating**: ${r.neighborhood} • ⭐${r.rating} (${r.cuisine})\n` +
+                `- **Must-Order Favorites**: *${r.signatureDish}*\n` +
+                `- **Table Booking**: [Book Table on ${r.bookingPlatform} →](${r.reservationUrl})`
               ).join('\n\n') +
-              (cityHub.shows?.length > 0 ? 
-                `\n\n#### 🎪 [${cityHub.shows[0].title}](${cityHub.shows[0].ticketUrl})\n` +
-                `- **Category & Venue**: \`${cityHub.shows[0].category}\` • ${cityHub.shows[0].venue}\n` +
-                `- **Showtimes & Dates**: ${cityHub.shows[0].dates} (${cityHub.shows[0].ticketPriceRange})\n` +
-                `- **Family Tickets**: [Get Tickets on ${cityHub.shows[0].ticketPlatform} →](${cityHub.shows[0].ticketUrl})` : '') +
               `\n\n💡 **Family Next Steps:**\n` +
               `- Find free indoor play centres and science discovery spots\n` +
               `- Check weekend family festival schedules in ${city.name}\n` +
               `- View stroller-accessible park and trail routes`;
           } else if (safePersona === 'insider') {
+            const speakeasies = (SPEAKEASIES[activeTenantId] || SPEAKEASIES.yyc || []).slice(0, 2);
+            const rooftops = (ROOFTOP_PATIOS[activeTenantId] || ROOFTOP_PATIOS.yyc || []).slice(0, 2);
+            const restaurants = (cityHub.restaurants || []).slice(0, 2);
+            const outdoors = (cityHub.outdoors || []).slice(0, 2);
+
             fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
-              `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
-              (cityHub.nightlife || []).slice(0, 1).map(n => 
-                `#### 🍸 [${n.name}](${n.guestlistUrl})\n` +
-                `- **Secret Spot & Scene**: Hidden speakeasy in ${n.neighborhood} • ${n.vibe}\n` +
-                `- **Insider Knowledge**: ${n.hours} — ${n.coverOrVip}\n` +
-                `- **VIP Access**: [Get on Guestlist / Reserve VIP →](${n.guestlistUrl})`
+              `Here is your hyper-local dossier of authentic secrets, hidden speakeasies, scenic rooftops, and neighborhood gems known only to true **${city.name}** locals:\n\n` +
+              speakeasies.map((s) =>
+                `#### 🍸 Secret Speakeasy: [${s.name}](${s.guestlistUrl})\n` +
+                `- **Neighborhood**: ${s.neighborhood}\n` +
+                `- **Secret Entrance**: 🗝️ *${s.entranceSecret}*\n` +
+                `- **Insider Tip**: ${s.vibe}. Specialty: "${s.specialty}". (${s.hours})\n` +
+                `- **Access**: [Get on Guestlist / Reserve VIP →](${s.guestlistUrl})`
+              ).join('\n\n') + '\n\n' +
+              rooftops.map((r) =>
+                `#### ☀️ Scenic Rooftop: [${r.name}](${r.bookingUrl})\n` +
+                `- **Location**: \`${r.elevation}\` • ${r.neighborhood}\n` +
+                `- **Skyline View**: 🌅 *${r.viewHighlight}*\n` +
+                `- **Local Secret**: ${r.vibe}. Signature: "${r.signatureDrinkOrDish}". (${r.heatedOrCovered})\n` +
+                `- **Table Booking**: [Reserve on ${r.bookingPlatform} →](${r.bookingUrl})`
+              ).join('\n\n') + '\n\n' +
+              restaurants.map((r) =>
+                `#### 🍽️ Neighborhood Gem: [${r.name}](${r.reservationUrl})\n` +
+                `- **Cuisine & Scene**: ${r.cuisine} • \`${r.priceLevel}\` • ⭐${r.rating} (${r.neighborhood})\n` +
+                `- **Must-Order**: *${r.signatureDish}*\n` +
+                `- **Available Tonight**: ${r.availableTimes.join(', ')}\n` +
+                `- **Reservation**: [Book on ${r.bookingPlatform} →](${r.reservationUrl})`
+              ).join('\n\n') + '\n\n' +
+              outdoors.map((o) =>
+                `#### 🌲 Secret Lookout & Trail: [${o.name}](https://${city.domain})\n` +
+                `- **Area & Type**: \`${o.category}\` • ${o.neighborhood}\n` +
+                `- **Highlights**: ${o.features.join(', ')}\n` +
+                `- **Local Timing & Parking**: Best visited ${o.bestTime} (Parking: ${o.parkingTips})\n` +
+                `- **Visitor Details**: [Explore ${o.name} Guide →](https://${city.domain})`
               ).join('\n\n') +
-              (cityHub.restaurants?.length > 0 ? 
-                `\n\n#### 🍽️ [${cityHub.restaurants[0].name}](${cityHub.restaurants[0].reservationUrl})\n` +
-                `- **Local Neighborhood Gem**: ${cityHub.restaurants[0].neighborhood} • ⭐${cityHub.restaurants[0].rating} (${cityHub.restaurants[0].cuisine})\n` +
-                `- **Must-Order Dish**: *${cityHub.restaurants[0].signatureDish}*\n` +
-                `- **Table Booking**: [Reserve Table on ${cityHub.restaurants[0].bookingPlatform} →](${cityHub.restaurants[0].reservationUrl})` : '') +
-              (cityHub.outdoors?.length > 0 ? 
-                `\n\n#### 🌲 [${cityHub.outdoors[0].name}](https://${city.domain})\n` +
-                `- **Scenic Lookout & Nature**: ${cityHub.outdoors[0].neighborhood} • ${cityHub.outdoors[0].features.join(', ')}\n` +
-                `- **Local Tip**: Best time: ${cityHub.outdoors[0].bestTime} (Parking: ${cityHub.outdoors[0].parkingTips})\n` +
-                `- **Trail Details**: [Explore Trail & Lookout →](https://${city.domain})` : '') +
               `\n\n💡 **Quick Next Steps:**\n` +
               `- What are the best hidden rooftop patios in ${city.name}?\n` +
               `- Show me scenic river and skyline walk shortcuts\n` +
