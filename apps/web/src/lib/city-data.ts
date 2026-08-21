@@ -453,7 +453,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Tue - Sun • 7:30 PM (Matinees 2:00 PM)',
         ticketPriceRange: '$45 - $135',
-        ticketUrl: 'https://www.google.com/search?q=Theatre%20Calgary%3A%20The%20Great%20Gatsby%20Arts%20Commons%20(Max%20Bell%20Theatre)%20tickets',
+        ticketUrl: 'https://www.theatrecalgary.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Good Seats Available',
         badgeColor: 'emerald'
@@ -466,7 +466,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Symphony',
         dates: 'Friday & Saturday • 7:30 PM',
         ticketPriceRange: '$38 - $110',
-        ticketUrl: 'https://www.google.com/search?q=Calgary%20Philharmonic%20Orchestra%3A%20Beethoven%20Symphony%20No.%209%20Jack%20Singer%20Concert%20Hall%20tickets',
+        ticketUrl: 'https://calgaryphil.com',
         ticketPlatform: 'Box Office',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -479,7 +479,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Concert',
         dates: 'Next Month • 8:00 PM',
         ticketPriceRange: '$85 - $295',
-        ticketUrl: 'https://www.ticketmaster.ca/search?q=Saddledome%20Live%3A%20Dua%20Lipa%20-%20Radical%20Optimism%20Tour',
+        ticketUrl: 'https://www.ticketmaster.ca/scotiabank-saddledome-tickets-calgary/venue/139352',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Limited VIP',
         badgeColor: 'purple'
@@ -492,7 +492,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Theatre',
         dates: 'Wed - Sun • 8:00 PM & 2:00 PM',
         ticketPriceRange: '$65 - $180',
-        ticketUrl: 'https://www.ticketmaster.ca/search?q=Jubilee%20Auditorium%3A%20Wicked%20Broadway%20National%20Tour',
+        ticketUrl: 'https://www.ticketmaster.ca/southern-alberta-jubilee-auditorium-tickets-calgary/venue/139366',
         ticketPlatform: 'Ticketmaster',
         availabilityStatus: 'Selling Fast',
         badgeColor: 'amber'
@@ -505,7 +505,7 @@ export const CITY_HUB_REGISTRY: Record<string, CityHubData> = {
         category: 'Comedy',
         dates: 'Friday & Saturday • 8:00 PM & 10:30 PM',
         ticketPriceRange: '$18 - $25',
-        ticketUrl: 'https://www.google.com/search?q=Loose%20Moose%20Theatre%3A%20Improv%20Comedy%20Championship%20Loose%20Moose%20Theatre%20tickets',
+        ticketUrl: 'https://www.loosemoose.com',
         ticketPlatform: 'Showpass',
         availabilityStatus: 'Walk-ins Welcome',
         badgeColor: 'cyan'
