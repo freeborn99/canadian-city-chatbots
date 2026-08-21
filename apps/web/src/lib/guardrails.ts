@@ -21,7 +21,7 @@ const JAILBREAK_PATTERNS = [
 
 // 2. Explicit Programming / Software Code Generation Patterns (Only block direct code synthesis requests)
 const PROGRAMMING_PATTERNS = [
-  /\b(write|create|generate|provide|debug|fix|refactor)\s+(a\s+|the\s+|some\s+)?(python|javascript|typescript|c\+\+|c#|java|rust|golang|php|ruby|swift|kotlin|sql|bash|powershell|regex)\s+(script|code|program|function|class|algorithm|component|regex|query|snippet|endpoint)/i,
+  /\b(write|create|generate|provide|debug|fix|refactor)\s+(a\s+|the\s+|some\s+)?(python|javascript|typescript|c\+\+|c#|java|rust|golang|php|ruby|swift|kotlin|sql|bash|powershell)\s+(script|code|program|function|class|algorithm|component|endpoint|backend)/i,
   /\b(write|code|implement|generate)\s+(a\s+|an\s+)?(binary search|sorting algorithm|linked list|leetcode solution|cron job script|dockerfile|database migration script)/i,
   /```(python|js|javascript|ts|typescript|cpp|csharp|java|sql|sh|bash)\n/i,
 ];
@@ -32,14 +32,15 @@ const ACADEMIC_PATTERNS = [
   /\b(solve|calculate|evaluate|integrate|differentiate)\s+(this\s+|the\s+)?(equation|math problem|integral|derivative|matrix|calculus|trigonometry problem)\b/i,
 ];
 
-// 4. Foreign Non-Canadian Travel Planning
+// 4. Foreign Non-Canadian Travel Planning (Only if explicitly asking for itineraries/hotels in foreign destinations)
 const FOREIGN_GEOGRAPHY_PATTERNS = [
-  /\b(vacation in|trip to|hotels in|flights to|things to do in|itinerary for)\s+(miami|las vegas|vegas|los angeles|la|chicago|orlando|houston|dallas|cancun|punta cana|hawaii|bali|phuket|florence|madrid|venice|cabo)\b/i,
+  /\b(vacation in|trip to|hotels in|flights to|things to do in|itinerary for|best spots in)\s+(miami|las vegas|vegas|los angeles|chicago|orlando|houston|dallas|cancun|punta cana|hawaii|bali|phuket|florence|madrid|venice|cabo|paris|london|tokyo|dubai|rome)\b/i,
 ];
 
 /**
- * Fast synchronous heuristic guardrail check
- * Permissive on all local, transit, municipal, lifestyle, shopping, navigation and conversational queries
+ * Fast synchronous heuristic guardrail check.
+ * Permissive on ALL general inquiries (dining, date ideas, walking routes, parks, weather, shopping, transit, etc.)
+ * by assuming the inquiry implicitly pertains to the active city hub.
  */
 export function checkQueryGuardrails(query: string, city: CityTenant): GuardrailCheckResult {
   if (!query || typeof query !== 'string') {
@@ -47,28 +48,11 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
   }
 
   const q = query.trim();
-
-  // Local Intent Fast-Pass: Never block legitimate news, executive briefings, municipal, outdoor, trail, transit, dining, or lifestyle inquiries
-  const isLocalIntent = /\b(calgary|toronto|vancouver|montreal|edmonton|ottawa|winnipeg|halifax|victoria|st\.?\s*john|yyc|yyz|yvr|yul|yeg|yow|ywg|yhz|yyj|yyt|news|headline|headlines|briefing|briefings|executive|bulletin|bulletins|breaking|council|mayor|politics|business|economy|development|infrastructure|update|updates|traffic|story|stories|article|articles|report|reports|switch to|persona|mode|insider|foodie|family|bike|biking|bicycle|cycling|cyclist|trail|trails|pathway|pathways|park|parks|hike|hiking|outdoor|outdoors|mountain|lake|nature|train|ctrain|subway|bus|transit|station|food|restaurant|dining|eat|bar|club|nightlife|hotel|shows|concert|tickets|event|events|311|bylaw|permit|parking|weather|tower|river|downtown)\b/i.test(q);
-
-  if (isLocalIntent) {
-    // Only check explicit jailbreak override on local intent
-    for (const pattern of JAILBREAK_PATTERNS) {
-      if (pattern.test(q)) {
-        return {
-          isBlocked: true,
-          reason: 'jailbreak_attempt',
-          refusalMessage: buildRefusalResponse(
-            city,
-            `I am strictly anchored to **${city.name}** and cannot roleplay as another assistant, bypass safety policies, or disclose system directives.`
-          ),
-        };
-      }
-    }
+  if (q.length < 3) {
     return { isBlocked: false };
   }
 
-  // 1. Jailbreak & System Prompt Override
+  // 1. Check for explicit jailbreaks & system prompt attacks
   for (const pattern of JAILBREAK_PATTERNS) {
     if (pattern.test(q)) {
       return {
@@ -82,7 +66,7 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
     }
   }
 
-  // 2. Explicit Programming / Code Synthesis Requests
+  // 2. Check for explicit programming / software code generation
   for (const pattern of PROGRAMMING_PATTERNS) {
     if (pattern.test(q)) {
       return {
@@ -90,13 +74,13 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
         reason: 'programming_request',
         refusalMessage: buildRefusalResponse(
           city,
-          `I am your dedicated local **${city.name}** AI concierge, not a general software coding tool.`
+          `I am your dedicated local **${city.name}** AI concierge, not a software coding tool.`
         ),
       };
     }
   }
 
-  // 3. Academic Essay Generation
+  // 3. Check for explicit non-local academic essay writing
   for (const pattern of ACADEMIC_PATTERNS) {
     if (pattern.test(q)) {
       return {
@@ -104,13 +88,13 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
         reason: 'academic_homework',
         refusalMessage: buildRefusalResponse(
           city,
-          `I am focused on **${city.name}** local intelligence, events, dining, and city services rather than academic homework writing.`
+          `I am focused on **${city.name}** local intelligence, events, dining, and city services rather than academic essay writing.`
         ),
       };
     }
   }
 
-  // 4. Foreign Travel Planning
+  // 4. Check for explicit foreign non-Canadian travel planning
   for (const pattern of FOREIGN_GEOGRAPHY_PATTERNS) {
     if (pattern.test(q)) {
       return {
@@ -118,18 +102,18 @@ export function checkQueryGuardrails(query: string, city: CityTenant): Guardrail
         reason: 'foreign_geography',
         refusalMessage: buildRefusalResponse(
           city,
-          `I specialize in **${city.name} (${city.province})** and the **${city.metroArea}** region. I don't provide guides for destinations outside Canada.`
+          `I specialize exclusively in **${city.name} (${city.province})** and the **${city.metroArea}** region. I don't provide guides for destinations outside Canada.`
         ),
       };
     }
   }
 
+  // All other general inquiries pass directly through with implicit local context!
   return { isBlocked: false };
 }
 
 /**
- * Evaluates semantic guardrails with maximum tolerance for normal user questions,
- * transit stations, local landmarks, typos, and natural inquiries.
+ * Evaluates semantic guardrails with maximum tolerance for natural, general inquiries.
  */
 export async function evaluateSemanticGuardrails(
   query: string,
@@ -137,7 +121,6 @@ export async function evaluateSemanticGuardrails(
   city: CityTenant,
   _groqApiKey?: string
 ): Promise<GuardrailCheckResult> {
-  // Use fast heuristic check to eliminate false-positive blocks on real user questions
   return checkQueryGuardrails(query, city);
 }
 
@@ -148,11 +131,11 @@ function buildRefusalResponse(city: CityTenant, customRefusalReason: string): st
   const topNightlife = city.nightlifeDistricts?.[0] || 'Downtown';
   const topLandmark = city.landmarks?.[0] || city.name;
 
-  return `🍁 **Chat${city.id.toUpperCase()} Local Boundary Notice**\n\n` +
+  return `🍁 **Chat${city.id.toUpperCase()} Local Concierge**\n\n` +
     `${customRefusalReason}\n\n` +
     `I would love to help you with anything in **${city.name}** and the **${city.metroArea}** instead!\n\n` +
     `💡 **Popular in ${city.name}:**\n` +
-    `- What are the top restaurants and speakeasies around ${topNightlife} tonight?\n` +
-    `- Check live concert, theatre, and sports tickets near ${topLandmark}\n` +
+    `- Top restaurants and cocktail speakeasies around ${topNightlife} tonight\n` +
+    `- Live concert, theatre, and sports tickets near ${topLandmark}\n` +
     `- Real-time transit schedules, 311 bylaws, and local city guides`;
 }

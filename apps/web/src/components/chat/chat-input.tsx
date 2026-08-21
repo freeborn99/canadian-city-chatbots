@@ -146,7 +146,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             placeholder={
               isListening
                 ? '🎙️ Listening to your voice in Canadian English/French...'
-                : `Ask ${tenant.name} AI (news headlines, scores, food resos, events)...`
+                : `Ask ${tenant.name} AI anything (events, hidden gems, food resos, transit, date spots)...`
             }
             disabled={isLoading}
             className={`w-full bg-transparent resize-none border-0 px-3 py-2 text-sm md:text-base text-white placeholder:text-slate-500 focus:outline-none focus:ring-0 max-h-44 min-h-[44px] leading-relaxed disabled:opacity-50 ${
