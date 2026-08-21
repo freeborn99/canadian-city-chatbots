@@ -495,7 +495,7 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
           const isOffTopic = /\b(python|javascript|react|code|coding|sql|homework|essay|calculus|quantum|tokyo|paris|london|miami|las vegas|los angeles)\b/.test(q);
           const isNightlife = isFood || /\b(nightlife|club|clubs|party|parties|lounge|lounges|speakeasy|bar|bars|pub|pubs|drink|drinks|dj|dance|cocktail|cocktails|after hours)\b/.test(q);
           const isAnimal = /\b(animal|dog|cat|pet|bite|aggressive|loose)\b/.test(q);
-          const isParkingOrCivic = /\b(parking|ticket|permit|bylaw|311|tax|garbage|recycling|snow)\b/.test(q);
+          const isParkingOrCivic = /\b(parking ticket|traffic ticket|speeding ticket|bylaw fine|bylaw infraction|311 request|property tax|waste collection|garbage schedule|recycling pickup|snow route|snow removal)\b/i.test(q);
           const isSports = /\b(sport|sports|game|games|score|scores|match|nhl|cfl|hockey|flames|leafs|canucks|oilers)\b/.test(q);
           const isStay = /\b(hotel|hotels|stay|stays|motel|resort|lodge)\b/.test(q);
           const isOutdoors = isFamily || /\b(park|parks|hike|hiking|trail|trails|nature|lake|ski|mountain|bike|biking|bicycle|cycling|cyclist|pathway|pathways|singletrack|greenway|rotary|nose hill|fish creek|glenmore|bow river|outdoor|outdoors)\b/i.test(q);
@@ -509,6 +509,75 @@ ${retrievedContext ? retrievedContext : `(Rely on verified live directory above)
               `- What are the top nightclubs and cocktail lounges in ${city.name} tonight?\n\n` +
               `- Recommend the best dinner spots with open reservations\n\n` +
               `- What major concerts and live shows are happening this weekend?`;
+          } else if (safePersona === 'news') {
+            const stories = (cityHub.news || []).slice(0, 4);
+            fallbackText = `### 📰 Exclusive News & Executive Briefing • ${city.name}\n\n` +
+              stories.map((n) => 
+                `#### 📌 [${n.title}](${n.url})\n` +
+                `- **Category & Source**: \`${n.category || 'Civic'}\` • **${n.source || 'News'}** • *${n.timeAgo || 'Recently'}*\n` +
+                `- **The Story**: ${n.summary}\n` +
+                `- **Local Impact**: ${n.expandedDetails?.localImpact || `Key civic development for ${city.name} residents.`}\n` +
+                `- **Full Coverage**: [Read Story on ${n.source || 'Official Source'} →](${n.url})`
+              ).join('\n\n') +
+              `\n\n💡 **Executive Follow-Ups:**\n` +
+              `- What are the upcoming ${city.name} City Council agenda items?\n` +
+              `- Check current transit service alerts\n` +
+              `- Explore business highlights in ${city.name}`;
+          } else if (safePersona === 'events') {
+            fallbackText = `### 🎟️ **Live Shows & Entertainment Events • ${city.name}**\n\n` +
+              `Here are top concerts, theatre productions, and live shows in **${city.name}**:\n\n` +
+              cityHub.shows.map(s => 
+                `#### 🎭 [${s.title}](${s.ticketUrl}) (${s.category})\n` +
+                `- **Venue**: [${s.venue}](${s.ticketUrl}) • ${s.neighborhood}\n` +
+                `- **Dates**: ${s.dates} (${s.ticketPriceRange})\n` +
+                `- **Tickets**: [Get Tickets on ${s.ticketPlatform}](${s.ticketUrl}) — ${s.availabilityStatus}\n`
+              ).join('\n') +
+              `\n💡 **Quick Next Steps:**\n- Find dinner reservations near these venues\n- Discover top nightclubs and speakeasies for after the show\n- Check live sports games tonight in ${city.name}`;
+          } else if (safePersona === 'foodie') {
+            fallbackText = `### 🍽️ **Top Dining & Nightlife Reservations • ${city.name}**\n\n` +
+              `Here are top trending dining spots and cocktail lounges in **${city.name}** with open tables tonight:\n\n` +
+              (cityHub.restaurants || []).slice(0, 3).map(r => 
+                `#### 🍷 [${r.name}](${r.reservationUrl}) (${r.neighborhood} • ${r.priceLevel} • ⭐${r.rating})\n` +
+                `- **Cuisine**: ${r.cuisine} • Must-Order: *${r.signatureDish}*\n` +
+                `- **Available Tables**: ${r.availableTimes.join(', ')}\n` +
+                `- **Reserve**: [Book Table on ${r.bookingPlatform}](${r.reservationUrl})\n`
+              ).join('\n') +
+              (cityHub.nightlife?.length > 0 ? 
+                `\n#### 🍸 Trending Nightclubs & Speakeasies\n` +
+                cityHub.nightlife.slice(0, 2).map(n => `- 🪩 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood} • ${n.category}): ${n.vibe} — [Reserve VIP / Guestlist](${n.guestlistUrl})\n`).join('') : '') +
+              `\n💡 **Quick Next Steps:**\n- Explore top cocktail lounges and nightlife nearby\n- Check live shows happening after dinner\n- Get transit directions`;
+          } else if (safePersona === 'family') {
+            fallbackText = `### 👨‍👩‍👧‍👦 **Family & Weekend Adventures • ${city.name}**\n\n` +
+              `Here are top family-friendly activities, kid-approved spots, and weekend outings in **${city.name}**:\n\n` +
+              (cityHub.outdoors?.length > 0 ? 
+                `#### 🌲 Scenic Parks & Outdoor Playgrounds\n` +
+                cityHub.outdoors.slice(0, 3).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Family Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
+              (cityHub.shows?.length > 0 ? 
+                `#### 🎭 Family Shows & Live Entertainment\n` +
+                cityHub.shows.slice(0, 2).map(s => `- 🎟️ **[${s.title}](${s.ticketUrl})** at ${s.venue} (${s.dates}) — [Get Family Tickets](${s.ticketUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.restaurants?.length > 0 ? 
+                `#### 🍕 Kid-Friendly Dining & Sweet Treats\n` +
+                cityHub.restaurants.slice(0, 2).map(r => `- 🍽️ **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Favorites**: *${r.signatureDish}* — [Book Table](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
+              `💡 **Family Next Steps:**\n` +
+              `- Find free indoor play centres and science discovery spots\n` +
+              `- Check weekend family festival schedules in ${city.name}\n` +
+              `- View stroller-accessible park and trail routes`;
+          } else if (safePersona === 'insider') {
+            fallbackText = `### 🧭 **${city.name} Local Insider Secrets & Hidden Gems**\n\n` +
+              `Here are authentic local favorites and hidden spots in **${city.name}** known only to true locals:\n\n` +
+              (cityHub.nightlife?.length > 0 ? 
+                `#### 🍸 Hidden Speakeasies & Cocktail Secrets\n` +
+                cityHub.nightlife.slice(0, 2).map(n => `- 📍 **[${n.name}](${n.guestlistUrl})** (${n.neighborhood})\n  • **Vibe**: ${n.vibe}\n  • **Insider Tip**: ${n.hours} — ${n.coverOrVip}\n  • **Guestlist**: [Reserve VIP / Entry](${n.guestlistUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.restaurants?.length > 0 ? 
+                `#### 🍽️ Underrated Neighborhood Eateries\n` +
+                cityHub.restaurants.slice(0, 2).map(r => `- 📍 **[${r.name}](${r.reservationUrl})** (${r.neighborhood} • ⭐${r.rating})\n  • **Must-Order**: *${r.signatureDish}*\n  • **Table Reservation**: [Book on ${r.bookingPlatform}](${r.reservationUrl})\n`).join('\n') + '\n' : '') +
+              (cityHub.outdoors?.length > 0 ? 
+                `#### 🌲 Secret Scenic Lookouts & Quiet Trails\n` +
+                cityHub.outdoors.slice(0, 2).map(o => `- 📍 **${o.name}** (${o.neighborhood})\n  • **Highlights**: ${o.features.join(', ')}\n  • **Local Tip**: ${o.bestTime} (Parking: ${o.parkingTips})\n`).join('\n') + '\n' : '') +
+              `💡 **Quick Next Steps:**\n` +
+              `- What are the best hidden rooftop patios in ${city.name}?\n` +
+              `- Show me scenic river and skyline walk shortcuts\n` +
+              `- Find late-night underground food spots`;
           } else if (isTransit) {
             const transitName = city.id === 'yyc' ? 'Calgary Transit (CTrain & Bus)' :
               city.id === 'yyz' ? 'TTC (Subway, Streetcar & Bus)' :
