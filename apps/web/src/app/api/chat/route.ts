@@ -66,10 +66,10 @@ export async function POST(req: Request) {
     // Truncate message history to last 8 messages to prevent unbounded token costs and stay comfortably within free tier limits
     const truncatedMessages = messages.slice(-8);
 
-    // Validate individual message content length (3000 char max per message)
+    // Validate individual user message content length (3000 char max per user prompt)
     for (const msg of truncatedMessages) {
-      if (typeof msg.content === 'string' && msg.content.length > 3000) {
-        return new Response(JSON.stringify({ error: 'Message too long. Maximum 3000 characters per message.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      if (msg.role === 'user' && typeof msg.content === 'string' && msg.content.length > 3000) {
+        return new Response(JSON.stringify({ error: 'User message too long. Maximum 3000 characters per message.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
       }
     }
 
