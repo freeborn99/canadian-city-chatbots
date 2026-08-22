@@ -1,29 +1,10 @@
 {
-  "yyc": [
-    {
-      "id": "scrape-1787422350739-373",
-      "title": "Newsroom City of Calgary",
-      "source": "City of Calgary Newsroom",
-      "category": "Civic",
-      "url": "https://newsroom.calgary.ca/",
-      "timeAgo": "Just now",
-      "summary": "ALL DOCUMENTS MAPS NEWS MULTIMEDIA CALENDAR GET INVOLVED\n\n20 August 2026 | 09:04 America/Denver The City of Calgary launches Beyond the Badge program ...",
-      "expandedDetails": {
-        "keyTakeaways": [
-          "Check the full article for details."
-        ],
-        "localImpact": "Important local update.",
-        "timeline": "Recent",
-        "relatedActionUrl": "https://newsroom.calgary.ca/",
-        "relatedActionText": "Read Full Article"
-      }
-    }
-  ],
+  "yyc": [],
   "yyz": [],
   "yvr": [],
   "yul": [
     {
-      "id": "scrape-1787422402632-690",
+      "id": "scrape-1787429436884-350",
       "title": "News",
       "source": "Ville de Montreal News",
       "category": "Civic",
@@ -45,7 +26,7 @@
   "yow": [],
   "ywg": [
     {
-      "id": "scrape-1787422456147-131",
+      "id": "scrape-1787429490597-477",
       "title": "Newsroom",
       "source": "City of Winnipeg News",
       "category": "Civic",
@@ -66,7 +47,7 @@
   "yhz": [],
   "yyj": [
     {
-      "id": "scrape-1787422491810-742",
+      "id": "scrape-1787429526393-375",
       "title": "News | City of Victoria",
       "source": "City of Victoria News",
       "category": "Civic",
